@@ -247,7 +247,7 @@ fun ResumoDaCompraConcluida(
         BotaoComprix("Ver gráficos no histórico", aoVerHistorico, bloco = true, icone = Icones.grafico)
         EspacoVertical(9.dp)
         BotaoComprix(
-            "Voltar para Minhas Listas",
+            "Voltar para Minhas listas",
             aoVoltarParaListas,
             bloco = true,
             estilo = EstiloDeBotao.CONTORNADO,
@@ -433,7 +433,7 @@ fun PainelDeCompraMista(
         if (aoAplicar != null) {
             EspacoVertical(11.dp)
             BotaoComprix(
-                "Usar a compra mista",
+                "Usar compra mista",
                 aoAplicar,
                 bloco = true,
                 estilo = EstiloDeBotao.AMBAR,

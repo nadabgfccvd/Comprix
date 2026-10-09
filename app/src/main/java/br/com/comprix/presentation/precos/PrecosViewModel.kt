@@ -222,7 +222,14 @@ class PrecosViewModel(
 
     /** "Não tinha na loja": dado legitimo, diferente de "ainda não pesquisei". */
     fun marcarIndisponivel(itemId: Long, estabelecimentoId: Long) {
-        viewModelScope.launch { precoRepositorio.marcarIndisponivel(itemId, estabelecimentoId) }
+        viewModelScope.launch {
+            precoRepositorio.marcarIndisponivel(itemId, estabelecimentoId)
+            // Mesma torrada do ListaViewModel.marcarIndisponivel (a acao e a
+            // mesma vinda da folha da celula ou da folha do item da lista).
+            val nome = estado.value.itens
+                .firstOrNull { it.item.id == itemId }?.produto?.nome ?: "Item"
+            _mensagem.value = "\"$nome\" marcado como indisponível nessa loja."
+        }
     }
 
     /**

@@ -116,7 +116,7 @@ fun BotaoComprix(
     val tinta = when (estilo) {
         EstiloDeBotao.PRINCIPAL -> cores.sobreAcao
         EstiloDeBotao.TONAL -> cores.verdeTinta
-        EstiloDeBotao.PERIGO -> if (cores.escuro) Color(0xFF351211) else Color.White
+        EstiloDeBotao.PERIGO -> cores.sobrePerigo
         EstiloDeBotao.AMBAR -> cores.ambarTinta
         EstiloDeBotao.TECNICO -> cores.sobreLavanda
         else -> cores.acao
@@ -283,7 +283,10 @@ fun FaixaDeDestaque(
         TomDoSelo.ALERTA -> Color.White
         TomDoSelo.VERDE -> cores.verdeTinta
         TomDoSelo.TECNICO -> cores.lavandaTinta
-        else -> Color(0xFF251D05)
+        else ->
+            // Tinta propria, nao ambarTinta: no tema escuro ambarTinta e clara
+            // e sumiria sobre o ambar cheio deste fundo saturado.
+            Color(0xFF251D05)
     }
     Row(
         modifier = modifier

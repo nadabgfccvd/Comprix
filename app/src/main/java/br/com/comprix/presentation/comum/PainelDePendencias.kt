@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -110,7 +111,14 @@ fun PainelDePendencias(
                 .heightIn(min = ALVO_MINIMO)
                 .then(
                     if (pendencias.isNotEmpty()) {
-                        Modifier.tocarSemRealce { expandido = !expandido }
+                        // Estado e acao no proprio Row (o chevron e decorativo):
+                        // o leitor de tela anuncia expandido/recolhido e a acao.
+                        Modifier.toggleable(
+                            value = expandido,
+                            interactionSource = null,
+                            indication = null,
+                            onValueChange = { novoValor -> expandido = novoValor },
+                        )
                     } else {
                         Modifier
                     },
@@ -131,7 +139,7 @@ fun PainelDePendencias(
             if (pendencias.isNotEmpty()) {
                 IconeComprix(
                     if (expandido) Icones.expandir else Icones.descer,
-                    if (expandido) "Recolher pendências" else "Ver o que falta",
+                    null,
                     tamanho = TamanhoDeIcone.pequeno,
                     tinta = tinta,
                 )

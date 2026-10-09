@@ -38,6 +38,7 @@ import br.com.comprix.presentation.comum.BotaoDeIcone
 import br.com.comprix.presentation.comum.CampoComprix
 import br.com.comprix.presentation.comum.ChaveComprix
 import br.com.comprix.presentation.comum.DocaInferior
+import br.com.comprix.presentation.comum.DialogoComprix
 import br.com.comprix.presentation.comum.EspacoVertical
 import br.com.comprix.presentation.comum.EstiloDeBotao
 import br.com.comprix.presentation.comum.FolhaComprix
@@ -75,6 +76,9 @@ fun CategoriasScreen(
     val mensagem by viewModel.mensagem.collectAsStateWithLifecycle()
     var criando by remember { mutableStateOf(false) }
     var renomeando by remember { mutableStateOf<Categoria?>(null) }
+    // Exclusao de categoria criada pela pessoa: passa pela confirmacao (a
+    // acao vai para a lixeira, como em todo o app).
+    var removendo by remember { mutableStateOf<Categoria?>(null) }
 
     LaunchedEffect(mensagem) {
         if (mensagem != null) {
@@ -108,12 +112,24 @@ fun CategoriasScreen(
             if (mensagem != null) {
                 Torrada(
                     mensagem.orEmpty(),
+                    aoDescartar = viewModel::mensagemExibida,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
                 )
             }
         },
     ) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+            if (estado.carregando) {
+                // Mesmo padrao da LojasScreen: corpo centrado enquanto o banco
+                // emite o primeiro estado.
+                item {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Legenda("Abrindo…")
+                    }
+                }
+                return@LazyColumn
+            }
+
             item {
                 TituloDaTela("Categorias e ordem do mercado")
                 EspacoVertical(14.dp)
@@ -174,7 +190,7 @@ fun CategoriasScreen(
                     aoSubir = { viewModel.mover(categoria.id, -1) },
                     aoDescer = { viewModel.mover(categoria.id, 1) },
                     aoRenomear = { renomeando = categoria },
-                    aoRemover = { viewModel.remover(categoria) },
+                    aoRemover = { removendo = categoria },
                 )
                 EspacoVertical(8.dp)
             }
@@ -219,6 +235,41 @@ fun CategoriasScreen(
                 viewModel.renomear(alvo, nome)
             },
         )
+    }
+
+    removendo?.let { alvo ->
+        DialogoComprix(
+            titulo = "Excluir \"${alvo.nome}\"?",
+            aoFechar = { removendo = null },
+            icone = Icones.excluir,
+            rodape = {
+                Row(horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                    BotaoComprix(
+                        "Cancelar",
+                        { removendo = null },
+                        estilo = EstiloDeBotao.CONTORNADO,
+                        modifier = Modifier.weight(1f),
+                    )
+                    BotaoComprix(
+                        "Excluir",
+                        {
+                            viewModel.remover(alvo)
+                            removendo = null
+                        },
+                        estilo = EstiloDeBotao.PERIGO,
+                        modifier = Modifier.weight(1f),
+                        icone = Icones.excluir,
+                    )
+                }
+            },
+        ) {
+            Text(
+                "A categoria vai para a lixeira e fica recuperável por 30 dias. " +
+                    "Depois disso, é apagada para sempre.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Tema.cores.apagado,
+            )
+        }
     }
 }
 
@@ -291,7 +342,7 @@ private fun CartaoDeCategoria(
         if (categoria.origem == OrigemCategoria.USUARIO) {
             BotaoDeIcone(
                 Icones.excluir,
-                "Remover ${categoria.nome}",
+                "Excluir ${categoria.nome}",
                 aoRemover,
                 tinta = cores.vermelhoTinta,
                 tamanhoDoIcone = 18.dp,

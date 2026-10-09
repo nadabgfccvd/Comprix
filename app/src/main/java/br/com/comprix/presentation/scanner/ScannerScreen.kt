@@ -20,6 +20,11 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -249,16 +255,28 @@ fun ScannerScreen(
                 }
 
                 if (estado.analisando) {
+                    // Giro continuo enquanto o app le: indicar processamento
+                    // sem emprestar a cara de botao do simbolo de recomecar.
+                    val giro = rememberInfiniteTransition(label = "leituraDoRotulo")
+                    val angulo by giro.animateFloat(
+                        initialValue = 0f,
+                        targetValue = 360f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 1200, easing = LinearEasing),
+                        ),
+                        label = "giroDaLeitura",
+                    )
                     Row(
                         Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         IconeComprix(
-                            Icones.recomecar,
+                            Icones.carregando,
                             null,
                             tamanho = TamanhoDeIcone.pequeno,
                             tinta = cores.acao,
+                            modifier = Modifier.rotate(angulo),
                         )
                         Column(Modifier.weight(1f)) {
                             Text(

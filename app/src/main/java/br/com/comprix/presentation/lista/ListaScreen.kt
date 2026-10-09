@@ -529,6 +529,17 @@ fun ListaScreen(
         },
     ) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+            if (estado.carregando) {
+                // Mesmo padrao da LojasScreen: corpo centrado enquanto o banco
+                // emite o primeiro estado (barra e doca ficam no lugar).
+                item {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Legenda("Abrindo…")
+                    }
+                }
+                return@LazyColumn
+            }
+
             item {
                 TituloDaTela(estado.lista?.nome.orEmpty())
                 EspacoVertical(14.dp)
@@ -644,7 +655,7 @@ fun ListaScreen(
                                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(min = 44.dp)
+                                    .heightIn(min = ALVO_MINIMO)
                                     .tocarSemRealce {
                                         textoDeAdicao = sugestao
                                         sugestaoAplicada = sugestao
@@ -856,7 +867,7 @@ fun ListaScreen(
                         { aoEscanear(ModoScanner.FOTO) },
                         estilo = EstiloDeBotao.CONTORNADO,
                         compacto = true,
-                        icone = Icones.camera,
+                        icone = Icones.escanear,
                     )
                     BotaoComprix(
                         "Vídeo de 30 s",

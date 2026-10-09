@@ -110,10 +110,12 @@ fun MatrizDePrecos(
                     Modifier
                         .width(56.dp)
                         .heightIn(min = 56.dp)
+                        // Alvo de toque antes do recuo: o toque recebe os 56 dp
+                        // cheios e o desenho segue do mesmo tamanho de antes.
+                        .tocarSemRealce(aoAdicionarLoja)
                         .padding(5.dp)
                         .clip(RoundedCornerShape(11.dp))
-                        .border(1.dp, cores.contornoForte, RoundedCornerShape(11.dp))
-                        .tocarSemRealce(aoAdicionarLoja),
+                        .border(1.dp, cores.contornoForte, RoundedCornerShape(11.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
                     IconeComprix(Icones.adicionar, "Adicionar loja à comparação", tinta = cores.acao)

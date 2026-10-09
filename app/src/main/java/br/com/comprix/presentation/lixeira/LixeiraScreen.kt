@@ -244,7 +244,7 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
                         modifier = Modifier.weight(1f),
                     )
                     BotaoComprix(
-                        "Excluir agora",
+                        "Apagar agora",
                         {
                             viewModel.removerRegistro(registro.id)
                             registroParaExcluir = null
@@ -389,7 +389,7 @@ private fun CartaoDeRegistro(
             }
             BotaoDeIcone(
                 Icones.excluir,
-                "Excluir agora",
+                "Apagar agora",
                 aoExcluirAgora,
                 tinta = cores.vermelhoTinta,
             )

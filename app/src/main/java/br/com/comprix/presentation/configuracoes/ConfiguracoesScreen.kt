@@ -63,6 +63,7 @@ import br.com.comprix.presentation.tema.TamanhoDeIcone
 import br.com.comprix.presentation.tema.Tema
 import br.com.comprix.util.Constantes
 import br.com.comprix.util.Formatadores
+import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -110,6 +111,12 @@ fun ConfiguracoesScreen(
     var editandoMeta by remember { mutableStateOf(false) }
     var textoDaMeta by remember { mutableStateOf("") }
 
+    // Confirmacao unica de restauracao: a acao substitui os dados atuais do
+    // app, entao os dois caminhos (arquivo escolhido no SAF e backup
+    // automatico listado aqui) passam por ela antes de tocar no ViewModel.
+    var confirmandoRestauracaoDeArquivo by remember { mutableStateOf(false) }
+    var arquivoDeRestauracao by remember { mutableStateOf<File?>(null) }
+
     val validades by viewModel.validadesProximas.collectAsStateWithLifecycle()
 
     val escolherDestino = rememberLauncherForActivityResult(
@@ -134,6 +141,7 @@ fun ConfiguracoesScreen(
             if (mensagem != null) {
                 Torrada(
                     mensagem.orEmpty(),
+                    aoDescartar = viewModel::mensagemExibida,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
                 )
             }
@@ -529,7 +537,7 @@ fun ConfiguracoesScreen(
                     EspacoVertical(9.dp)
                     BotaoComprix(
                         "Restaurar de um arquivo",
-                        { escolherOrigem.launch(arrayOf("*/*")) },
+                        { confirmandoRestauracaoDeArquivo = true },
                         bloco = true,
                         estilo = EstiloDeBotao.CONTORNADO,
                         icone = Icones.baixar,
@@ -564,7 +572,7 @@ fun ConfiguracoesScreen(
                                 }
                                 BotaoComprix(
                                     "Restaurar",
-                                    { viewModel.restaurarDeArquivo(arquivo) },
+                                    { arquivoDeRestauracao = arquivo },
                                     estilo = EstiloDeBotao.TEXTO,
                                     compacto = true,
                                 )
@@ -683,9 +691,58 @@ fun ConfiguracoesScreen(
         }
     }
 
+    // Confirmacao unica dos dois caminhos de restauracao (SAF e backups
+    // automaticos): restaurar SUBSTITUI os dados atuais, entao exige PERIGO.
+    if (confirmandoRestauracaoDeArquivo || arquivoDeRestauracao != null) {
+        DialogoComprix(
+            titulo = "Restaurar backup?",
+            aoFechar = {
+                confirmandoRestauracaoDeArquivo = false
+                arquivoDeRestauracao = null
+            },
+            icone = Icones.baixar,
+            rodape = {
+                Row(horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                    BotaoComprix(
+                        "Cancelar",
+                        {
+                            confirmandoRestauracaoDeArquivo = false
+                            arquivoDeRestauracao = null
+                        },
+                        estilo = EstiloDeBotao.CONTORNADO,
+                        modifier = Modifier.weight(1f),
+                    )
+                    BotaoComprix(
+                        "Restaurar",
+                        {
+                            val arquivo = arquivoDeRestauracao
+                            confirmandoRestauracaoDeArquivo = false
+                            arquivoDeRestauracao = null
+                            if (arquivo != null) {
+                                viewModel.restaurarDeArquivo(arquivo)
+                            } else {
+                                escolherOrigem.launch(arrayOf("*/*"))
+                            }
+                        },
+                        estilo = EstiloDeBotao.PERIGO,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            },
+        ) {
+            Text(
+                "Restaurar substitui os dados atuais do app: as listas, as lojas, os " +
+                    "preços e as configurações voltam a ser como estavam no backup. " +
+                    "A ação não pode ser desfeita.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Tema.cores.apagado,
+            )
+        }
+    }
+
     alergiaParaRemover?.let { alvo ->
         DialogoComprix(
-            titulo = "Remover \"${alvo.nome}\"?",
+            titulo = "Excluir \"${alvo.nome}\"?",
             aoFechar = { alergiaParaRemover = null },
             icone = Icones.excluir,
             rodape = {
@@ -699,7 +756,7 @@ fun ConfiguracoesScreen(
                     BotaoComprix(
                         // Acao destrutiva: mesmo estilo PERIGO dos outros
                         // dialogos de remocao do app (listas, lojas, historico).
-                        "Remover",
+                        "Excluir",
                         {
                             viewModel.removerAlergiaCustomizada(alvo.id)
                             alergiaParaRemover = null
@@ -778,7 +835,7 @@ private fun LinhaDeRestricaoPersonalizada(
         }
         BotaoDeIcone(
             Icones.fechar,
-            "Remover ${alergia.nome}",
+            "Excluir ${alergia.nome}",
             aoRemover,
             tinta = cores.apagado,
             tamanhoDoIcone = TamanhoDeIcone.pequeno,

@@ -154,9 +154,15 @@ fun ListasScreen(
             }
         }
 
-        if (estado.vazio) {
+        if (estado.carregando) {
+            // Mesmo padrao da LojasScreen: nada de LazyColumn vazia piscando
+            // enquanto o banco emite o primeiro resumo.
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Legenda("Abrindo…")
+            }
+        } else if (estado.vazio) {
             Column(Modifier.fillMaxSize().padding(PREENCHIMENTO_DA_TELA)) {
-                TituloDaTela("Minhas Listas")
+                TituloDaTela("Minhas listas")
                 EstadoVazio(
                     icone = Icones.cesta,
                     titulo = "Nenhuma lista ainda.",
@@ -172,7 +178,7 @@ fun ListasScreen(
                 contentPadding = PREENCHIMENTO_DA_TELA,
             ) {
                 item {
-                    TituloDaTela("Minhas Listas")
+                    TituloDaTela("Minhas listas")
                     EspacoVertical(14.dp)
                 }
 
@@ -193,8 +199,9 @@ fun ListasScreen(
                                     tinta = cores.verdeTinta,
                                 )
                                 Text(
-                                    "Dica: deslize um card ou toque no menu para renomear, duplicar " +
-                                        "ou compartilhar suas listas.",
+                                    "Dica: toque nos botões do card para renomear, duplicar, " +
+                                        "reabrir, favoritar ou excluir, e segure o dedo no card " +
+                                        "para selecionar várias listas.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = cores.texto,
                                     modifier = Modifier.weight(1f),
@@ -805,7 +812,7 @@ private fun FolhaDeNovaLista(aoFechar: () -> Unit, aoCriar: (String?) -> Unit) {
     val sugestoes = listOf("Compra do Mês", "Feira Semanal", "Churrasco", "Farmácia e Higiene")
 
     FolhaComprix(
-        titulo = "Criar Nova Lista",
+        titulo = "Criar nova lista",
         aoFechar = aoFechar,
         rodape = {
             BotaoComprix(

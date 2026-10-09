@@ -318,7 +318,7 @@ fun CabecalhoDeSecao(
 ) {
     val cores = Tema.cores
     Row(
-        modifier.fillMaxWidth().padding(top = 15.dp, bottom = 9.dp),
+        modifier.fillMaxWidth().padding(top = 16.dp, bottom = 9.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {

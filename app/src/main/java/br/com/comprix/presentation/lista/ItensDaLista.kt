@@ -117,7 +117,7 @@ fun CartaoDeItem(
             // puxador fica desligado - so um indicador apagado.
             Box(
                 modifier = modificadorDeArrasto
-                    .size(34.dp)
+                    .size(ALVO_MINIMO)
                     .semantics {
                         contentDescription = "Segurar e arrastar para reordenar ${produto.nome}"
                     },
@@ -225,15 +225,20 @@ fun CartaoDeItem(
         if (temSelos) {
             EspacoVertical(9.dp)
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (item.ehKit && aoCompararKit != null) {
-                    Box(Modifier.tocarSemRealce(aoCompararKit)) {
+                    Box(
+                        Modifier
+                            .heightIn(min = ALVO_MINIMO)
+                            .tocarSemRealce(aoCompararKit),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Selo(
                             texto = "Kit de ${item.itensPorKit ?: "?"} — comparar com avulso",
                             tom = TomDoSelo.OURO,
-                            icone = Icones.trofeu,
+                            icone = Icones.comparar,
                         )
                     }
                 }

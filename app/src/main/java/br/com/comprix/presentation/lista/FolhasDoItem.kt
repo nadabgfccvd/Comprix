@@ -63,7 +63,7 @@ import java.math.BigDecimal
  *
  * 1. **Disponibilidade por loja** - uma linha por estabelecimento, com o chip
  *    colorido da loja, o estado atual (preco anotado, marcada como
- *    indisponivel ou sem preco) e a acao de uma linha so: "Nao tem nessa loja"
+ *    indisponivel ou sem preco) e a acao de uma linha so: "Nao tinha nesta loja"
  *    ou "Permitir novamente" quando a marca ja existe. A folha NAO fecha ao
  *    marcar: as linhas se atualizam ao vivo (o estado observa o banco) e a
  *    pessoa pode revisar varias lojas seguidas.
@@ -218,7 +218,7 @@ private fun LinhaDeDisponibilidade(
             )
         } else {
             BotaoComprix(
-                "Não tem nessa loja",
+                "Não tinha nesta loja",
                 { aoIndisponibilizar(loja.id) },
                 estilo = EstiloDeBotao.CONTORNADO,
                 compacto = true,
@@ -312,7 +312,7 @@ fun FolhaDePrecoDaPendencia(
         rodape = {
             Row(horizontalArrangement = Arrangement.spacedBy(9.dp)) {
                 BotaoComprix(
-                    "Não tinha nessa loja",
+                    "Não tinha nesta loja",
                     aoMarcarIndisponivel,
                     estilo = EstiloDeBotao.CONTORNADO,
                     icone = Icones.indisponivel,

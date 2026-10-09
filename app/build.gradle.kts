@@ -44,8 +44,8 @@ android {
         applicationId = "br.com.comprix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.4.0"
+        versionCode = 7
+        versionName = "1.4.1"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += listOf("pt-rBR")
     }
@@ -95,6 +95,19 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // Divisao por ABI: o grosso do APK sao as bibliotecas nativas do ML Kit
+    // (OCR + codigo de barras) duplicadas para as 4 ABIs (~58 MB). Splits geram
+    // um APK por ABI (~3,5x menor no aparelho) e mantem o universal como
+    // artefato de fallback, conforme developer.android.com/build/configure-apk-splits.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            isUniversalApk = true
+        }
     }
 
     packaging {

@@ -37,6 +37,7 @@ object Icones {
     val pao = R.drawable.ic_bread
     val calendario = R.drawable.ic_calendar
     val camera = R.drawable.ic_camera
+    val carregando = R.drawable.ic_carregando
     val grafico = R.drawable.ic_chart
     val confirmar = R.drawable.ic_check
     val confirmarCirculo = R.drawable.ic_check_circle

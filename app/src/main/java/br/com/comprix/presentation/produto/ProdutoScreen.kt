@@ -81,7 +81,7 @@ fun ProdutoScreen(viewModel: ProdutoViewModel, aoVoltar: () -> Unit) {
         if (produto == null) {
             EstadoVazio(
                 icone = Icones.caixa,
-                titulo = if (estado.carregando) "Carregando…" else "Produto não encontrado",
+                titulo = if (estado.carregando) "Abrindo…" else "Produto não encontrado",
                 descricao = "Ele pode ter sido removido do catálogo local.",
                 modifier = Modifier.fillMaxSize(),
             ) {

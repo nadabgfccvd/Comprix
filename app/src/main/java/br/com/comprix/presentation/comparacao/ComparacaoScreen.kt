@@ -214,11 +214,13 @@ fun ComparacaoScreen(
                     texto = desfazer?.descricao.orEmpty(),
                     rotuloDaAcao = "Desfazer",
                     aoAcionar = viewModel::desfazerUltimaAcao,
+                    aoDescartar = viewModel::descartarDesfazer,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
                 )
 
                 mensagem != null -> Torrada(
                     mensagem.orEmpty(),
+                    aoDescartar = viewModel::mensagemExibida,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
                 )
 
@@ -231,6 +233,17 @@ fun ComparacaoScreen(
         },
     ) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+            if (estado.carregando) {
+                // Enquanto o banco emite o primeiro estado, a matriz ainda e
+                // nula - mostrar "Falta uma segunda loja" aqui enganaria.
+                item {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Legenda("Abrindo…")
+                    }
+                }
+                return@LazyColumn
+            }
+
             item {
                 TituloDaTela(
                     estado.lista?.nome.orEmpty(),
@@ -330,14 +343,14 @@ fun ComparacaoScreen(
                         EspacoVertical(10.dp)
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             BotaoComprix(
-                                if (usarCompraMista) "Usando compra mista" else "Usar compra mista",
+                                "Usar compra mista",
                                 { usarCompraMista = true },
                                 estilo = if (usarCompraMista) EstiloDeBotao.TONAL else EstiloDeBotao.CONTORNADO,
                                 compacto = true,
                                 icone = if (usarCompraMista) Icones.confirmar else null,
                             )
                             BotaoComprix(
-                                if (!usarCompraMista) "Comprando numa loja só" else "Comprar numa loja só",
+                                "Comprar numa loja só",
                                 { usarCompraMista = false },
                                 estilo = if (!usarCompraMista) EstiloDeBotao.TONAL else EstiloDeBotao.CONTORNADO,
                                 compacto = true,
@@ -597,7 +610,7 @@ private fun FolhaDePrecoDaCelula(
         aoFechar = aoFechar,
         rodape = {
             BotaoComprix(
-                "Pronto",
+                "Salvar",
                 { gravarECerrar() },
                 bloco = true,
                 icone = Icones.confirmar,
@@ -613,7 +626,7 @@ private fun FolhaDePrecoDaCelula(
             rotulo = "Preço em $nomeDaLoja",
             dica = when {
                 suspeito -> "Confirme: ${Formatadores.moeda(interpretado!!)}"
-                else -> "Tocar em Pronto grava o preço desta coluna."
+                else -> "Tocar em Salvar grava o preço desta coluna."
             },
             erro = if (acimaDoLimite) {
                 "Acima de ${Formatadores.moeda(BigDecimal(Constantes.PRECO_MAXIMO_ACEITO))} — confira os dígitos."
@@ -631,7 +644,7 @@ private fun FolhaDePrecoDaCelula(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             BotaoComprix(
-                "Não tinha aqui",
+                "Não tinha nesta loja",
                 aoMarcarIndisponivel,
                 estilo = EstiloDeBotao.CONTORNADO,
                 compacto = true,

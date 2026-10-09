@@ -104,6 +104,7 @@ fun HistoricoScreen(
             if (mensagem != null) {
                 Torrada(
                     mensagem.orEmpty(),
+                    aoDescartar = viewModel::mensagemExibida,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
                 )
             }
@@ -115,6 +116,18 @@ fun HistoricoScreen(
                 EspacoVertical(14.dp)
             }
 
+            if (estado.carregando) {
+                // Mesmo padrao da LojasScreen: os cartoes de valor comecam
+                // zerados no estado inicial - mostrar a legenda de abertura
+                // evita o flash de zeros antes do primeiro resumo.
+                item {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Legenda("Abrindo…")
+                    }
+                }
+                return@LazyColumn
+            }
+
             if (estado.vazio) {
                 item {
                     EstadoVazio(
@@ -123,10 +136,44 @@ fun HistoricoScreen(
                         descricao = "Finalize uma comparação para guardar aqui o total pago, " +
                             "a economia e os gráficos de gasto.",
                     ) {
-                        BotaoComprix("Ir para Minhas Listas", aoAbrirListas, icone = Icones.listas)
+                        BotaoComprix("Ir para Minhas listas", aoAbrirListas, icone = Icones.listas)
                     }
                 }
                 return@LazyColumn
+            }
+
+            if (estado.mostrarDica) {
+                item {
+                    CartaoComprix(preenchimento = PaddingValues(14.dp)) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(9.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            IconeComprix(
+                                Icones.brilho,
+                                null,
+                                tamanho = TamanhoDeIcone.pequeno,
+                                tinta = cores.verdeTinta,
+                            )
+                            Text(
+                                "Dica: toque num período para recalcular os números. " +
+                                    "Use “Exportar compras (CSV)” para levar o histórico " +
+                                    "para a planilha.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = cores.texto,
+                                modifier = Modifier.weight(1f),
+                            )
+                            BotaoComprix(
+                                "Entendi",
+                                viewModel::dispensarDica,
+                                estilo = EstiloDeBotao.TEXTO,
+                                compacto = true,
+                            )
+                        }
+                    }
+                    EspacoVertical(12.dp)
+                }
             }
 
             item {
@@ -267,7 +314,7 @@ fun HistoricoScreen(
 
     confirmandoRemocao?.let { compra ->
         br.com.comprix.presentation.comum.DialogoComprix(
-            titulo = "Remover do histórico?",
+            titulo = "Excluir do histórico?",
             aoFechar = { confirmandoRemocao = null },
             icone = Icones.excluir,
             rodape = {
@@ -279,7 +326,7 @@ fun HistoricoScreen(
                         modifier = Modifier.weight(1f),
                     )
                     BotaoComprix(
-                        "Remover",
+                        "Excluir",
                         {
                             viewModel.remover(compra)
                             confirmandoRemocao = null
@@ -394,7 +441,7 @@ private fun CartaoDeCompra(
             }
             br.com.comprix.presentation.comum.BotaoDeIcone(
                 Icones.excluir,
-                "Remover “${compra.nomeLista}” do histórico",
+                "Excluir “${compra.nomeLista}” do histórico",
                 aoRemover,
                 tinta = cores.apagado,
                 tamanhoDoIcone = 18.dp,

@@ -41,6 +41,8 @@ data class ComprixCores(
     val acaoRealce: Color,
     /** Texto sobre [acao] (branco no claro, verde-escuro no escuro). */
     val sobreAcao: Color,
+    /** Texto sobre o fundo de perigo [vermelhoTinta] (botao destrutivo). */
+    val sobrePerigo: Color,
     /** Verde escuro para texto sobre [verdeSuave]. */
     val verdeTinta: Color,
     /** Verde claro de container: chip selecionado, faixa de economia, destaque. */
@@ -155,6 +157,7 @@ data class ComprixCores(
             acao = Color(0xFF18794D),
             acaoRealce = Color(0xFF12633E),
             sobreAcao = Color(0xFFFFFFFF),
+            sobrePerigo = Color.White,
             verdeTinta = Color(0xFF14633E),
             verdeSuave = Color(0xFFE5F2EA),
             ambar = Color(0xFFF4B400),
@@ -185,6 +188,7 @@ data class ComprixCores(
             acao = Color(0xFF8DD7AE),
             acaoRealce = Color(0xFFABE5C4),
             sobreAcao = Color(0xFF0E2518),
+            sobrePerigo = Color(0xFF351211),
             verdeTinta = Color(0xFFADDEBE),
             verdeSuave = Color(0xFF263E2F),
             ambar = Color(0xFFF4B400),
@@ -330,7 +334,8 @@ fun razaoDeContraste(a: Color, b: Color): Double {
 }
 
 /** Tinta escura padrao do app, usada sobre preenchimentos claros. */
-val TINTA_ESCURA = Color(0xFF1C1B1F)
+// Mesmo valor de CLARO.texto: uma unica fonte para a tinta escura do app.
+val TINTA_ESCURA = ComprixCores.CLARO.texto
 
 /**
  * Escolhe entre branco e [TINTA_ESCURA] a cor que le melhor sobre [fundo].
@@ -347,7 +352,7 @@ fun corDeTextoSobre(fundo: Color): Color =
     }
 
 /** Converte `#RRGGBB` ou `#AARRGGBB` em [Color], caindo na marca se o texto for invalido. */
-fun corDeHex(hex: String, padrao: Color = Color(0xFF1E8E5A)): Color = runCatching {
+fun corDeHex(hex: String, padrao: Color = ComprixCores.CLARO.marca): Color = runCatching {
     val limpo = hex.removePrefix("#")
     when (limpo.length) {
         6 -> Color(limpo.toLong(16) or 0xFF000000L)
