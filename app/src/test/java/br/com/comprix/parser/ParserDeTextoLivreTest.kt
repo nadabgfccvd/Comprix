@@ -799,16 +799,26 @@ class ParserDeTextoLivreTest {
         // (ausente no classpath de teste do Android).
         val instrumentado = ParserDeLinhaDeCompra::class.java.declaredFields
             .any { campo -> campo.name.contains("jacoco", ignoreCase = true) }
-        val fator = if (instrumentado) 3.0 else 1.0
+
+        // Runners compartilhados de CI (GitHub Actions: 2 cores virtuais, JIT
+        // frio, vizinhos ruidosos) rodam o mesmo codigo mais devagar e com
+        // variancia de dezenas de por cento entre execucoes - o gate de CI
+        // existe para pegar regressoes GROSSEIRAS de ordem de grandeza, nao
+        // ruido de infraestrutura; a medida fina continua sendo a da maquina
+        // local. O Actions define CI=true: a folga extra de 3x mantem o
+        // limite na mesma ordem de grandeza e estabiliza o teste no CI.
+        val emCi = System.getenv("CI") == "true"
+        val sufixoDoLimite =
+            (if (instrumentado) " (com JaCoCo ligado)" else "") +
+                (if (emCi) " (runner de CI compartilhado)" else "")
+        val fator = (if (instrumentado) 3.0 else 1.0) * (if (emCi) 3.0 else 1.0)
 
         assertTrue(
-            "pior caso levou ${"%.3f".format(mediaLonga)} ms por linha" +
-                if (instrumentado) " (com JaCoCo ligado)" else "",
+            "pior caso levou ${"%.3f".format(mediaLonga)} ms por linha" + sufixoDoLimite,
             mediaLonga < 1.0 * fator,
         )
         assertTrue(
-            "linha tipica levou ${"%.3f".format(mediaTipica)} ms" +
-                if (instrumentado) " (com JaCoCo ligado)" else "",
+            "linha tipica levou ${"%.3f".format(mediaTipica)} ms" + sufixoDoLimite,
             mediaTipica < 0.15 * fator,
         )
     }
