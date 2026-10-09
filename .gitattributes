@@ -1,0 +1,9 @@
+# binary artifacts
+*.tgz binary
+*.apk binary
+*.jks binary
+*.db binary
+# linguist
+backups/** linguist-documentation
+keystore/** linguist-generated
+docs/** linguist-documentation
