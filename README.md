@@ -7,6 +7,7 @@
 ![Tests](https://img.shields.io/badge/unit_tests-253%20passing-4CAF50)
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 > 🇧🇷 App in Brazilian Portuguese · **Compareça**: lista de compras + comparador de preços entre mercados, sem login, sem nuvem, sem internet.
 
@@ -69,10 +70,12 @@ Release builds are auto-signed with the development keystore in `keystore/` (kep
 ```
 app/src/main/java/br/com/comprix/   # app source (domain / data / presentation)
 backups/fonte/                      # historical source snapshots (v1.0 rebuild phases → v1.4.1)
-docs/                               # internal project docs
+docs/                               # internal docs, logo and social preview card
 keystore/                           # development release keystore
 ```
 
-## 📄 Notes
+## 📄 License
 
-Personal project, built iteratively with heavy unit-test coverage and UX/accessibility polish. UI language is Brazilian Portuguese (`pt-BR`).
+Released under the **[MIT License](LICENSE)** — free to use, modify and distribute. The UI language is Brazilian Portuguese (`pt-BR`).
+
+**Note:** the development keystore is committed on purpose so release APKs stay upgrade-compatible. If you fork and publish your own builds, replace it with your own keystore.
