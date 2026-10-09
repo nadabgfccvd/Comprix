@@ -1,17 +1,29 @@
-# Comprix
+<p align="center">
+  <img src="docs/logo.png" alt="Comprix logo" width="160"/>
+</p>
 
-**Smart shopping lists + price comparison across stores. 100% offline Android app.**
-
-![Platform](https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white)
-![Release](https://img.shields.io/badge/release-v1.4.1-8A5CF6)
-![Tests](https://img.shields.io/badge/unit_tests-253%20passing-4CAF50)
-![Kotlin](https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white)
-![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-> 🇧🇷 App in Brazilian Portuguese · **Compareça**: lista de compras + comparador de preços entre mercados, sem login, sem nuvem, sem internet.
+<h1 align="center">🛒 Comprix</h1>
 
 ---
+
+<p align="center">
+  <strong>Smart shopping lists — compare prices across stores. 100% offline.<br/>
+  No account. No cloud. No internet.</strong>
+</p>
+
+<p align="center">
+  <em>Compareça — listas de compras inteligentes: compare preços entre mercados.<br/>
+  Sem login. Sem nuvem. Sem internet.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
+  <img src="https://img.shields.io/badge/release-v1.4.1-8A5CF6" alt="Release: v1.4.1"/>&nbsp;
+  <img src="https://img.shields.io/badge/unit_tests-253_passing-4CAF50" alt="Unit tests: 253 passing"/>&nbsp;
+  <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
+  <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>
+</p>
 
 ## ✨ What it does
 
