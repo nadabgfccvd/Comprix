@@ -1,0 +1,29 @@
+name: "💡 Sugestão de funcionalidade"
+description: Ideia para deixar o Comprix melhor
+labels: ["melhoria"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de enviar, uma regra de ouro do projeto: **tudo funciona 100% offline** — sem internet, sem conta, sem nuvem. Ideias que se encaixam nesse limite são muito bem-vindas.
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qual problema isso resolve?
+      description: Descreva o cenário de uso real ("quando estou no mercado e…"), não só a solução.
+    validations:
+      required: true
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Solução proposta
+      description: Como você imagina isso funcionando dentro do app?
+    validations:
+      required: true
+  - type: checkboxes
+    id: limites
+    attributes:
+      label: Limites do projeto
+      options:
+        - label: Funciona 100% offline (sem internet, sem conta, sem nuvem)
+          required: true

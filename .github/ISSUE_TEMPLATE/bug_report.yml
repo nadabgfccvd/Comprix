@@ -1,0 +1,63 @@
+name: "🐞 Relatório de bug"
+description: Algo não funcionou como esperado no app
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar! Preencha o que souber — quanto mais detalhes, mais rápida a correção.
+
+        **Vulnerabilidade de segurança não é reportada aqui.** Siga [`SECURITY.md`](../../blob/main/SECURITY.md).
+
+        O Comprix funciona 100% offline: se um erro só acontece "sem internet", melhor ainda — descreva assim mesmo.
+  - type: input
+    id: versao
+    attributes:
+      label: Versão do Comprix
+      description: Está em Configurações, no rodapé do app.
+      placeholder: ex. v1.4.2
+    validations:
+      required: true
+  - type: input
+    id: dispositivo
+    attributes:
+      label: Aparelho e versão do Android
+      placeholder: ex. Moto G54, Android 14
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: Passos para reproduzir
+      description: O caminho exato, do app aberto até o erro.
+      placeholder: |
+        1. Abra "…"
+        2. Toque em "…"
+        3. Veja o erro
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que você esperava que acontecesse
+    validations:
+      required: true
+  - type: textarea
+    id: ocorreu
+    attributes:
+      label: O que aconteceu de fato
+    validations:
+      required: true
+  - type: checkboxes
+    id: contexto
+    attributes:
+      label: Contexto extra
+      options:
+        - label: Acontece com o aparelho em modo avião (sem internet)
+        - label: Já tentei exportar/restaurar um backup antes de reportar
+        - label: Já reinstalei o app e o problema continua
+  - type: textarea
+    id: anexos
+    attributes:
+      label: Capturas de tela ou vídeo
+      description: Arraste os arquivos para cá. Antes de anexar, remova dados pessoais das listas.

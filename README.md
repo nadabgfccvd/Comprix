@@ -45,7 +45,7 @@ Comprix keeps your grocery lists and compares prices between the stores you regi
 
 ## 📥 Download
 
-Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.4.2` is archived there.
+Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.4.2` is archived there. Detailed per-version history lives in [CHANGELOG.md](CHANGELOG.md) (pt-BR).
 
 **Latest (v1.4.2):**
 

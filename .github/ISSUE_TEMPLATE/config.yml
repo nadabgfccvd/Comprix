@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Vulnerabilidade de segurança
+    url: https://github.com/nadabgfccvd/Comprix/blob/main/SECURITY.md
+    about: Reporte seguindo a política de segurança — não abra issue pública.
+  - name: ❓ Como atualizar para a v1.4.2 (troca de assinatura)
+    url: https://github.com/nadabgfccvd/Comprix/blob/main/docs/ROTACAO-DE-CHAVE-v1.4.2.md
+    about: Guia de migração backup → desinstalar → instalar → restaurar.
