@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icone estrela no padrao do conjunto Comprix: grade 24 x 24, traco 1,8, pontas e juntas arredondadas. A cor real vem do tint no desenho. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,3 L14.2,8.9 20.6,9.2 15.6,13.2 17.3,19.3 12,15.8 6.7,19.3 8.4,13.2 3.4,9.2 9.8,8.9 Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

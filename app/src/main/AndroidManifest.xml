@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      O Comprix e offline por construcao.
+
+      1) NAO declaramos android.permission.INTERNET.
+      2) As bibliotecas do ML Kit trazem INTERNET / ACCESS_NETWORK_STATE / WAKE_LOCK
+         no proprio manifesto (telemetria opcional do Google). Os tools:node="remove"
+         abaixo apagam essas permissoes na fusao de manifestos - confirmado com
+         `aapt2 dump badging` no APK final: sobram apenas CAMERA e VIBRATE.
+      3) Os modelos de OCR e de codigo de barras sao embarcados (variantes bundled),
+         entao nada disso faz falta: tudo funciona em modo aviao desde a 1a abertura.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="remove" />
+
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <application
+        android:name=".ComprixApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/regras_backup"
+        android:fullBackupContent="@xml/regras_backup_legado"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="false"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.Comprix">
+
+        <activity
+            android:name=".presentation.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density|fontScale"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Comprix"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Widget da lista: le o banco direto no onUpdate (sem Activity, offline)
+          e abre o app ao toque. Sem permissao nenhuma - componente local.
+        -->
+        <receiver
+            android:name=".presentation.widget.ListaWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/lista_widget_info" />
+        </receiver>
+
+        <!--
+          Sem <meta-data com.google.mlkit.vision.DEPENDENCIES>: esse marcador so
+          existe nas variantes "unbundled", que baixariam o modelo pelo Google Play.
+        -->
+    </application>
+
+</manifest>

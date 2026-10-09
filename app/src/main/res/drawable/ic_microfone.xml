@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vetor do conjunto Comprix: microfone, grade 24 x 24, traco 1,8. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M9,6 a3,3 0 0,1 6,0 v4.5 a3,3 0 0,1 -6,0 Z M5.5,11 v1 a6.5,6.5 0 0,0 13,0 v-1 M12,18.5 v2.6 M9,21.1 h6"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

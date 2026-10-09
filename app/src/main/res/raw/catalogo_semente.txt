@@ -1,0 +1,1872 @@
+# comprix catalogo-semente 2
+# CONTAGEM 23 111 1714 19
+# SINONIMOS: a partir da semente 2, ITEM pode ter 4a coluna com
+# apelidos de busca separados por virgula (ex: ITEM|Tangerina|1|mexerica, bergamota).
+# A busca casa o apelido ao produto oficial (mexerica e bergamota acham Tangerina).
+SETOR|1|Hortifruti|Hortifruti
+SETOR|2|Açougue e carnes|Açougue/Carnes
+SETOR|3|Peixaria|Açougue/Carnes
+SETOR|4|Padaria e confeitaria|Padaria
+SETOR|5|Laticínios e frios|Laticínios e Frios
+SETOR|6|Mercearia básica|Mercearia/Secos
+SETOR|7|Temperos, molhos e conservas|Mercearia/Secos
+SETOR|8|Matinais, cafés e chás|Mercearia/Secos
+SETOR|9|Biscoitos, snacks e bomboniere|Mercearia/Secos
+SETOR|10|Confeitaria e insumos culinários|Mercearia/Secos
+SETOR|11|Granel, naturais e alimentação especial|Mercearia/Secos
+SETOR|12|Bebidas não alcoólicas|Bebidas
+SETOR|13|Bebidas alcoólicas|Bebidas
+SETOR|14|Congelados|Congelados
+SETOR|15|Rotisseria e massas frescas|Outros
+SETOR|16|Limpeza|Limpeza
+SETOR|17|Higiene e perfumaria|Higiene e Perfumaria
+SETOR|18|Infantil|Infantil
+SETOR|19|Pet|Pet
+SETOR|20|Embalagens e descartáveis|Bazar/Utilidades
+SETOR|21|Bazar e utilidades domésticas|Bazar/Utilidades
+SETOR|22|Orgânicos|Orgânicos
+SETOR|23|Cestas e kits mistos|Outros
+SUB|1|Frutas|1
+SUB|2|Legumes e raízes|1
+SUB|3|Folhas e flores comestíveis|1
+SUB|4|Temperos frescos|1
+SUB|5|Cogumelos e preparados|1
+SUB|6|Ovos|1
+SUB|7|Cortes bovinos|2
+SUB|8|Miúdos bovinos|2
+SUB|9|Cortes suínos|2
+SUB|10|Aves|2
+SUB|11|Carnes especiais|2
+SUB|12|Linguiças frescas|2
+SUB|13|Carnes salgadas e defumadas|2
+SUB|14|Peixes|3
+SUB|15|Frutos do mar e derivados|3
+SUB|16|Pães|4
+SUB|17|Bolos e confeitaria|4
+SUB|18|Salgados prontos|4
+SUB|19|Sazonais da padaria|4
+SUB|20|Leites líquidos|5
+SUB|21|Leites em pó|5
+SUB|22|Fermentados e sobremesas|5
+SUB|23|Queijos|5
+SUB|24|Cremes e gorduras|5
+SUB|25|Frios e embutidos|5
+SUB|26|Patês e antepastos refrigerados|5
+SUB|27|Arroz e grãos|6
+SUB|28|Farinhas e derivados|6
+SUB|29|Massas secas|6
+SUB|30|Açúcares e adoçantes sólidos|6
+SUB|31|Adoçantes líquidos|6
+SUB|32|Óleos e vinagres|6
+SUB|33|Gorduras culinárias|6
+SUB|34|Temperos secos|7
+SUB|35|Molhos e pastas|7
+SUB|36|Molhos líquidos|7
+SUB|37|Conservas vegetais|7
+SUB|38|Conservas de pescado e carne|7
+SUB|39|Cafés e bebidas em pó|8
+SUB|40|Cápsulas e sachês|8
+SUB|41|Chás e infusões|8
+SUB|42|Cereais e complementos|8
+SUB|43|Biscoitos|9
+SUB|44|Snacks|9
+SUB|45|Chocolates e balas|9
+SUB|46|Doces em calda|9
+SUB|47|Sazonais de chocolate|9
+SUB|48|Ingredientes secos|10
+SUB|49|Ingredientes líquidos|10
+SUB|50|Caldas e recheios|10
+SUB|51|Sementes e oleaginosas|11
+SUB|52|Frutas secas|11
+SUB|53|Alimentos especiais|11
+SUB|54|Águas e refrigerantes|12
+SUB|55|Sucos e refrescos|12
+SUB|56|Outras bebidas|12
+SUB|57|Refrescos em pó|12
+SUB|58|Cervejas|13
+SUB|59|Vinhos e espumantes|13
+SUB|60|Destilados e aperitivos|13
+SUB|61|Vegetais congelados|14
+SUB|62|Frutas e polpas|14
+SUB|63|Pratos e lanches congelados|14
+SUB|64|Proteínas e empanados|14
+SUB|65|Sorvetes e sobremesas|14
+SUB|66|Gelo|14
+SUB|67|Refeições prontas|15
+SUB|68|Lanches e porções|15
+SUB|69|Massas frescas refrigeradas|15
+SUB|70|Casa e superfícies|16
+SUB|71|Louças|16
+SUB|72|Lavanderia líquida|16
+SUB|73|Produtos em pó e sólidos|16
+SUB|74|Doses e acessórios químicos|16
+SUB|75|Utensílios de limpeza|16
+SUB|76|Higiene bucal|17
+SUB|77|Banho e corpo|17
+SUB|78|Cabelos|17
+SUB|79|Rosto e proteção|17
+SUB|80|Barba e depilação|17
+SUB|81|Higiene íntima e cuidados|17
+SUB|82|Unhas e maquiagem|17
+SUB|83|Fraldas e higiene|18
+SUB|84|Alimentação infantil|18
+SUB|85|Acessórios para bebê|18
+SUB|86|Alimentação de cães|19
+SUB|87|Alimentação de gatos|19
+SUB|88|Outros animais|19
+SUB|89|Higiene pet|19
+SUB|90|Acessórios pet|19
+SUB|91|Descartáveis de mesa|20
+SUB|92|Embalagens para alimentos|20
+SUB|93|Rolos e proteção|20
+SUB|94|Apoio ao comércio|20
+SUB|95|Cozinha|21
+SUB|96|Casa e organização|21
+SUB|97|Têxteis e vestuário básico|21
+SUB|98|Churrasco e lazer|21
+SUB|99|Combustível para churrasco|21
+SUB|100|Papelaria|21
+SUB|101|Festas e sazonais|21
+SUB|102|Elétrica e pequenos reparos|21
+SUB|103|Jardinagem|21
+SUB|104|Automotivos|21
+SUB|105|Eletroportáteis|21
+SUB|106|Hortifruti orgânico|22
+SUB|107|Folhas orgânicas|22
+SUB|108|Ovos orgânicos|22
+SUB|109|Mercearia orgânica|22
+SUB|110|Bebidas e laticínios orgânicos|22
+SUB|111|Conjuntos heterogêneos|23
+ITEM|Abacate|1
+ITEM|Abacaxi|1
+ITEM|Acerola|1
+ITEM|Ameixa fresca|1
+ITEM|Amora|1
+ITEM|Atemoia|1
+ITEM|Banana-prata|1
+ITEM|Banana-nanica|1
+ITEM|Banana-maçã|1
+ITEM|Banana-da-terra|1
+ITEM|Caju|1
+ITEM|Caqui|1
+ITEM|Carambola|1
+ITEM|Cereja fresca|1
+ITEM|Coco seco|1
+ITEM|Coco verde|1
+ITEM|Cupuaçu|1
+ITEM|Figo fresco|1
+ITEM|Framboesa|1
+ITEM|Goiaba|1
+ITEM|Graviola|1
+ITEM|Jabuticaba|1
+ITEM|Jaca|1
+ITEM|Kiwi|1
+ITEM|Laranja-pera|1
+ITEM|Laranja-lima|1
+ITEM|Laranja-baía|1
+ITEM|Lichia|1
+ITEM|Lima-da-pérsia|1
+ITEM|Limão-taiti|1
+ITEM|Limão-siciliano|1
+ITEM|Limão-cravo|1
+ITEM|Maçã gala|1
+ITEM|Maçã fuji|1
+ITEM|Maçã verde|1
+ITEM|Mamão papaia|1
+ITEM|Mamão formosa|1
+ITEM|Manga palmer|1
+ITEM|Manga tommy|1
+ITEM|Maracujá|1
+ITEM|Melancia|1
+ITEM|Melão amarelo|1
+ITEM|Melão cantaloupe|1
+ITEM|Melão pele-de-sapo|1
+ITEM|Mirtilo|1
+ITEM|Morango|1
+ITEM|Nectarina|1
+ITEM|Pera|1
+ITEM|Pêssego|1
+ITEM|Physalis|1
+ITEM|Pinha|1
+ITEM|Pitaya|1
+ITEM|Romã|1
+ITEM|Tamarindo|1
+ITEM|Tangerina|1|mexerica, bergamota
+ITEM|Uva verde|1
+ITEM|Uva roxa|1
+ITEM|Uva sem sementes|1
+ITEM|Abóbora cabotiá|2|abobora japonesa, cabotia
+ITEM|Abóbora moranga|2
+ITEM|Abóbora de pescoço|2
+ITEM|Abobrinha italiana|2
+ITEM|Abobrinha menina|2
+ITEM|Batata inglesa|2
+ITEM|Batata asterix|2
+ITEM|Batata-doce|2
+ITEM|Batata-baroa|2|mandioquinha, batata salsa
+ITEM|Berinjela|2
+ITEM|Beterraba|2
+ITEM|Cará|2
+ITEM|Cebola branca|2
+ITEM|Cebola roxa|2
+ITEM|Cenoura|2
+ITEM|Chuchu|2
+ITEM|Ervilha fresca|2
+ITEM|Gengibre|2
+ITEM|Inhame|2
+ITEM|Jiló|2
+ITEM|Mandioca|2|aipim, macaxeira
+ITEM|Mandioquinha descascada|2
+ITEM|Maxixe|2
+ITEM|Milho verde em espiga|2
+ITEM|Nabo|2
+ITEM|Pepino japonês|2
+ITEM|Pepino caipira|2
+ITEM|Pimentão verde|2
+ITEM|Pimentão vermelho|2
+ITEM|Pimentão amarelo|2
+ITEM|Quiabo|2
+ITEM|Rabanete|2
+ITEM|Tomate salada|2
+ITEM|Tomate italiano|2
+ITEM|Tomate-cereja|2
+ITEM|Vagem|2
+ITEM|Acelga|3
+ITEM|Agrião|3
+ITEM|Alface americana|3
+ITEM|Alface crespa|3
+ITEM|Alface lisa|3
+ITEM|Alface roxa|3
+ITEM|Almeirão|3
+ITEM|Brócolis|3
+ITEM|Chicória|3
+ITEM|Couve-manteiga|3
+ITEM|Couve-flor|3
+ITEM|Escarola|3
+ITEM|Espinafre|3
+ITEM|Mostarda em folhas|3
+ITEM|Ora-pro-nóbis|3
+ITEM|Repolho verde|3
+ITEM|Repolho roxo|3
+ITEM|Rúcula|3
+ITEM|Salsão|3|aipo
+ITEM|Taioba|3
+ITEM|Alecrim fresco|4
+ITEM|Alho em cabeça|4
+ITEM|Alho descascado|4
+ITEM|Alho-poró|4
+ITEM|Cebolinha|4
+ITEM|Cheiro-verde|4
+ITEM|Coentro fresco|4
+ITEM|Hortelã|4|menta fresca
+ITEM|Louro fresco|4
+ITEM|Manjericão fresco|4
+ITEM|Orégano fresco|4
+ITEM|Pimenta-biquinho fresca|4
+ITEM|Pimenta-dedo-de-moça fresca|4
+ITEM|Pimenta-malagueta fresca|4
+ITEM|Salsinha|4
+ITEM|Sálvia fresca|4
+ITEM|Tomilho fresco|4
+ITEM|Champignon fresco|5
+ITEM|Shimeji|5
+ITEM|Shiitake|5
+ITEM|Cogumelo portobello|5
+ITEM|Mix de cogumelos|5
+ITEM|Salada higienizada|5
+ITEM|Legumes picados|5
+ITEM|Frutas cortadas|5
+ITEM|Broto de feijão|5
+ITEM|Broto de alfafa|5
+ITEM|Ovo de galinha branco|6
+ITEM|Ovo de galinha vermelho|6
+ITEM|Ovo caipira|6
+ITEM|Ovo de codorna|6
+ITEM|Ovo de galinhas livres|6
+ITEM|Ovo de pata|6
+ITEM|Acém bovino|7
+ITEM|Alcatra bovina|7
+ITEM|Aranha bovina|7
+ITEM|Bananinha bovina|7
+ITEM|Capa de filé bovina|7
+ITEM|Contrafilé bovino|7
+ITEM|Costela bovina|7
+ITEM|Coxão duro bovino|7
+ITEM|Coxão mole bovino|7
+ITEM|Cupim bovino|7
+ITEM|Filé-mignon bovino|7
+ITEM|Fraldinha bovina|7
+ITEM|Lagarto bovino|7
+ITEM|Maminha bovina|7
+ITEM|Músculo bovino|7
+ITEM|Paleta bovina|7
+ITEM|Patinho bovino|7
+ITEM|Peito bovino|7
+ITEM|Pescoço bovino|7
+ITEM|Picanha bovina|7
+ITEM|Ponta de agulha bovina|7
+ITEM|Ossobuco bovino|7
+ITEM|Bife ancho|7
+ITEM|Bife de chorizo|7
+ITEM|T-bone bovino|7
+ITEM|Carne bovina moída|7
+ITEM|Carne bovina em cubos|7
+ITEM|Carne bovina em tiras|7
+ITEM|Espetinho bovino cru|7
+ITEM|Hambúrguer bovino fresco|7
+ITEM|Fígado bovino|8
+ITEM|Coração bovino|8
+ITEM|Língua bovina|8
+ITEM|Rim bovino|8
+ITEM|Bucho bovino|8|dobradinha crua
+ITEM|Rabada bovina|8
+ITEM|Mocotó bovino|8
+ITEM|Osso bovino para caldo|8
+ITEM|Bisteca suína|9
+ITEM|Carré suíno|9
+ITEM|Costela suína|9
+ITEM|Copa-lombo suína|9
+ITEM|Filé-mignon suíno|9
+ITEM|Lombo suíno|9
+ITEM|Paleta suína|9
+ITEM|Panceta suína|9
+ITEM|Pernil suíno|9
+ITEM|Picanha suína|9
+ITEM|Joelho suíno|9
+ITEM|Pé suíno|9
+ITEM|Orelha suína|9
+ITEM|Rabo suíno|9
+ITEM|Fígado suíno|9
+ITEM|Toucinho fresco|9
+ITEM|Carne suína moída|9
+ITEM|Espetinho suíno cru|9
+ITEM|Leitão inteiro|9
+ITEM|Frango inteiro|10
+ITEM|Frango caipira|10
+ITEM|Peito de frango com osso|10|peito de frango inteiro
+ITEM|Filé de peito de frango|10
+ITEM|Sassami de frango|10
+ITEM|Coxa de frango|10
+ITEM|Sobrecoxa de frango|10
+ITEM|Coxa e sobrecoxa de frango|10
+ITEM|Asa de frango|10
+ITEM|Coxinha da asa de frango|10|drumet, drumette
+ITEM|Meio da asa de frango|10|tulipa de frango
+ITEM|Dorso de frango|10
+ITEM|Pescoço de frango|10
+ITEM|Pé de frango|10
+ITEM|Coração de frango|10
+ITEM|Moela de frango|10
+ITEM|Fígado de frango|10
+ITEM|Frango a passarinho|10
+ITEM|Frango moído|10
+ITEM|Espetinho de frango cru|10
+ITEM|Peru inteiro|10
+ITEM|Peito de peru cru|10
+ITEM|Pato inteiro|10
+ITEM|Codorna inteira|10
+ITEM|Galinha-d'angola|10
+ITEM|Pernil de cordeiro|11
+ITEM|Paleta de cordeiro|11
+ITEM|Costela de cordeiro|11
+ITEM|Carré de cordeiro|11
+ITEM|Carne caprina|11
+ITEM|Carne de coelho|11
+ITEM|Carne de búfalo|11
+ITEM|Linguiça toscana|12
+ITEM|Linguiça de pernil|12
+ITEM|Linguiça de frango|12
+ITEM|Linguiça mista|12
+ITEM|Linguiça cuiabana|12
+ITEM|Linguiça artesanal fresca|12
+ITEM|Carne-seca|13
+ITEM|Charque|13
+ITEM|Carne de sol|13
+ITEM|Costela suína salgada|13
+ITEM|Pé suíno salgado|13
+ITEM|Orelha suína salgada|13
+ITEM|Rabo suíno salgado|13
+ITEM|Lombo suíno salgado|13
+ITEM|Kit para feijoada|13
+ITEM|Bacon|13
+ITEM|Toucinho defumado|13
+ITEM|Costela suína defumada|13
+ITEM|Lombo suíno defumado|13
+ITEM|Joelho suíno defumado|13
+ITEM|Tilápia inteira|14
+ITEM|Filé de tilápia|14
+ITEM|Salmão em posta|14
+ITEM|Filé de salmão|14
+ITEM|Atum fresco|14
+ITEM|Sardinha fresca|14
+ITEM|Filé de merluza|14
+ITEM|Filé de pescada|14
+ITEM|Pescadinha|14
+ITEM|Corvina|14
+ITEM|Cavalinha|14
+ITEM|Robalo|14
+ITEM|Tainha|14
+ITEM|Linguado|14
+ITEM|Truta|14
+ITEM|Dourado|14
+ITEM|Pintado|14
+ITEM|Surubim|14
+ITEM|Tambaqui|14
+ITEM|Pacu|14
+ITEM|Piramutaba|14
+ITEM|Polaca-do-alasca|14
+ITEM|Bacalhau salgado|14
+ITEM|Bacalhau dessalgado|14
+ITEM|Camarão com casca|15
+ITEM|Camarão limpo|15
+ITEM|Lula|15
+ITEM|Polvo|15
+ITEM|Mexilhão|15
+ITEM|Ostra|15
+ITEM|Vieira|15
+ITEM|Lagosta|15
+ITEM|Caranguejo|15
+ITEM|Siri|15
+ITEM|Carne de siri|15
+ITEM|Surimi|15
+ITEM|Salmão defumado|15
+ITEM|Pão francês|16|pao de sal, pao cacetinho
+ITEM|Pão de sal integral|16
+ITEM|Pão de forma branco|16
+ITEM|Pão de forma integral|16
+ITEM|Pão de forma sem casca|16
+ITEM|Pão de leite|16
+ITEM|Pão de milho|16
+ITEM|Pão de batata|16
+ITEM|Pão de mandioca|16
+ITEM|Pão de centeio|16
+ITEM|Pão australiano|16
+ITEM|Pão italiano|16
+ITEM|Pão de fermentação natural|16
+ITEM|Baguete|16
+ITEM|Ciabatta|16
+ITEM|Focaccia|16
+ITEM|Pão sírio|16
+ITEM|Pão de hambúrguer|16
+ITEM|Pão de cachorro-quente|16
+ITEM|Bisnaguinha|16
+ITEM|Pão sovado|16
+ITEM|Pão doce|16
+ITEM|Rosca doce|16
+ITEM|Rosca de coco|16
+ITEM|Brioche|16
+ITEM|Croissant|16
+ITEM|Pão de queijo assado|16
+ITEM|Chipa assada|16
+ITEM|Pão de alho refrigerado|16
+ITEM|Torrada de pão|16
+ITEM|Torrada integral|16
+ITEM|Wrap|16
+ITEM|Tortilha de trigo|16
+ITEM|Bolo de fubá|17
+ITEM|Bolo de milho|17
+ITEM|Bolo de cenoura|17
+ITEM|Bolo de chocolate|17
+ITEM|Bolo de laranja|17
+ITEM|Bolo de coco|17
+ITEM|Bolo de mandioca|17
+ITEM|Bolo de banana|17
+ITEM|Bolo de limão|17
+ITEM|Bolo formigueiro|17
+ITEM|Bolo inglês|17
+ITEM|Bolo de rolo|17
+ITEM|Bolo recheado|17
+ITEM|Bolo de aniversário|17
+ITEM|Bolo no pote|17
+ITEM|Cupcake|17
+ITEM|Muffin|17
+ITEM|Brownie|17
+ITEM|Rocambole doce|17
+ITEM|Torta de limão|17
+ITEM|Torta de morango|17
+ITEM|Torta de chocolate|17
+ITEM|Cheesecake|17
+ITEM|Pudim de leite|17
+ITEM|Manjar|17
+ITEM|Quindim|17
+ITEM|Brigadeiro|17
+ITEM|Beijinho|17
+ITEM|Cajuzinho|17
+ITEM|Olho-de-sogra|17
+ITEM|Sonho|17
+ITEM|Bomba de chocolate|17
+ITEM|Carolina|17
+ITEM|Éclair|17
+ITEM|Donut|17
+ITEM|Churros|17
+ITEM|Mil-folhas|17
+ITEM|Palmier|17
+ITEM|Broa de fubá|17
+ITEM|Sequilho|17
+ITEM|Biscoito de polvilho da padaria|17
+ITEM|Biscoito amanteigado artesanal|17
+ITEM|Biscoito de nata|17
+ITEM|Suspiro|17
+ITEM|Coxinha frita|18
+ITEM|Quibe frito|18
+ITEM|Bolinha de queijo|18
+ITEM|Risole|18
+ITEM|Croquete|18
+ITEM|Empada|18
+ITEM|Empadão|18
+ITEM|Esfiha|18
+ITEM|Enroladinho de salsicha|18
+ITEM|Pastel frito|18
+ITEM|Pastel de forno|18
+ITEM|Pão recheado|18
+ITEM|Joelho de presunto e queijo|18
+ITEM|Torta salgada|18
+ITEM|Quiche|18
+ITEM|Folhado salgado|18
+ITEM|Mini pizza assada|18
+ITEM|Panetone|19
+ITEM|Chocotone|19
+ITEM|Colomba pascal|19
+ITEM|Rabanada|19
+ITEM|Bolo natalino|19
+ITEM|Pão para rabanada|19
+ITEM|Leite UHT integral|20
+ITEM|Leite UHT semidesnatado|20
+ITEM|Leite UHT desnatado|20
+ITEM|Leite UHT zero lactose|20
+ITEM|Leite pasteurizado integral|20
+ITEM|Leite pasteurizado desnatado|20
+ITEM|Leite de cabra|20
+ITEM|Leite tipo A|20
+ITEM|Leite com teor aumentado de proteína|20
+ITEM|Leite em pó integral|21
+ITEM|Leite em pó desnatado|21
+ITEM|Leite em pó zero lactose|21
+ITEM|Composto lácteo|21
+ITEM|Iogurte natural integral|22
+ITEM|Iogurte natural desnatado|22
+ITEM|Iogurte grego|22
+ITEM|Iogurte com frutas|22
+ITEM|Iogurte líquido|22
+ITEM|Iogurte zero lactose|22
+ITEM|Iogurte proteico|22
+ITEM|Coalhada|22
+ITEM|Kefir lácteo|22
+ITEM|Leite fermentado|22
+ITEM|Bebida láctea fermentada|22
+ITEM|Petit suisse|22
+ITEM|Sobremesa láctea de chocolate|22
+ITEM|Flan lácteo|22
+ITEM|Mousse refrigerada|22
+ITEM|Arroz-doce refrigerado|22
+ITEM|Queijo muçarela|23|queijo mussarela, queijo mozarela
+ITEM|Queijo prato|23
+ITEM|Queijo minas frescal|23
+ITEM|Queijo minas padrão|23
+ITEM|Queijo minas artesanal|23
+ITEM|Queijo meia-cura|23
+ITEM|Queijo coalho|23
+ITEM|Queijo ricota|23
+ITEM|Queijo cottage|23
+ITEM|Queijo parmesão|23
+ITEM|Queijo parmesão ralado|23
+ITEM|Queijo provolone|23
+ITEM|Queijo gorgonzola|23
+ITEM|Queijo brie|23
+ITEM|Queijo camembert|23
+ITEM|Queijo gouda|23
+ITEM|Queijo edam|23
+ITEM|Queijo emmental|23
+ITEM|Queijo gruyère|23
+ITEM|Queijo estepe|23
+ITEM|Queijo cheddar|23
+ITEM|Queijo reino|23
+ITEM|Queijo de cabra|23
+ITEM|Muçarela de búfala|23
+ITEM|Burrata|23
+ITEM|Cream cheese|23
+ITEM|Requeijão cremoso|23
+ITEM|Requeijão de corte|23
+ITEM|Queijo fundido|23
+ITEM|Creme de ricota|23
+ITEM|Mistura para fondue de queijo|23
+ITEM|Manteiga com sal|24
+ITEM|Manteiga sem sal|24
+ITEM|Manteiga de garrafa|24
+ITEM|Manteiga ghee|24
+ITEM|Margarina com sal|24
+ITEM|Margarina sem sal|24
+ITEM|Nata|24
+ITEM|Creme de leite fresco|24
+ITEM|Creme de leite UHT|24
+ITEM|Creme de leite em lata|24
+ITEM|Leite condensado|24
+ITEM|Creme para chantilly|24
+ITEM|Chantilly pronto|24
+ITEM|Presunto cozido|25
+ITEM|Presunto cru|25
+ITEM|Apresuntado|25
+ITEM|Mortadela|25
+ITEM|Mortadela de frango|25
+ITEM|Peito de peru defumado|25
+ITEM|Blanquet de peru|25
+ITEM|Salame italiano|25
+ITEM|Salame tipo hamburguês|25
+ITEM|Copa curada|25
+ITEM|Lombo canadense|25
+ITEM|Pastrami|25
+ITEM|Rosbife fatiado|25
+ITEM|Salsicha hot dog|25
+ITEM|Salsicha de frango|25
+ITEM|Salsicha tipo Viena|25
+ITEM|Linguiça calabresa|25
+ITEM|Linguiça portuguesa|25
+ITEM|Paio|25
+ITEM|Linguiça defumada|25
+ITEM|Patê de frango|26
+ITEM|Patê de atum|26
+ITEM|Patê de presunto|26
+ITEM|Patê de azeitona|26
+ITEM|Homus|26
+ITEM|Babaganuche|26
+ITEM|Antepasto de berinjela|26
+ITEM|Coalhada seca|26
+ITEM|Tofu|26
+ITEM|Arroz branco|27
+ITEM|Arroz parboilizado|27
+ITEM|Arroz integral|27
+ITEM|Arroz arbóreo|27
+ITEM|Arroz japonês|27
+ITEM|Arroz basmati|27
+ITEM|Arroz cateto|27
+ITEM|Arroz negro|27
+ITEM|Arroz vermelho|27
+ITEM|Feijão carioca|27
+ITEM|Feijão preto|27
+ITEM|Feijão branco|27
+ITEM|Feijão vermelho|27
+ITEM|Feijão fradinho|27
+ITEM|Feijão jalo|27
+ITEM|Feijão rosinha|27
+ITEM|Feijão bolinha|27
+ITEM|Feijão verde|27
+ITEM|Lentilha|27
+ITEM|Grão-de-bico|27
+ITEM|Ervilha seca|27
+ITEM|Fava seca|27
+ITEM|Soja em grão|27
+ITEM|Milho para pipoca|27
+ITEM|Milho para canjica|27
+ITEM|Canjiquinha|27|quirera de milho
+ITEM|Trigo em grão|27
+ITEM|Trigo para quibe|27
+ITEM|Quinoa em grão|27
+ITEM|Cevada em grão|27
+ITEM|Farinha de trigo|28
+ITEM|Farinha de trigo com fermento|28
+ITEM|Farinha de trigo integral|28
+ITEM|Farinha de mandioca|28
+ITEM|Farinha de milho|28
+ITEM|Farinha de arroz|28
+ITEM|Farinha de aveia|28
+ITEM|Farinha de centeio|28
+ITEM|Farinha de grão-de-bico|28
+ITEM|Farinha de amêndoas|28
+ITEM|Farinha de coco|28
+ITEM|Farinha de linhaça|28
+ITEM|Farinha de rosca|28
+ITEM|Farinha panko|28
+ITEM|Fubá|28
+ITEM|Flocão de milho|28
+ITEM|Flocos de arroz|28
+ITEM|Sêmola de trigo|28
+ITEM|Amido de milho|28
+ITEM|Fécula de batata|28
+ITEM|Polvilho doce|28|fecula de mandioca
+ITEM|Polvilho azedo|28
+ITEM|Goma de tapioca hidratada|28
+ITEM|Tapioca granulada|28
+ITEM|Sagu|28
+ITEM|Farofa pronta de mandioca|28
+ITEM|Farofa pronta de milho|28
+ITEM|Mistura para polenta|28
+ITEM|Purê de batata em flocos|28
+ITEM|Macarrão espaguete|29
+ITEM|Macarrão penne|29
+ITEM|Macarrão parafuso|29|fusilli
+ITEM|Macarrão talharim|29
+ITEM|Macarrão gravata|29
+ITEM|Macarrão cabelo de anjo|29
+ITEM|Macarrão padre-nosso|29
+ITEM|Macarrão ave-maria|29
+ITEM|Macarrão conchinha|29
+ITEM|Massa seca para lasanha|29
+ITEM|Macarrão integral|29
+ITEM|Macarrão de arroz|29
+ITEM|Macarrão sem glúten|29
+ITEM|Macarrão instantâneo|29
+ITEM|Macarrão instantâneo em copo|29
+ITEM|Massa para yakisoba|29
+ITEM|Cuscuz marroquino|29
+ITEM|Açúcar cristal|30
+ITEM|Açúcar refinado|30
+ITEM|Açúcar demerara|30
+ITEM|Açúcar mascavo|30
+ITEM|Açúcar de confeiteiro|30
+ITEM|Açúcar impalpável|30
+ITEM|Açúcar em cubos|30
+ITEM|Açúcar de coco|30
+ITEM|Adoçante culinário|30
+ITEM|Adoçante em pó|30
+ITEM|Xilitol|30
+ITEM|Eritritol|30
+ITEM|Adoçante líquido de sucralose|31
+ITEM|Adoçante líquido de estévia|31
+ITEM|Adoçante líquido de sacarina e ciclamato|31
+ITEM|Óleo de soja|32
+ITEM|Óleo de milho|32
+ITEM|Óleo de girassol|32
+ITEM|Óleo de canola|32
+ITEM|Óleo de algodão|32
+ITEM|Óleo de coco|32
+ITEM|Óleo de gergelim|32
+ITEM|Azeite de oliva extravirgem|32
+ITEM|Azeite de oliva|32
+ITEM|Azeite de dendê|32
+ITEM|Óleo composto|32
+ITEM|Vinagre de álcool|32
+ITEM|Vinagre de vinho tinto|32
+ITEM|Vinagre de vinho branco|32
+ITEM|Vinagre de maçã|32
+ITEM|Vinagre de arroz|32
+ITEM|Aceto balsâmico|32
+ITEM|Banha suína|33
+ITEM|Gordura vegetal|33
+ITEM|Gordura vegetal para fritura|33
+ITEM|Sal refinado|34
+ITEM|Sal grosso|34
+ITEM|Sal marinho|34
+ITEM|Sal rosa|34
+ITEM|Sal de parrilla|34
+ITEM|Flor de sal|34
+ITEM|Sal com ervas|34
+ITEM|Pimenta-do-reino|34
+ITEM|Pimenta calabresa|34
+ITEM|Páprica doce|34
+ITEM|Páprica picante|34
+ITEM|Páprica defumada|34
+ITEM|Colorau|34
+ITEM|Cúrcuma em pó|34
+ITEM|Cominho|34
+ITEM|Coentro em grão|34
+ITEM|Orégano seco|34
+ITEM|Manjericão seco|34
+ITEM|Alecrim seco|34
+ITEM|Tomilho seco|34
+ITEM|Louro seco|34
+ITEM|Canela em pó|34
+ITEM|Canela em pau|34
+ITEM|Cravo-da-índia|34
+ITEM|Noz-moscada|34
+ITEM|Anis-estrelado|34
+ITEM|Erva-doce em sementes|34
+ITEM|Cardamomo|34
+ITEM|Curry|34
+ITEM|Garam masala|34
+ITEM|Chimichurri seco|34
+ITEM|Lemon pepper|34
+ITEM|Alho em pó|34
+ITEM|Cebola em pó|34
+ITEM|Alho frito|34
+ITEM|Tempero completo|34
+ITEM|Tempero para churrasco|34
+ITEM|Caldo de galinha em cubos|34
+ITEM|Caldo de carne em cubos|34
+ITEM|Caldo de legumes em cubos|34
+ITEM|Amaciante de carne|34
+ITEM|Realçador de sabor|34
+ITEM|Molho de tomate|35
+ITEM|Extrato de tomate|35
+ITEM|Passata de tomate|35
+ITEM|Tomate pelado|35
+ITEM|Ketchup|35
+ITEM|Mostarda amarela|35
+ITEM|Mostarda Dijon|35
+ITEM|Maionese|35
+ITEM|Maionese vegana|35
+ITEM|Molho barbecue|35
+ITEM|Molho pesto|35
+ITEM|Molho branco pronto|35
+ITEM|Molho bolonhesa pronto|35
+ITEM|Molho de queijo|35
+ITEM|Molho para salada|35
+ITEM|Molho de pimenta|35
+ITEM|Pasta de alho|35
+ITEM|Tahine|35
+ITEM|Pasta de curry|35
+ITEM|Wasabi em pasta|35
+ITEM|Missô|35
+ITEM|Molho shoyu|36
+ITEM|Molho inglês|36
+ITEM|Molho teriyaki|36
+ITEM|Molho de peixe|36
+ITEM|Milho em conserva|37
+ITEM|Ervilha em conserva|37
+ITEM|Seleta de legumes em conserva|37
+ITEM|Grão-de-bico em conserva|37
+ITEM|Feijão pronto em conserva|37
+ITEM|Lentilha em conserva|37
+ITEM|Palmito de pupunha|37
+ITEM|Palmito de açaí|37
+ITEM|Azeitona verde|37
+ITEM|Azeitona preta|37
+ITEM|Pepino em conserva|37
+ITEM|Cebolinha em conserva|37
+ITEM|Picles mistos|37
+ITEM|Alcaparra|37
+ITEM|Champignon em conserva|37
+ITEM|Aspargo em conserva|37
+ITEM|Alcachofra em conserva|37
+ITEM|Pimenta em conserva|37
+ITEM|Tomate seco|37
+ITEM|Chucrute|37
+ITEM|Gengibre em conserva|37|gari
+ITEM|Pequi em conserva|37
+ITEM|Atum em óleo|38
+ITEM|Atum em água|38
+ITEM|Sardinha em óleo|38
+ITEM|Sardinha em molho de tomate|38
+ITEM|Filé de anchova em conserva|38
+ITEM|Patê de atum enlatado|38
+ITEM|Carne bovina em conserva|38
+ITEM|Salsicha em conserva|38
+ITEM|Feijoada enlatada|38
+ITEM|Café torrado e moído|39
+ITEM|Café em grãos|39
+ITEM|Café solúvel|39
+ITEM|Café descafeinado|39
+ITEM|Cappuccino em pó|39
+ITEM|Achocolatado em pó|39
+ITEM|Chocolate em pó|39
+ITEM|Cacau em pó|39
+ITEM|Bebida maltada em pó|39
+ITEM|Mistura para bebida de cereais|39
+ITEM|Cápsula de café|40
+ITEM|Cápsula de cappuccino|40
+ITEM|Cápsula de chocolate|40
+ITEM|Sachê de café|40
+ITEM|Chá-preto|41
+ITEM|Chá-verde|41
+ITEM|Chá-branco|41
+ITEM|Chá-mate|41
+ITEM|Chá de camomila|41
+ITEM|Chá de erva-doce|41
+ITEM|Chá de hortelã|41
+ITEM|Chá de capim-cidreira|41
+ITEM|Chá de hibisco|41
+ITEM|Chá de frutas|41
+ITEM|Chá de gengibre|41
+ITEM|Erva-mate para chimarrão|41
+ITEM|Erva-mate para tereré|41
+ITEM|Aveia em flocos|42
+ITEM|Aveia em flocos finos|42
+ITEM|Farelo de aveia|42
+ITEM|Granola|42
+ITEM|Muesli|42
+ITEM|Cereal matinal de milho|42
+ITEM|Cereal matinal de chocolate|42
+ITEM|Cereal matinal integral|42
+ITEM|Barra de cereal|42
+ITEM|Barra de proteína|42
+ITEM|Pasta de amendoim|42
+ITEM|Creme de avelã|42
+ITEM|Geleia de morango|42
+ITEM|Geleia de uva|42
+ITEM|Geleia de frutas vermelhas|42
+ITEM|Geleia de damasco|42
+ITEM|Mel|42
+ITEM|Melado de cana|42
+ITEM|Rapadura|42
+ITEM|Biscoito cream cracker|43|bolacha cream cracker
+ITEM|Biscoito água e sal|43
+ITEM|Biscoito integral|43
+ITEM|Biscoito de arroz|43
+ITEM|Biscoito de gergelim|43
+ITEM|Biscoito salgado aperitivo|43
+ITEM|Biscoito recheado|43|bolacha recheada
+ITEM|Biscoito wafer|43
+ITEM|Biscoito maisena|43|bolacha maisena
+ITEM|Biscoito maria|43|bolacha maria
+ITEM|Biscoito leite|43
+ITEM|Biscoito amanteigado|43
+ITEM|Cookie|43
+ITEM|Biscoito de aveia|43
+ITEM|Biscoito de coco|43
+ITEM|Biscoito champanhe|43
+ITEM|Biscoito de polvilho industrializado|43
+ITEM|Rosquinha doce|43
+ITEM|Pão de mel|43
+ITEM|Alfajor|43
+ITEM|Batata chips|44
+ITEM|Batata palha|44
+ITEM|Salgadinho de milho|44
+ITEM|Salgadinho de trigo|44
+ITEM|Snack de arroz|44
+ITEM|Chips de mandioca|44
+ITEM|Chips de banana|44
+ITEM|Chips de batata-doce|44
+ITEM|Pipoca pronta salgada|44
+ITEM|Pipoca pronta doce|44
+ITEM|Pipoca de micro-ondas|44
+ITEM|Amendoim torrado|44
+ITEM|Amendoim japonês|44
+ITEM|Amendoim doce|44
+ITEM|Amendoim com cobertura|44
+ITEM|Mix de castanhas|44
+ITEM|Torresmo pronto|44
+ITEM|Biscoito pretzel|44
+ITEM|Tortilha de milho para aperitivo|44
+ITEM|Chocolate ao leite|45
+ITEM|Chocolate amargo|45
+ITEM|Chocolate meio amargo|45
+ITEM|Chocolate branco|45
+ITEM|Chocolate com castanhas|45
+ITEM|Chocolate recheado|45
+ITEM|Bombom|45
+ITEM|Trufa de chocolate|45
+ITEM|Confeito de chocolate|45
+ITEM|Bala dura|45
+ITEM|Bala mastigável|45
+ITEM|Bala de goma|45
+ITEM|Bala de gelatina|45
+ITEM|Bala de hortelã|45
+ITEM|Bala de caramelo|45
+ITEM|Pirulito|45
+ITEM|Goma de mascar|45|chiclete
+ITEM|Marshmallow|45
+ITEM|Paçoca|45
+ITEM|Pé de moleque|45
+ITEM|Pé de moça|45
+ITEM|Cocada|45
+ITEM|Doce de banana|45
+ITEM|Goiabada|45
+ITEM|Marmelada|45
+ITEM|Doce de abóbora|45
+ITEM|Doce de leite em pasta|45
+ITEM|Doce de leite em barra|45
+ITEM|Geleia de mocotó|45
+ITEM|Pêssego em calda|46
+ITEM|Figo em calda|46
+ITEM|Abacaxi em calda|46
+ITEM|Ameixa em calda|46
+ITEM|Cereja em calda|46
+ITEM|Doce de mamão em calda|46
+ITEM|Ovo de Páscoa|47
+ITEM|Coelho de chocolate|47
+ITEM|Caixa de bombons|47
+ITEM|Calendário de chocolate|47
+ITEM|Fermento químico em pó|48
+ITEM|Fermento biológico seco|48
+ITEM|Fermento biológico fresco|48
+ITEM|Bicarbonato de sódio culinário|48
+ITEM|Gelatina saborizada|48
+ITEM|Gelatina incolor|48
+ITEM|Ágar-ágar|48
+ITEM|Mistura para bolo|48
+ITEM|Mistura para pão|48
+ITEM|Mistura para pão de queijo|48
+ITEM|Mistura para brownie|48
+ITEM|Mistura para pudim|48
+ITEM|Mistura para mousse|48
+ITEM|Mistura para sorvete|48
+ITEM|Pó para chantilly|48
+ITEM|Coco ralado|48
+ITEM|Coco em flocos|48
+ITEM|Chocolate granulado|48|granulado de chocolate
+ITEM|Confeito colorido|48
+ITEM|Chocolate para cobertura|48
+ITEM|Cobertura fracionada de chocolate|48
+ITEM|Gotas de chocolate|48
+ITEM|Pasta americana|48
+ITEM|Marzipã|48
+ITEM|Fruta cristalizada|48
+ITEM|Liga neutra|48
+ITEM|Emulsificante para sorvete|48
+ITEM|Leite de coco|49
+ITEM|Essência de baunilha|49
+ITEM|Extrato de baunilha|49
+ITEM|Corante alimentício líquido|49
+ITEM|Água de flor de laranjeira|49
+ITEM|Glucose de milho|50
+ITEM|Calda de chocolate|50
+ITEM|Calda de caramelo|50
+ITEM|Cobertura de morango|50
+ITEM|Geleia de brilho|50
+ITEM|Recheio pronto de brigadeiro|50
+ITEM|Recheio pronto de beijinho|50
+ITEM|Creme de confeiteiro|50
+ITEM|Doce de leite para confeitaria|50
+ITEM|Geleia forneável|50
+ITEM|Amêndoa|51
+ITEM|Avelã|51
+ITEM|Castanha-de-caju|51
+ITEM|Castanha-do-pará|51
+ITEM|Noz|51
+ITEM|Noz-pecã|51
+ITEM|Pistache|51
+ITEM|Macadâmia|51
+ITEM|Amendoim cru|51
+ITEM|Semente de chia|51
+ITEM|Linhaça dourada|51
+ITEM|Linhaça marrom|51
+ITEM|Gergelim branco|51
+ITEM|Gergelim preto|51
+ITEM|Semente de girassol|51
+ITEM|Semente de abóbora|51
+ITEM|Amaranto|51
+ITEM|Uva-passa branca|52
+ITEM|Uva-passa preta|52
+ITEM|Damasco seco|52
+ITEM|Ameixa seca|52
+ITEM|Tâmara|52
+ITEM|Figo seco|52
+ITEM|Banana-passa|52
+ITEM|Maçã desidratada|52
+ITEM|Cranberry desidratado|52
+ITEM|Goji berry|52
+ITEM|Coco desidratado|52
+ITEM|Proteína texturizada de soja|53
+ITEM|Proteína vegetal em pó|53
+ITEM|Whey protein|53
+ITEM|Creatina|53
+ITEM|Colágeno em pó|53
+ITEM|Suplemento alimentar adulto em pó|53
+ITEM|Psyllium|53
+ITEM|Levedura nutricional|53
+ITEM|Alga nori|53|folha para sushi
+ITEM|Alga wakame|53
+ITEM|Pão sem glúten|53
+ITEM|Biscoito sem glúten|53
+ITEM|Mistura de farinhas sem glúten|53
+ITEM|Chocolate sem adição de açúcar|53
+ITEM|Geleia sem adição de açúcar|53
+ITEM|Doce de leite zero lactose|53
+ITEM|Leite condensado zero lactose|53
+ITEM|Creme de leite zero lactose|53
+ITEM|Queijo muçarela zero lactose|53
+ITEM|Pasta vegetal tipo queijo|53
+ITEM|Seitan|53
+ITEM|Água mineral sem gás|54
+ITEM|Água mineral com gás|54
+ITEM|Água saborizada|54
+ITEM|Água tônica|54
+ITEM|Água de coco|54
+ITEM|Refrigerante de cola|54
+ITEM|Refrigerante de guaraná|54
+ITEM|Refrigerante de laranja|54
+ITEM|Refrigerante de limão|54
+ITEM|Refrigerante de uva|54
+ITEM|Refrigerante de gengibre|54
+ITEM|Refrigerante zero açúcar|54
+ITEM|Soda limonada|54
+ITEM|Suco integral de uva|55
+ITEM|Suco integral de maçã|55
+ITEM|Suco de laranja|55
+ITEM|Suco de abacaxi|55
+ITEM|Suco de maracujá|55
+ITEM|Suco de goiaba|55
+ITEM|Suco de manga|55
+ITEM|Suco de acerola|55
+ITEM|Suco misto de frutas|55
+ITEM|Néctar de frutas|55
+ITEM|Refresco pronto|55
+ITEM|Suco concentrado|55
+ITEM|Xarope de groselha|55
+ITEM|Xarope de guaraná|55
+ITEM|Chá pronto para beber|56
+ITEM|Chá-mate pronto|56
+ITEM|Kombucha|56
+ITEM|Isotônico|56
+ITEM|Energético|56
+ITEM|Bebida de soja|56
+ITEM|Bebida de aveia|56
+ITEM|Bebida de amêndoas|56
+ITEM|Bebida de arroz|56
+ITEM|Bebida de coco|56
+ITEM|Bebida de castanhas|56
+ITEM|Achocolatado líquido|56
+ITEM|Café pronto gelado|56
+ITEM|Bebida proteica pronta|56
+ITEM|Aperitivo sem álcool|56
+ITEM|Cerveja sem álcool|56
+ITEM|Sidra sem álcool|56
+ITEM|Refresco em pó|57|suco em po
+ITEM|Preparado em pó para bebida isotônica|57
+ITEM|Cerveja pilsen|58
+ITEM|Cerveja puro malte|58
+ITEM|Cerveja lager|58
+ITEM|Cerveja de trigo|58
+ITEM|Cerveja IPA|58
+ITEM|Cerveja pale ale|58
+ITEM|Cerveja stout|58
+ITEM|Cerveja porter|58
+ITEM|Cerveja bock|58
+ITEM|Cerveja sour|58
+ITEM|Cerveja sem glúten|58
+ITEM|Chope|58
+ITEM|Vinho tinto seco|59
+ITEM|Vinho tinto suave|59
+ITEM|Vinho branco seco|59
+ITEM|Vinho branco suave|59
+ITEM|Vinho rosé|59
+ITEM|Vinho do Porto|59
+ITEM|Espumante brut|59
+ITEM|Espumante demi-sec|59
+ITEM|Espumante moscatel|59
+ITEM|Champagne|59
+ITEM|Sidra|59
+ITEM|Cachaça branca|60
+ITEM|Cachaça envelhecida|60
+ITEM|Vodca|60
+ITEM|Gin|60
+ITEM|Rum|60
+ITEM|Uísque|60
+ITEM|Tequila|60
+ITEM|Conhaque|60
+ITEM|Brandy|60
+ITEM|Saquê|60
+ITEM|Licor|60
+ITEM|Vermute|60
+ITEM|Aperitivo amargo|60
+ITEM|Coquetel alcoólico pronto|60
+ITEM|Bebida alcoólica mista tipo ice|60
+ITEM|Batata palito congelada|61
+ITEM|Batata rústica congelada|61
+ITEM|Batata noisette congelada|61
+ITEM|Mandioca congelada|61
+ITEM|Polenta palito congelada|61
+ITEM|Brócolis congelado|61
+ITEM|Couve-flor congelada|61
+ITEM|Ervilha congelada|61
+ITEM|Milho congelado|61
+ITEM|Espinafre congelado|61
+ITEM|Vagem congelada|61
+ITEM|Seleta de legumes congelada|61
+ITEM|Mix para yakisoba congelado|61
+ITEM|Edamame congelado|61
+ITEM|Morango congelado|62
+ITEM|Frutas vermelhas congeladas|62
+ITEM|Manga congelada|62
+ITEM|Polpa de acerola|62
+ITEM|Polpa de maracujá|62
+ITEM|Polpa de goiaba|62
+ITEM|Polpa de abacaxi|62
+ITEM|Polpa de manga|62
+ITEM|Polpa de caju|62
+ITEM|Polpa de cupuaçu|62
+ITEM|Polpa de graviola|62
+ITEM|Polpa de açaí|62
+ITEM|Pizza congelada|63
+ITEM|Lasanha congelada|63
+ITEM|Nhoque congelado|63
+ITEM|Ravióli congelado|63
+ITEM|Capeletti congelado|63
+ITEM|Panqueca recheada congelada|63
+ITEM|Escondidinho congelado|63
+ITEM|Feijoada congelada|63
+ITEM|Strogonoff congelado|63
+ITEM|Refeição completa congelada|63
+ITEM|Sopa congelada|63
+ITEM|Torta salgada congelada|63
+ITEM|Quiche congelada|63
+ITEM|Sanduíche congelado|63
+ITEM|Pão de queijo congelado|63
+ITEM|Pão de alho congelado|63
+ITEM|Croissant congelado|63
+ITEM|Massa folhada congelada|63
+ITEM|Coxinha congelada|63
+ITEM|Quibe congelado|63
+ITEM|Bolinha de queijo congelada|63
+ITEM|Empada congelada|63
+ITEM|Pastel congelado|63
+ITEM|Esfiha congelada|63
+ITEM|Bolinho de bacalhau congelado|63
+ITEM|Hambúrguer bovino congelado|64
+ITEM|Hambúrguer de frango congelado|64
+ITEM|Hambúrguer vegetal congelado|64
+ITEM|Almôndega congelada|64
+ITEM|Nugget de frango|64
+ITEM|Filé de frango empanado congelado|64
+ITEM|Peixe empanado congelado|64
+ITEM|Steak de frango congelado|64
+ITEM|Anel de cebola congelado|64
+ITEM|Tira vegetal empanada congelada|64
+ITEM|Ave natalina temperada congelada|64
+ITEM|Pernil temperado congelado|64
+ITEM|Sorvete de massa|65
+ITEM|Picolé de fruta|65
+ITEM|Picolé cremoso|65
+ITEM|Sorvete em cone|65
+ITEM|Sanduíche de sorvete|65
+ITEM|Açaí preparado congelado|65
+ITEM|Creme de cupuaçu congelado|65
+ITEM|Torta doce congelada|65
+ITEM|Petit gâteau congelado|65
+ITEM|Frozen yogurt|65
+ITEM|Geladinho|65
+ITEM|Gelo em cubos|66
+ITEM|Gelo triturado|66
+ITEM|Frango assado|67
+ITEM|Carne assada|67
+ITEM|Pernil assado|67
+ITEM|Costela assada|67
+ITEM|Peixe assado|67
+ITEM|Arroz cozido|67
+ITEM|Arroz à grega|67
+ITEM|Feijão cozido|67
+ITEM|Feijão tropeiro|67
+ITEM|Tutu de feijão|67
+ITEM|Feijoada pronta|67
+ITEM|Lasanha pronta|67
+ITEM|Macarrão ao molho|67
+ITEM|Panqueca recheada pronta|67
+ITEM|Escondidinho pronto|67
+ITEM|Strogonoff pronto|67
+ITEM|Purê de batata pronto|67
+ITEM|Legumes cozidos|67
+ITEM|Salada de maionese|67
+ITEM|Salpicão|67
+ITEM|Vinagrete|67
+ITEM|Salada pronta|67
+ITEM|Sopa pronta|67
+ITEM|Caldo de feijão|67
+ITEM|Caldo verde|67
+ITEM|Sushi|67
+ITEM|Sashimi|67
+ITEM|Marmita pronta|68
+ITEM|Sanduíche natural|68
+ITEM|Sanduíche de baguete|68
+ITEM|Misto-quente|68
+ITEM|Cachorro-quente pronto|68
+ITEM|Hambúrguer montado|68
+ITEM|Tapioca recheada|68
+ITEM|Porção de batata frita|68
+ITEM|Combo de salgados|68
+ITEM|Massa para pastel refrigerada|69
+ITEM|Massa para lasanha refrigerada|69
+ITEM|Massa de pizza refrigerada|69
+ITEM|Nhoque refrigerado|69
+ITEM|Ravióli refrigerado|69
+ITEM|Capeletti refrigerado|69
+ITEM|Talharim fresco|69
+ITEM|Massa de panqueca refrigerada|69
+ITEM|Água sanitária|70|agua de lavadeira
+ITEM|Desinfetante|70
+ITEM|Limpador multiuso|70
+ITEM|Limpador perfumado|70
+ITEM|Limpador de piso|70
+ITEM|Limpa-vidros|70
+ITEM|Limpador de banheiro|70
+ITEM|Limpador de rejunte|70
+ITEM|Limpador pós-obra|70
+ITEM|Desengordurante|70
+ITEM|Limpa-forno|70
+ITEM|Limpa-alumínio|70
+ITEM|Limpador de inox|70
+ITEM|Lustra-móveis|70
+ITEM|Cera líquida para piso|70
+ITEM|Removedor de cera|70
+ITEM|Álcool para limpeza|70
+ITEM|Limpador de carpete|70
+ITEM|Eliminador de odores|70
+ITEM|Antimofo líquido|70
+ITEM|Detergente líquido|71
+ITEM|Secante para lava-louças|71
+ITEM|Detergente para lava-louças em gel|71
+ITEM|Lava-roupas líquido|72|sabao liquido para roupas
+ITEM|Amaciante|72
+ITEM|Amaciante concentrado|72
+ITEM|Alvejante sem cloro líquido|72
+ITEM|Tira-manchas líquido|72
+ITEM|Passa-roupas|72
+ITEM|Lava-roupas para peças delicadas|72
+ITEM|Limpa-máquina de lavar líquido|72
+ITEM|Lava-roupas em pó|73|sabao em po
+ITEM|Sabão em barra|73
+ITEM|Sabão de coco|73
+ITEM|Sabão em pasta|73
+ITEM|Saponáceo em pó|73
+ITEM|Saponáceo cremoso|73
+ITEM|Pasta para limpeza|73
+ITEM|Alvejante sem cloro em pó|73
+ITEM|Tira-manchas em pó|73
+ITEM|Detergente para lava-louças em pó|73
+ITEM|Sal para lava-louças|73
+ITEM|Absorvedor de umidade|73
+ITEM|Cloro para piscina|73
+ITEM|Cápsula de lava-roupas|74
+ITEM|Pastilha para lava-louças|74
+ITEM|Pedra sanitária|74
+ITEM|Bloco sanitário|74
+ITEM|Gel adesivo sanitário|74
+ITEM|Odorizador de ambiente|74
+ITEM|Refil de odorizador|74
+ITEM|Inseticida aerossol|74
+ITEM|Repelente elétrico de ambiente|74
+ITEM|Refil de repelente elétrico|74
+ITEM|Armadilha adesiva para insetos|74
+ITEM|Esponja de louça|75
+ITEM|Esponja não abrasiva|75
+ITEM|Esponja de aço|75
+ITEM|Lã de aço|75|palha de aco
+ITEM|Escova de limpeza|75
+ITEM|Escova sanitária|75
+ITEM|Escova para roupas|75
+ITEM|Pano de chão|75
+ITEM|Pano multiuso|75
+ITEM|Pano de microfibra|75
+ITEM|Flanela|75
+ITEM|Luva de limpeza|75
+ITEM|Vassoura|75
+ITEM|Rodo|75
+ITEM|Pá de lixo|75
+ITEM|Mop|75
+ITEM|Refil de mop|75
+ITEM|Balde|75
+ITEM|Bacia|75
+ITEM|Desentupidor manual|75
+ITEM|Lixeira|75
+ITEM|Saco para lixo|75
+ITEM|Prendedor de roupa|75
+ITEM|Cabide|75
+ITEM|Saco para lavar roupas|75
+ITEM|Varal portátil|75
+ITEM|Creme dental|76|pasta de dente
+ITEM|Escova dental|76
+ITEM|Fio dental|76
+ITEM|Fita dental|76
+ITEM|Escova interdental|76
+ITEM|Limpador de língua|76
+ITEM|Enxaguante bucal|76
+ITEM|Limpador de prótese dentária|76
+ITEM|Fixador de prótese dentária|76
+ITEM|Sabonete em barra|77
+ITEM|Sabonete líquido|77
+ITEM|Refil de sabonete líquido|77
+ITEM|Esponja de banho|77
+ITEM|Bucha vegetal|77
+ITEM|Desodorante aerossol|77
+ITEM|Desodorante roll-on|77
+ITEM|Desodorante em creme|77
+ITEM|Desodorante stick|77
+ITEM|Hidratante corporal|77
+ITEM|Óleo corporal|77
+ITEM|Talco corporal|77
+ITEM|Desodorante para os pés|77
+ITEM|Colônia|77
+ITEM|Perfume|77
+ITEM|Álcool em gel para mãos|77
+ITEM|Lenço umedecido para adultos|77
+ITEM|Shampoo|78
+ITEM|Shampoo anticaspa|78
+ITEM|Shampoo a seco|78
+ITEM|Condicionador|78
+ITEM|Máscara capilar|78
+ITEM|Creme para pentear|78
+ITEM|Óleo capilar|78
+ITEM|Reparador de pontas|78
+ITEM|Protetor térmico capilar|78
+ITEM|Gel capilar|78
+ITEM|Pomada modeladora|78
+ITEM|Spray fixador|78
+ITEM|Mousse capilar|78
+ITEM|Tintura capilar|78
+ITEM|Tonalizante capilar|78
+ITEM|Água oxigenada cosmética|78
+ITEM|Pó descolorante capilar|78
+ITEM|Pente|78
+ITEM|Escova de cabelo|78
+ITEM|Elástico de cabelo|78
+ITEM|Presilha de cabelo|78
+ITEM|Touca de banho|78
+ITEM|Sabonete facial|79
+ITEM|Gel de limpeza facial|79
+ITEM|Água micelar|79
+ITEM|Demaquilante|79
+ITEM|Tônico facial|79
+ITEM|Hidratante facial|79
+ITEM|Máscara facial|79
+ITEM|Esfoliante facial|79
+ITEM|Protetor solar|79
+ITEM|Protetor labial|79
+ITEM|Hidratante labial|79
+ITEM|Loção pós-sol|79
+ITEM|Repelente corporal|79
+ITEM|Aparelho de barbear|80
+ITEM|Carga de lâmina de barbear|80
+ITEM|Lâmina de barbear|80
+ITEM|Espuma de barbear|80
+ITEM|Gel de barbear|80
+ITEM|Loção pós-barba|80
+ITEM|Creme depilatório|80
+ITEM|Cera depilatória|80
+ITEM|Folha depilatória|80
+ITEM|Pinça|80
+ITEM|Papel higiênico|81
+ITEM|Lenço de papel|81
+ITEM|Absorvente externo|81
+ITEM|Absorvente interno|81
+ITEM|Protetor diário|81
+ITEM|Coletor menstrual|81
+ITEM|Sabonete íntimo|81
+ITEM|Preservativo|81
+ITEM|Lubrificante íntimo|81
+ITEM|Fralda geriátrica|81
+ITEM|Roupa íntima descartável adulta|81
+ITEM|Absorvente para incontinência|81
+ITEM|Algodão|81
+ITEM|Haste flexível|81|cotonete
+ITEM|Curativo adesivo|81
+ITEM|Gaze|81
+ITEM|Fita microporosa|81
+ITEM|Esparadrapo|81
+ITEM|Esmalte|82
+ITEM|Base para unhas|82
+ITEM|Removedor de esmalte|82
+ITEM|Acetona cosmética|82
+ITEM|Lixa de unha|82
+ITEM|Cortador de unha|82
+ITEM|Alicate de cutícula|82
+ITEM|Palito de manicure|82
+ITEM|Batom|82
+ITEM|Gloss labial|82
+ITEM|Máscara para cílios|82
+ITEM|Lápis de olho|82
+ITEM|Delineador|82
+ITEM|Base facial|82
+ITEM|Pó facial|82
+ITEM|Corretivo|82
+ITEM|Blush|82
+ITEM|Sombra|82
+ITEM|Esponja de maquiagem|82
+ITEM|Pincel de maquiagem|82
+ITEM|Necessaire|82
+ITEM|Fralda infantil descartável|83
+ITEM|Fralda infantil tipo calça|83
+ITEM|Fralda para piscina|83
+ITEM|Lenço umedecido infantil|83
+ITEM|Toalha umedecida infantil|83
+ITEM|Creme preventivo de assaduras|83
+ITEM|Sabonete infantil|83
+ITEM|Shampoo infantil|83
+ITEM|Condicionador infantil|83
+ITEM|Creme para pentear infantil|83
+ITEM|Hidratante infantil|83
+ITEM|Óleo infantil|83
+ITEM|Colônia infantil|83
+ITEM|Escova dental infantil|83
+ITEM|Creme dental infantil|83
+ITEM|Protetor solar infantil|83
+ITEM|Repelente infantil|83
+ITEM|Fórmula infantil de partida|84
+ITEM|Fórmula infantil de seguimento|84
+ITEM|Fórmula infantil para necessidades específicas|84
+ITEM|Composto lácteo infantil|84
+ITEM|Cereal infantil|84
+ITEM|Papinha salgada|84
+ITEM|Papinha de frutas|84
+ITEM|Purê de frutas em sachê|84
+ITEM|Biscoito infantil|84
+ITEM|Snack infantil|84
+ITEM|Mamadeira|85
+ITEM|Bico de mamadeira|85
+ITEM|Chupeta|85
+ITEM|Prendedor de chupeta|85
+ITEM|Copo de transição|85|copo de treinamento
+ITEM|Prato infantil|85
+ITEM|Colher infantil|85
+ITEM|Babador|85
+ITEM|Escova para mamadeira|85
+ITEM|Mordedor|85
+ITEM|Pote para leite em pó|85
+ITEM|Saco para armazenamento de leite materno|85
+ITEM|Absorvente para seios|85
+ITEM|Fralda de pano|85
+ITEM|Ração seca para cão adulto|86
+ITEM|Ração seca para cão filhote|86
+ITEM|Ração seca para cão sênior|86
+ITEM|Ração seca para cão de pequeno porte|86
+ITEM|Ração seca para cão de grande porte|86
+ITEM|Ração úmida para cão|86
+ITEM|Petisco para cão|86
+ITEM|Biscoito para cão|86
+ITEM|Snack dental para cão|86
+ITEM|Ração seca para gato adulto|87
+ITEM|Ração seca para gato filhote|87
+ITEM|Ração seca para gato castrado|87
+ITEM|Ração seca para gato sênior|87
+ITEM|Ração úmida para gato|87
+ITEM|Petisco para gato|87
+ITEM|Petisco cremoso para gato|87
+ITEM|Ração para aves|88
+ITEM|Mistura de sementes para aves|88
+ITEM|Alpiste|88
+ITEM|Ração para peixe ornamental|88
+ITEM|Ração para coelho|88
+ITEM|Ração para hamster|88
+ITEM|Feno para pequenos animais|88
+ITEM|Areia higiênica para gatos|89
+ITEM|Granulado de madeira para gatos|89
+ITEM|Sílica higiênica para gatos|89
+ITEM|Tapete higiênico para cães|89
+ITEM|Fralda para cães|89
+ITEM|Saco coletor de fezes|89
+ITEM|Shampoo para pets|89
+ITEM|Condicionador para pets|89
+ITEM|Lenço umedecido para pets|89
+ITEM|Escova para pets|89
+ITEM|Pente para pets|89
+ITEM|Cortador de unha para pets|89
+ITEM|Neutralizador de odores pet|89
+ITEM|Coleira|90
+ITEM|Guia para cães|90
+ITEM|Peitoral para cães|90
+ITEM|Comedouro|90
+ITEM|Bebedouro|90
+ITEM|Caixa de areia|90
+ITEM|Pá para areia|90
+ITEM|Brinquedo para cães|90
+ITEM|Brinquedo para gatos|90
+ITEM|Arranhador|90
+ITEM|Cama para pets|90
+ITEM|Caixa de transporte|90
+ITEM|Poleiro para aves|90
+ITEM|Banheira para aves|90
+ITEM|Copo descartável para água|91
+ITEM|Copo descartável para café|91
+ITEM|Copo de papel|91
+ITEM|Tampa para copo|91
+ITEM|Prato descartável|91
+ITEM|Garfo descartável|91
+ITEM|Faca descartável|91
+ITEM|Colher descartável|91
+ITEM|Mexedor para café|91
+ITEM|Canudo|91
+ITEM|Guardanapo de papel|91
+ITEM|Papel-toalha|91
+ITEM|Palito de dente|91
+ITEM|Espeto de bambu|91
+ITEM|Bandeja descartável|91
+ITEM|Toalha de mesa descartável|91
+ITEM|Marmita de alumínio|92
+ITEM|Marmita de plástico|92
+ITEM|Marmita de isopor|92
+ITEM|Tampa para marmita|92
+ITEM|Pote descartável com tampa|92
+ITEM|Pote para sobremesa|92
+ITEM|Embalagem para bolo|92
+ITEM|Base para bolo|92
+ITEM|Caixa para pizza|92
+ITEM|Caixa para hambúrguer|92
+ITEM|Embalagem para cachorro-quente|92
+ITEM|Embalagem para sushi|92
+ITEM|Embalagem para porções|92
+ITEM|Saco de papel para pão|92
+ITEM|Saco para pipoca|92
+ITEM|Saco para lanche|92
+ITEM|Saco para congelamento|92
+ITEM|Saco com fecho zip|92
+ITEM|Saco para vácuo|92
+ITEM|Saco para confeitar|92
+ITEM|Forma de papel para cupcake|92
+ITEM|Forminha para brigadeiro|92
+ITEM|Bandeja de papelão|92
+ITEM|Sacola plástica|92
+ITEM|Sacola de papel|92
+ITEM|Sacola reutilizável|92
+ITEM|Etiqueta para embalagem|92
+ITEM|Lacre para delivery|92
+ITEM|Papel-alumínio|93|papel aluminio
+ITEM|Filme plástico|93|filme pvc
+ITEM|Papel-manteiga|93
+ITEM|Papel para assar|93
+ITEM|Papel para embalar alimentos|93
+ITEM|Papel kraft|93
+ITEM|Barbante culinário|93
+ITEM|Touca descartável|94
+ITEM|Luva descartável para manipulação|94
+ITEM|Avental descartável|94
+ITEM|Máscara descartável|94
+ITEM|Bobina de papel térmico|94
+ITEM|Bobina de saco picotado|94
+ITEM|Filtro de papel para café|94
+ITEM|Protetor de fogão de alumínio|94
+ITEM|Panela|95
+ITEM|Panela de pressão|95
+ITEM|Frigideira|95
+ITEM|Leiteira|95
+ITEM|Chaleira|95
+ITEM|Assadeira|95
+ITEM|Forma para bolo|95
+ITEM|Forma para pudim|95
+ITEM|Forma de gelo|95
+ITEM|Travessa|95
+ITEM|Tigela|95
+ITEM|Saladeira|95
+ITEM|Prato|95
+ITEM|Copo de vidro|95
+ITEM|Taça|95
+ITEM|Caneca|95
+ITEM|Xícara|95
+ITEM|Pires|95
+ITEM|Jarra|95
+ITEM|Garrafa térmica|95
+ITEM|Garrafa para água|95|squeeze
+ITEM|Pote para alimentos|95
+ITEM|Porta-mantimentos|95
+ITEM|Marmita reutilizável|95
+ITEM|Faca de cozinha|95
+ITEM|Faca de mesa|95
+ITEM|Garfo de mesa|95
+ITEM|Colher de mesa|95
+ITEM|Colher de chá|95
+ITEM|Colher de pau|95
+ITEM|Espátula|95
+ITEM|Concha|95
+ITEM|Escumadeira|95
+ITEM|Pegador de alimentos|95
+ITEM|Batedor de arame|95|fouet
+ITEM|Ralador|95
+ITEM|Descascador|95
+ITEM|Abridor de lata|95
+ITEM|Abridor de garrafa|95
+ITEM|Saca-rolhas|95
+ITEM|Tesoura de cozinha|95
+ITEM|Tábua de corte|95
+ITEM|Peneira|95
+ITEM|Escorredor de macarrão|95
+ITEM|Escorredor de louça|95
+ITEM|Funil|95
+ITEM|Espremedor de alho|95
+ITEM|Espremedor manual de frutas|95
+ITEM|Rolo de massa|95
+ITEM|Copo medidor|95
+ITEM|Colher medidora|95
+ITEM|Balança de cozinha|95
+ITEM|Termômetro culinário|95
+ITEM|Coador de pano|95
+ITEM|Porta-filtro de café|95
+ITEM|Luva térmica|95
+ITEM|Descanso de panela|95
+ITEM|Avental de cozinha|95
+ITEM|Caixa organizadora|96
+ITEM|Cesto organizador|96
+ITEM|Cesto de roupa|96
+ITEM|Saboneteira|96
+ITEM|Porta-escova de dentes|96
+ITEM|Dispenser de sabonete|96
+ITEM|Tapete de banheiro|96
+ITEM|Cortina de box|96
+ITEM|Gancho adesivo|96
+ITEM|Pregador de embalagem|96
+ITEM|Saco a vácuo para roupas|96
+ITEM|Tábua de passar|96
+ITEM|Carrinho de feira|96
+ITEM|Escada doméstica|96
+ITEM|Vela comum|96
+ITEM|Vela decorativa|96
+ITEM|Vela aromática|96
+ITEM|Isqueiro|96
+ITEM|Caixa de fósforos|96
+ITEM|Pano de prato|97
+ITEM|Toalha de mesa|97
+ITEM|Jogo americano|97
+ITEM|Toalha de rosto|97
+ITEM|Toalha de banho|97
+ITEM|Lençol|97
+ITEM|Fronha|97
+ITEM|Travesseiro|97
+ITEM|Cobertor|97
+ITEM|Edredom|97
+ITEM|Chinelo|97
+ITEM|Meia|97
+ITEM|Camiseta básica|97
+ITEM|Cueca|97
+ITEM|Calcinha|97
+ITEM|Churrasqueira portátil|98
+ITEM|Grelha|98
+ITEM|Espeto metálico|98
+ITEM|Pegador para churrasco|98
+ITEM|Acendedor de carvão|98
+ITEM|Caixa térmica|98
+ITEM|Bolsa térmica|98
+ITEM|Cadeira de praia|98
+ITEM|Guarda-sol|98
+ITEM|Boia|98
+ITEM|Bola esportiva|98
+ITEM|Baralho|98
+ITEM|Jogo de tabuleiro|98
+ITEM|Brinquedo infantil|98
+ITEM|Piscina inflável|98
+ITEM|Carvão vegetal|99
+ITEM|Briquete de carvão|99
+ITEM|Lenha para uso culinário|99
+ITEM|Caderno|100
+ITEM|Bloco de notas|100
+ITEM|Papel sulfite|100
+ITEM|Caneta esferográfica|100
+ITEM|Lápis|100
+ITEM|Borracha|100
+ITEM|Apontador|100
+ITEM|Régua|100
+ITEM|Tesoura escolar|100
+ITEM|Cola branca|100
+ITEM|Cola em bastão|100
+ITEM|Fita adesiva|100
+ITEM|Fita dupla face|100
+ITEM|Fita para embalagem|100
+ITEM|Envelope|100
+ITEM|Pasta escolar|100
+ITEM|Grampeador|100
+ITEM|Grampo para grampeador|100
+ITEM|Clipes|100
+ITEM|Marcador de texto|100
+ITEM|Lápis de cor|100
+ITEM|Giz de cera|100
+ITEM|Massa de modelar|100
+ITEM|Papel de presente|100
+ITEM|Sacola para presente|100
+ITEM|Vela de aniversário|101
+ITEM|Balão de festa|101
+ITEM|Faixa decorativa|101
+ITEM|Enfeite de bolo|101
+ITEM|Chapéu de festa|101
+ITEM|Painel de festa|101
+ITEM|Árvore de Natal|101
+ITEM|Enfeite de Natal|101
+ITEM|Pisca-pisca|101
+ITEM|Cesta para presente|101
+ITEM|Bandeirinha junina|101
+ITEM|Fantasia infantil|101
+ITEM|Pilha AA|102
+ITEM|Pilha AAA|102
+ITEM|Pilha C|102
+ITEM|Pilha D|102
+ITEM|Bateria 9 V|102
+ITEM|Bateria tipo moeda|102
+ITEM|Lâmpada LED|102
+ITEM|Extensão elétrica|102
+ITEM|Filtro de linha|102
+ITEM|Adaptador de tomada|102
+ITEM|Lanterna|102
+ITEM|Fita isolante|102
+ITEM|Fita veda-rosca|102
+ITEM|Cola instantânea|102
+ITEM|Cola epóxi|102
+ITEM|Chave de fenda|102
+ITEM|Chave Phillips|102
+ITEM|Alicate|102
+ITEM|Martelo|102
+ITEM|Trena|102
+ITEM|Parafuso|102
+ITEM|Prego|102
+ITEM|Bucha de parede|102
+ITEM|Cadeado|102
+ITEM|Vaso para planta|103
+ITEM|Prato para vaso|103
+ITEM|Floreira|103
+ITEM|Terra vegetal|103
+ITEM|Substrato para plantas|103
+ITEM|Adubo|103
+ITEM|Semente de hortaliça|103
+ITEM|Semente de flor|103
+ITEM|Muda de planta|103
+ITEM|Planta ornamental|103
+ITEM|Buquê de flores|103
+ITEM|Regador|103
+ITEM|Mangueira|103
+ITEM|Pá de jardinagem|103
+ITEM|Luva de jardinagem|103
+ITEM|Shampoo automotivo|104
+ITEM|Cera automotiva|104
+ITEM|Silicone automotivo|104
+ITEM|Limpa-pneus|104
+ITEM|Limpador de para-brisa|104
+ITEM|Aromatizante automotivo|104
+ITEM|Pano automotivo|104
+ITEM|Esponja automotiva|104
+ITEM|Óleo lubrificante de motor|104
+ITEM|Aditivo de radiador|104
+ITEM|Fluido de freio|104
+ITEM|Palheta de para-brisa|104
+ITEM|Liquidificador|105
+ITEM|Batedeira|105
+ITEM|Mixer|105
+ITEM|Processador de alimentos|105
+ITEM|Cafeteira elétrica|105
+ITEM|Chaleira elétrica|105
+ITEM|Sanduicheira|105
+ITEM|Torradeira|105
+ITEM|Fritadeira elétrica|105|air fryer
+ITEM|Panela elétrica de arroz|105
+ITEM|Grill elétrico|105
+ITEM|Espremedor elétrico de frutas|105
+ITEM|Ferro de passar|105
+ITEM|Ventilador|105
+ITEM|Secador de cabelo|105
+ITEM|Máquina de cortar cabelo|105
+ITEM|Aparador de pelos|105
+ITEM|Aspirador de pó|105
+ITEM|Balança corporal|105
+ITEM|Carregador de celular|105
+ITEM|Cabo USB|105
+ITEM|Fone de ouvido|105
+ITEM|Banana orgânica|106
+ITEM|Maçã orgânica|106
+ITEM|Morango orgânico|106
+ITEM|Tomate orgânico|106
+ITEM|Cenoura orgânica|106
+ITEM|Batata orgânica|106
+ITEM|Abobrinha orgânica|106
+ITEM|Alface orgânica|107
+ITEM|Couve orgânica|107
+ITEM|Rúcula orgânica|107
+ITEM|Brócolis orgânico|107
+ITEM|Ovo orgânico|108
+ITEM|Arroz orgânico|109
+ITEM|Feijão orgânico|109
+ITEM|Açúcar orgânico|109
+ITEM|Café orgânico|109
+ITEM|Farinha de trigo orgânica|109
+ITEM|Aveia orgânica|109
+ITEM|Mel orgânico|109
+ITEM|Macarrão orgânico|109
+ITEM|Pão orgânico|109
+ITEM|Suco de uva orgânico|110
+ITEM|Leite orgânico|110
+ITEM|Bebida vegetal orgânica|110
+ITEM|Cesta básica|111
+ITEM|Cesta de café da manhã|111
+ITEM|Cesta de Natal|111
+ITEM|Kit de queijos e vinhos|111
+ITEM|Kit de higiene pessoal|111
+ITEM|Kit de limpeza doméstica|111
+ALIAS|maca|Maçã gala
+ALIAS|banana|Banana-prata
+ALIAS|laranja|Laranja-pera
+ALIAS|limao|Limão-taiti
+ALIAS|mamao|Mamão papaia
+ALIAS|manga|Manga palmer
+ALIAS|melao|Melão amarelo
+ALIAS|feijao|Feijão carioca
+ALIAS|arroz|Arroz branco
+ALIAS|acucar|Açúcar refinado
+ALIAS|manteiga|Manteiga com sal
+ALIAS|papel higenico|Papel higiênico
+ALIAS|frango|Frango inteiro
+ALIAS|requeijao|Requeijão cremoso
+ALIAS|farinha|Farinha de trigo
+ALIAS|macarrao|Macarrão espaguete
+ALIAS|oleo|Óleo de soja
+ALIAS|sorvete|Sorvete de massa
+ALIAS|pizza|Pizza congelada

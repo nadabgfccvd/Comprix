@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout do widget da lista: fundo escuro do tema verde do app (hex do
+  `fundo` escuro de Cores.kt), nome da lista, barra fina de progresso e
+  contagem "X de Y comprados". O widget inteiro e clicavel (o id
+  raiz_do_widget recebe o PendingIntent do provider).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/raiz_do_widget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FF151B18"
+    android:paddingStart="14dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/texto_nome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFFFF"
+        android:text="Comprix" />
+
+    <ProgressBar
+        android:id="@+id/barra_progresso"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="5dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="#FF2FA86C"
+        android:progressBackgroundTint="#FF3E4C42" />
+
+    <TextView
+        android:id="@+id/texto_contagem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="12sp"
+        android:textColor="#FFB9C5BD"
+        android:text="0 de 0 comprados" />
+</LinearLayout>

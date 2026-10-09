@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Tema de inicializacao: a janela antes de o Compose subir. O tema real,
+      com a preferencia salva pela pessoa, e aplicado em TemaComprix.
+
+      As barras do sistema ficam transparentes e o fundo ja e o #F8FAF9 do
+      app, entao nao ha "piscada" branca seguida de verde na abertura. A cor
+      dos icones da barra e reajustada pelo Compose conforme o tema escolhido.
+    -->
+    <style name="Theme.Comprix" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/fundo</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorPrimary">@color/marca</item>
+        <item name="android:colorAccent">@color/acao</item>
+        <item name="android:textColorPrimary">@color/texto</item>
+    </style>
+</resources>

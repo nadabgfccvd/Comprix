@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Tokens da referencia visual do Comprix (comprix_referencia/src/design.css).
+
+      A paleta completa, com tema escuro e alto contraste, vive em
+      presentation/tema/Cores.kt. Estas entradas servem apenas ao tema XML
+      usado *antes* de o Compose subir: janela, fundo inicial e barras do
+      sistema. Manter os dois alinhados e o que evita a "piscada" de cor na
+      abertura do app.
+
+      Marca e acao sao cores diferentes de proposito: #1E8E5A rende 3,3:1
+      sobre branco e so pode preencher; todo texto e icone usa #18794D
+      (4,96:1) ou #14633E (6,97:1). Ver a tabela no README, secao
+      Acessibilidade.
+    -->
+    <color name="marca">#FF1E8E5A</color>
+    <color name="acao">#FF18794D</color>
+    <color name="verde_tinta">#FF14633E</color>
+    <color name="verde_suave">#FFE5F2EA</color>
+    <color name="ambar">#FFF4B400</color>
+    <color name="ambar_tinta">#FF624700</color>
+    <color name="alerta">#FFD93025</color>
+    <color name="alerta_tinta">#FFAE251D</color>
+    <color name="fundo">#FFF8FAF9</color>
+    <color name="cartao">#FFFFFFFF</color>
+    <color name="texto">#FF1C1B1F</color>
+    <color name="texto_apagado">#FF606963</color>
+    <color name="contorno">#FFD8E1DA</color>
+    <color name="contorno_forte">#FF758179</color>
+    <color name="lavanda">#FFEAE5F4</color>
+    <color name="lavanda_tinta">#FF60507E</color>
+    <color name="fundo_escuro">#FF151B18</color>
+    <color name="cartao_escuro">#FF202822</color>
+    <color name="texto_claro">#FFE6E1E5</color>
+</resources>

@@ -1,0 +1,2606 @@
+{
+  "meta": {
+    "versao": "1.0",
+    "idioma": "pt-BR",
+    "app": "Comprix",
+    "escopo": "linha de adicao rapida (texto livre) e pos-processamento de OCR",
+    "modos": {
+      "linha": "ParserDeLinhaDeCompra.interpretar",
+      "quantidade": "QuantidadeEmPosicaoNumerica.interpretar (posicao estritamente numerica)"
+    },
+    "totalDeCasos": 155,
+    "distribuicao": {
+      "ambiguos": 10,
+      "coletivos": 25,
+      "colisao_lexico": 10,
+      "decimais_fracoes": 15,
+      "multiplos_itens": 25,
+      "negativos": 10,
+      "numerais_extenso": 10,
+      "ocr": 10,
+      "popular_animal": 15,
+      "popular_nao_animal": 15,
+      "sugestao": 10
+    }
+  },
+  "casos": [
+    {
+      "id": "coletivos-01",
+      "tipo": "coletivos",
+      "entrada": "uma duzia de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "12",
+            "unidade": "un",
+            "categoriaSugerida": "mercearia",
+            "confianca": "alta"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-02",
+      "tipo": "coletivos",
+      "entrada": "meia duzia de ovo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovo",
+            "quantidade": "6",
+            "unidade": "un",
+            "categoriaSugerida": "mercearia",
+            "confianca": "alta"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-03",
+      "tipo": "coletivos",
+      "entrada": "duas duzias de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "24",
+            "unidade": "un",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-04",
+      "tipo": "coletivos",
+      "entrada": "um par de luvas",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "luvas",
+            "quantidade": "2",
+            "unidade": "un"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-05",
+      "tipo": "coletivos",
+      "entrada": "uma dezena de laranjas",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "laranjas",
+            "quantidade": "10",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-06",
+      "tipo": "coletivos",
+      "entrada": "uma vintena de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "20",
+            "unidade": "un"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-07",
+      "tipo": "coletivos",
+      "entrada": "meia centena de paes",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "paes",
+            "quantidade": "50",
+            "unidade": "un",
+            "categoriaSugerida": "padaria"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-08",
+      "tipo": "coletivos",
+      "entrada": "um cento de salgados",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "salgados",
+            "quantidade": "100",
+            "unidade": "un",
+            "categoriaSugerida": "padaria"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-09",
+      "tipo": "coletivos",
+      "entrada": "uma grossa de parafusos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "parafusos",
+            "quantidade": "144",
+            "unidade": "un",
+            "categoriaSugerida": "bazar"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-10",
+      "tipo": "coletivos",
+      "entrada": "um milheiro de tijolos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tijolos",
+            "quantidade": "1000",
+            "unidade": "un"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-11",
+      "tipo": "coletivos",
+      "entrada": "meio milheiro de tijolos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tijolos",
+            "quantidade": "500",
+            "unidade": "un"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-12",
+      "tipo": "coletivos",
+      "entrada": "um trio de abacaxis",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "abacaxis",
+            "quantidade": "3",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-13",
+      "tipo": "coletivos",
+      "entrada": "um pacote de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "pct",
+            "categoriaSugerida": "mercearia",
+            "confianca": "alta"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-14",
+      "tipo": "coletivos",
+      "entrada": "pacote com 2 de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 2,
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-15",
+      "tipo": "coletivos",
+      "entrada": "fardo com 6 de agua",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "agua",
+            "quantidade": "1",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 6,
+            "categoriaSugerida": "bebidas"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-16",
+      "tipo": "coletivos",
+      "entrada": "fardo c/ 12 de cerveja",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cerveja",
+            "quantidade": "1",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 12,
+            "categoriaSugerida": "bebidas"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-17",
+      "tipo": "coletivos",
+      "entrada": "caixa de ovo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovo",
+            "quantidade": "1",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 30,
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      },
+      "nota": "capacidade documentada: cx = 30"
+    },
+    {
+      "id": "coletivos-18",
+      "tipo": "coletivos",
+      "entrada": "caixa de leite",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "1",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 12,
+            "categoriaSugerida": "laticinios"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-19",
+      "tipo": "coletivos",
+      "entrada": "fardo de cerveja",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cerveja",
+            "quantidade": "1",
+            "unidade": "pct",
+            "categoriaSugerida": "bebidas",
+            "motivoContem": "capacidade varia"
+          }
+        ]
+      },
+      "nota": "itensPorKit fica null: fardo de cerveja varia (6/12/15)"
+    },
+    {
+      "id": "coletivos-20",
+      "tipo": "coletivos",
+      "entrada": "2 caixas de leite",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "2",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 12,
+            "categoriaSugerida": "laticinios",
+            "observacaoContem": "caixa"
+          }
+        ]
+      },
+      "nota": "2 embalagens de leite; capacidade documentada cx = 12"
+    },
+    {
+      "id": "coletivos-21",
+      "tipo": "coletivos",
+      "entrada": "cerveja 12x350ml",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cerveja",
+            "quantidade": "1",
+            "unidade": "mL",
+            "pesoOuVolume": "350",
+            "ehKit": true,
+            "itensPorKit": 12,
+            "categoriaSugerida": "bebidas"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-22",
+      "tipo": "coletivos",
+      "entrada": "3 bandejas de ovo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovo",
+            "quantidade": "3",
+            "unidade": "pct",
+            "ehKit": true,
+            "itensPorKit": 30,
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      },
+      "nota": "3 bandejas; capacidade documentada bandeja = 30"
+    },
+    {
+      "id": "coletivos-23",
+      "tipo": "coletivos",
+      "entrada": "uma lata de milho",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "milho",
+            "quantidade": "1",
+            "unidade": "pct",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-24",
+      "tipo": "coletivos",
+      "entrada": "duas garrafas de oleo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "oleo",
+            "quantidade": "2",
+            "unidade": "pct",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coletivos-25",
+      "tipo": "coletivos",
+      "entrada": "meia caixa de leite",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "6",
+            "unidade": "un",
+            "categoriaSugerida": "laticinios",
+            "motivoContem": "metade"
+          }
+        ]
+      },
+      "nota": "0,5 x capacidade conhecida (12) = 6 unidades"
+    },
+    {
+      "id": "popular_nao_animal-01",
+      "tipo": "popular_nao_animal",
+      "entrada": "dois patinhos na lagoa de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "22",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-02",
+      "tipo": "popular_nao_animal",
+      "entrada": "2 patinhos na lagoa de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "22"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-03",
+      "tipo": "popular_nao_animal",
+      "entrada": "dois patinho na lagoa de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "22"
+          }
+        ]
+      },
+      "nota": "variante sem plural"
+    },
+    {
+      "id": "popular_nao_animal-04",
+      "tipo": "popular_nao_animal",
+      "entrada": "idade de cristo de paes",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "paes",
+            "quantidade": "33",
+            "categoriaSugerida": "padaria"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-05",
+      "tipo": "popular_nao_animal",
+      "entrada": "uma boa ideia de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "51"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-06",
+      "tipo": "popular_nao_animal",
+      "entrada": "tapa na orelha de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "66"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-07",
+      "tipo": "popular_nao_animal",
+      "entrada": "mao cheia de feijao",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "feijao",
+            "quantidade": "5",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-08",
+      "tipo": "popular_nao_animal",
+      "entrada": "pingo no pe de laranja",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "laranja",
+            "quantidade": "9",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-09",
+      "tipo": "popular_nao_animal",
+      "entrada": "craque de bola de banana",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "banana",
+            "quantidade": "10",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-10",
+      "tipo": "popular_nao_animal",
+      "entrada": "menina moca de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-11",
+      "tipo": "popular_nao_animal",
+      "entrada": "a velha de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "90"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-12",
+      "tipo": "popular_nao_animal",
+      "entrada": "dois patinhos na lagoa",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "dois patinhos na lagoa",
+            "quantidade": "1"
+          }
+        ]
+      },
+      "nota": "Regra B: sem 'de' + item do lexico, nao converte"
+    },
+    {
+      "id": "popular_nao_animal-13",
+      "tipo": "popular_nao_animal",
+      "entrada": "numero do mentiroso de paes",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "paes",
+            "quantidade": "7",
+            "categoriaSugerida": "padaria"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-14",
+      "tipo": "popular_nao_animal",
+      "entrada": "duas machadinhas de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "77"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_nao_animal-15",
+      "tipo": "popular_nao_animal",
+      "entrada": "infinito duplo de ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "88"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-01",
+      "tipo": "popular_animal",
+      "entrada": "cachorro",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "5"
+      }
+    },
+    {
+      "id": "popular_animal-02",
+      "tipo": "popular_animal",
+      "entrada": "racao para cachorro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ração para cachorro",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "pet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-03",
+      "tipo": "popular_animal",
+      "entrada": "cabra",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "6"
+      }
+    },
+    {
+      "id": "popular_animal-04",
+      "tipo": "popular_animal",
+      "entrada": "queijo de cabra",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "queijo de cabra",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "laticinios"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-05",
+      "tipo": "popular_animal",
+      "entrada": "carneiro",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "7"
+      }
+    },
+    {
+      "id": "popular_animal-06",
+      "tipo": "popular_animal",
+      "entrada": "carne de carneiro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne de carneiro",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-07",
+      "tipo": "popular_animal",
+      "entrada": "peru",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "20"
+      }
+    },
+    {
+      "id": "popular_animal-08",
+      "tipo": "popular_animal",
+      "entrada": "peru congelado",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "peru congelado",
+            "quantidade": "1",
+            "unidade": "un",
+            "categoriaSugerida": "congelados"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-09",
+      "tipo": "popular_animal",
+      "entrada": "coelho",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "10"
+      }
+    },
+    {
+      "id": "popular_animal-10",
+      "tipo": "popular_animal",
+      "entrada": "carne de coelho",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne de coelho",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-11",
+      "tipo": "popular_animal",
+      "entrada": "galo",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "13"
+      }
+    },
+    {
+      "id": "popular_animal-12",
+      "tipo": "popular_animal",
+      "entrada": "gato",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "14"
+      }
+    },
+    {
+      "id": "popular_animal-13",
+      "tipo": "popular_animal",
+      "entrada": "racao para gato",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ração para gato",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "pet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "popular_animal-14",
+      "tipo": "popular_animal",
+      "entrada": "quanto custa? cachorro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "quanto custa cachorro",
+            "quantidade": "1"
+          }
+        ]
+      },
+      "nota": "Regra A sem excecao: frase aparentemente quantitativa NAO vira 5"
+    },
+    {
+      "id": "popular_animal-15",
+      "tipo": "popular_animal",
+      "entrada": "vaca",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "25"
+      }
+    },
+    {
+      "id": "multiplos_itens-01",
+      "tipo": "multiplos_itens",
+      "entrada": "2kg de carne e meia duzia de ovo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          },
+          {
+            "nomeItem": "ovo",
+            "quantidade": "6",
+            "unidade": "un",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      },
+      "nota": "caso-prova da secao 14 do documento"
+    },
+    {
+      "id": "multiplos_itens-02",
+      "tipo": "multiplos_itens",
+      "entrada": "cafe 500g",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cafe",
+            "quantidade": "1",
+            "unidade": "g",
+            "pesoOuVolume": "500",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-03",
+      "tipo": "multiplos_itens",
+      "entrada": "arroz 5kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "5",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-04",
+      "tipo": "multiplos_itens",
+      "entrada": "pao frances 3",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "pao frances",
+            "quantidade": "3",
+            "unidade": "un",
+            "categoriaSugerida": "padaria"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-05",
+      "tipo": "multiplos_itens",
+      "entrada": "leite 2 l",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "1",
+            "unidade": "L",
+            "pesoOuVolume": "2",
+            "categoriaSugerida": "laticinios"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-06",
+      "tipo": "multiplos_itens",
+      "entrada": "acucar 1kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "acucar",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-07",
+      "tipo": "multiplos_itens",
+      "entrada": "feijao 2kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "feijao",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "2",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-08",
+      "tipo": "multiplos_itens",
+      "entrada": "detergente 500ml",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "detergente",
+            "quantidade": "1",
+            "unidade": "mL",
+            "pesoOuVolume": "500",
+            "categoriaSugerida": "limpeza"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-09",
+      "tipo": "multiplos_itens",
+      "entrada": "banana 6",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "banana",
+            "quantidade": "6",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-10",
+      "tipo": "multiplos_itens",
+      "entrada": "tomate 2",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tomate",
+            "quantidade": "2",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-11",
+      "tipo": "multiplos_itens",
+      "entrada": "cafe 500g e acucar 1kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cafe",
+            "quantidade": "1",
+            "unidade": "g",
+            "pesoOuVolume": "500"
+          },
+          {
+            "nomeItem": "acucar",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-12",
+      "tipo": "multiplos_itens",
+      "entrada": "arroz 5kg, feijao 2kg, oleo 900ml",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "5"
+          },
+          {
+            "nomeItem": "feijao",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "2"
+          },
+          {
+            "nomeItem": "oleo",
+            "quantidade": "1",
+            "unidade": "mL",
+            "pesoOuVolume": "900"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-13",
+      "tipo": "multiplos_itens",
+      "entrada": "pao frances 10 e leite 1l",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "pao frances",
+            "quantidade": "10",
+            "unidade": "un"
+          },
+          {
+            "nomeItem": "leite",
+            "quantidade": "1",
+            "unidade": "L",
+            "pesoOuVolume": "1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-14",
+      "tipo": "multiplos_itens",
+      "entrada": "2 kg de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-15",
+      "tipo": "multiplos_itens",
+      "entrada": "3 kg de batata",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "batata",
+            "quantidade": "3",
+            "unidade": "kg",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-16",
+      "tipo": "multiplos_itens",
+      "entrada": "meia duzia de ovos e 1 kg de tomate",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "6",
+            "unidade": "un"
+          },
+          {
+            "nomeItem": "tomate",
+            "quantidade": "1",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-17",
+      "tipo": "multiplos_itens",
+      "entrada": "carne e ovos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1",
+            "unidade": "kg"
+          },
+          {
+            "nomeItem": "ovos",
+            "quantidade": "1",
+            "unidade": "dz"
+          }
+        ]
+      },
+      "nota": "'ovos' sem numero usa a unidade padrao do lexico (dz)"
+    },
+    {
+      "id": "multiplos_itens-18",
+      "tipo": "multiplos_itens",
+      "entrada": "3 macas, 2 bananas e 1 kg de tomate",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "macas",
+            "quantidade": "3",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          },
+          {
+            "nomeItem": "bananas",
+            "quantidade": "2",
+            "unidade": "un",
+            "categoriaSugerida": "hortifruti"
+          },
+          {
+            "nomeItem": "tomate",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "hortifruti"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-19",
+      "tipo": "multiplos_itens",
+      "entrada": "ovos, meia duzia",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "6",
+            "unidade": "un",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      },
+      "nota": "P2"
+    },
+    {
+      "id": "multiplos_itens-20",
+      "tipo": "multiplos_itens",
+      "entrada": "tomate, 2 kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tomate",
+            "quantidade": "2",
+            "unidade": "kg"
+          }
+        ]
+      },
+      "nota": "P2"
+    },
+    {
+      "id": "multiplos_itens-21",
+      "tipo": "multiplos_itens",
+      "entrada": "leite; pao; cafe",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "1",
+            "unidade": "L"
+          },
+          {
+            "nomeItem": "pao",
+            "quantidade": "1",
+            "unidade": "un"
+          },
+          {
+            "nomeItem": "cafe",
+            "quantidade": "1",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-22",
+      "tipo": "multiplos_itens",
+      "entrada": "sabao em po 1kg + amaciante 2l",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "sabao em po",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1",
+            "categoriaSugerida": "limpeza"
+          },
+          {
+            "nomeItem": "amaciante",
+            "quantidade": "1",
+            "unidade": "L",
+            "pesoOuVolume": "2",
+            "categoriaSugerida": "limpeza"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-23",
+      "tipo": "multiplos_itens",
+      "entrada": "frango 2kg e linguica 1kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "frango",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "2",
+            "categoriaSugerida": "acougue"
+          },
+          {
+            "nomeItem": "linguica",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiplos_itens-24",
+      "tipo": "multiplos_itens",
+      "entrada": "papel higienico 12 rolos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "papel higienico",
+            "quantidade": "1",
+            "unidade": "pct"
+          }
+        ]
+      },
+      "nota": "'rolos' nao e unidade canonica: vira observacao"
+    },
+    {
+      "id": "multiplos_itens-25",
+      "tipo": "multiplos_itens",
+      "entrada": "queijo 300g e presunto 200g",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "queijo",
+            "quantidade": "1",
+            "unidade": "g",
+            "pesoOuVolume": "300",
+            "categoriaSugerida": "laticinios"
+          },
+          {
+            "nomeItem": "presunto",
+            "quantidade": "1",
+            "unidade": "g",
+            "pesoOuVolume": "200",
+            "categoriaSugerida": "laticinios"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-01",
+      "tipo": "colisao_lexico",
+      "entrada": "patinho",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "patinho",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-02",
+      "tipo": "colisao_lexico",
+      "entrada": "1 kg de patinho",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "patinho",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-03",
+      "tipo": "colisao_lexico",
+      "entrada": "lagarto",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "lagarto",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      },
+      "nota": "verificado: lagarto nao e grupo do jogo do bicho - nunca vira numero"
+    },
+    {
+      "id": "colisao_lexico-04",
+      "tipo": "colisao_lexico",
+      "entrada": "2kg de lagarto",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "lagarto",
+            "quantidade": "2",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-05",
+      "tipo": "colisao_lexico",
+      "entrada": "peru congelado 4kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "peru congelado",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "4",
+            "categoriaSugerida": "congelados"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-06",
+      "tipo": "colisao_lexico",
+      "entrada": "coxao mole 1kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "coxao mole",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-07",
+      "tipo": "colisao_lexico",
+      "entrada": "maminha",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "maminha",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-08",
+      "tipo": "colisao_lexico",
+      "entrada": "fraldinha",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "fraldinha",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-09",
+      "tipo": "colisao_lexico",
+      "entrada": "fralda descartavel",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "fralda descartável",
+            "quantidade": "1",
+            "unidade": "pct",
+            "categoriaSugerida": "infantil"
+          }
+        ]
+      }
+    },
+    {
+      "id": "colisao_lexico-10",
+      "tipo": "colisao_lexico",
+      "entrada": "alcatra 2kg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "alcatra",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "2",
+            "categoriaSugerida": "acougue"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-01",
+      "tipo": "decimais_fracoes",
+      "entrada": "1,5 kg de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-02",
+      "tipo": "decimais_fracoes",
+      "entrada": "1.5 kg de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-03",
+      "tipo": "decimais_fracoes",
+      "entrada": "um quilo e meio de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-04",
+      "tipo": "decimais_fracoes",
+      "entrada": "1 kg e meio de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-05",
+      "tipo": "decimais_fracoes",
+      "entrada": "quilo e meio de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-06",
+      "tipo": "decimais_fracoes",
+      "entrada": "meio quilo de queijo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "queijo",
+            "quantidade": "0.5",
+            "unidade": "kg",
+            "categoriaSugerida": "laticinios"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-07",
+      "tipo": "decimais_fracoes",
+      "entrada": "meio kg de queijo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "queijo",
+            "quantidade": "0.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-08",
+      "tipo": "decimais_fracoes",
+      "entrada": "um quarto de quilo de presunto",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "presunto",
+            "quantidade": "0.25",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-09",
+      "tipo": "decimais_fracoes",
+      "entrada": "quarto de quilo de presunto",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "presunto",
+            "quantidade": "0.25",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-10",
+      "tipo": "decimais_fracoes",
+      "entrada": "tres quartos de quilo de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "0.75",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-11",
+      "tipo": "decimais_fracoes",
+      "entrada": "um terco de quilo de queijo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "queijo",
+            "quantidade": "0.333",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-12",
+      "tipo": "decimais_fracoes",
+      "entrada": "dois tercos de quilo de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "0.667",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-13",
+      "tipo": "decimais_fracoes",
+      "entrada": "1/2 kg de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "0.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-14",
+      "tipo": "decimais_fracoes",
+      "entrada": "0,5 l de leite",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "quantidade": "0.5",
+            "unidade": "L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimais_fracoes-15",
+      "tipo": "decimais_fracoes",
+      "entrada": "2,5 kg de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "2.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "numerais_extenso-01",
+      "tipo": "numerais_extenso",
+      "entrada": "zero",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "0"
+      }
+    },
+    {
+      "id": "numerais_extenso-02",
+      "tipo": "numerais_extenso",
+      "entrada": "onze",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "11"
+      }
+    },
+    {
+      "id": "numerais_extenso-03",
+      "tipo": "numerais_extenso",
+      "entrada": "dezesseis",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "16"
+      }
+    },
+    {
+      "id": "numerais_extenso-04",
+      "tipo": "numerais_extenso",
+      "entrada": "vinte e um",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "21"
+      }
+    },
+    {
+      "id": "numerais_extenso-05",
+      "tipo": "numerais_extenso",
+      "entrada": "cento e um",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "101"
+      }
+    },
+    {
+      "id": "numerais_extenso-06",
+      "tipo": "numerais_extenso",
+      "entrada": "duzentas e uma",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "201"
+      }
+    },
+    {
+      "id": "numerais_extenso-07",
+      "tipo": "numerais_extenso",
+      "entrada": "mil e duzentos",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "1200"
+      }
+    },
+    {
+      "id": "numerais_extenso-08",
+      "tipo": "numerais_extenso",
+      "entrada": "doze centos",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "1200"
+      }
+    },
+    {
+      "id": "numerais_extenso-09",
+      "tipo": "numerais_extenso",
+      "entrada": "vinte e um mil",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "21000"
+      }
+    },
+    {
+      "id": "numerais_extenso-10",
+      "tipo": "numerais_extenso",
+      "entrada": "cinquenta mil",
+      "fonte": "texto",
+      "modo": "quantidade",
+      "esperado": {
+        "valor": "50000"
+      }
+    },
+    {
+      "id": "negativos-01",
+      "tipo": "negativos",
+      "entrada": "meia estacao",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "meia estacao",
+            "quantidade": "1",
+            "motivoContem": "meia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-02",
+      "tipo": "negativos",
+      "entrada": "meia calca",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "meia calca",
+            "quantidade": "1",
+            "categoriaSugerida": "bazar",
+            "motivoContem": "vestuario"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-03",
+      "tipo": "negativos",
+      "entrada": "um pouco de sal",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "sal",
+            "motivoContem": "quantidade indefinida"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-04",
+      "tipo": "negativos",
+      "entrada": "sal a gosto",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "sal",
+            "motivoContem": "quantidade indefinida"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-05",
+      "tipo": "negativos",
+      "entrada": "duzia de motivos",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "duzia de motivos",
+            "quantidade": "1",
+            "motivoContem": "figura de linguagem"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-06",
+      "tipo": "negativos",
+      "entrada": "parafuso",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "parafuso",
+            "quantidade": "1",
+            "categoriaSugerida": "bazar"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-07",
+      "tipo": "negativos",
+      "entrada": "quina da mesa",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "quina da mesa",
+            "quantidade": "1",
+            "motivoContem": "canto de movel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-08",
+      "tipo": "negativos",
+      "entrada": "sal grosso",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "sal grosso",
+            "quantidade": "1",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      },
+      "nota": "'grossa'=144 nao pode disparar aqui"
+    },
+    {
+      "id": "negativos-09",
+      "tipo": "negativos",
+      "entrada": "molho de tomate",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "molho de tomate",
+            "quantidade": "1",
+            "categoriaSugerida": "mercearia"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negativos-10",
+      "tipo": "negativos",
+      "entrada": "uns tomates",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tomates",
+            "motivoContem": "quantidade indefinida"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-01",
+      "tipo": "ambiguos",
+      "entrada": "meia",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "meia",
+            "quantidade": "0.5",
+            "gatilho": "G3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-02",
+      "tipo": "ambiguos",
+      "entrada": "2 e 50 de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2.50",
+            "unidade": "kg",
+            "confianca": "baixa",
+            "gatilho": "G4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-03",
+      "tipo": "ambiguos",
+      "entrada": "dois e meio de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2.5",
+            "unidade": "kg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-04",
+      "tipo": "ambiguos",
+      "entrada": "um pacote de arroz",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "pct"
+          }
+        ]
+      },
+      "nota": "'um' = quantidade 1"
+    },
+    {
+      "id": "ambiguos-05",
+      "tipo": "ambiguos",
+      "entrada": "uma duzia",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "uma duzia",
+            "quantidade": "12",
+            "unidade": "un"
+          }
+        ]
+      },
+      "nota": "'uma' faz parte do token"
+    },
+    {
+      "id": "ambiguos-06",
+      "tipo": "ambiguos",
+      "entrada": "pao e queijo",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "pao",
+            "quantidade": "1",
+            "unidade": "un"
+          },
+          {
+            "nomeItem": "queijo",
+            "quantidade": "1",
+            "unidade": "kg"
+          }
+        ]
+      },
+      "nota": "nao existe produto 'pao e queijo' no lexico: dois itens"
+    },
+    {
+      "id": "ambiguos-07",
+      "tipo": "ambiguos",
+      "entrada": "leite de coco",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite de coco",
+            "quantidade": "1",
+            "categoriaSugerida": "bebidas"
+          }
+        ]
+      },
+      "nota": "o 'de' nao separa: expressao catalogada"
+    },
+    {
+      "id": "ambiguos-08",
+      "tipo": "ambiguos",
+      "entrada": "cachorro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cachorro",
+            "quantidade": "1",
+            "gatilho": "G1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-09",
+      "tipo": "ambiguos",
+      "entrada": "ovos (caipira)",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovos",
+            "quantidade": "1",
+            "observacaoContem": "caipira"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguos-10",
+      "tipo": "ambiguos",
+      "entrada": "carne sem gordura",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "1",
+            "unidade": "kg",
+            "observacaoContem": "sem gordura"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sugestao-01",
+      "tipo": "sugestao",
+      "entrada": "cachorro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cachorro",
+            "quantidade": "1",
+            "gatilho": "G1"
+          }
+        ]
+      },
+      "nota": "G1 apelido de animal"
+    },
+    {
+      "id": "sugestao-02",
+      "tipo": "sugestao",
+      "entrada": "a bruxa",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "a bruxa",
+            "quantidade": "1",
+            "gatilho": "G2"
+          }
+        ]
+      },
+      "nota": "G2 apelido nao animal fora de posicao"
+    },
+    {
+      "id": "sugestao-03",
+      "tipo": "sugestao",
+      "entrada": "meia",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "meia",
+            "quantidade": "0.5",
+            "gatilho": "G3"
+          }
+        ]
+      },
+      "nota": "G3"
+    },
+    {
+      "id": "sugestao-04",
+      "tipo": "sugestao",
+      "entrada": "2 e 50 de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2.50",
+            "gatilho": "G4"
+          }
+        ]
+      },
+      "nota": "G4"
+    },
+    {
+      "id": "sugestao-05",
+      "tipo": "sugestao",
+      "entrada": "duzia de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "12",
+            "unidade": "un",
+            "alertaContem": "vendido por peso"
+          }
+        ]
+      },
+      "nota": "G5 alerta, nao pergunta"
+    },
+    {
+      "id": "sugestao-06",
+      "tipo": "sugestao",
+      "entrada": "2 kg de carne",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "carne",
+            "quantidade": "2",
+            "unidade": "kg",
+            "confianca": "alta"
+          }
+        ]
+      },
+      "nota": "G7 confianca alta: nao pergunta"
+    },
+    {
+      "id": "sugestao-07",
+      "tipo": "sugestao",
+      "entrada": "biotina 5mg",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "biotina 5mg",
+            "quantidade": "1",
+            "categoriaSugerida": "outros"
+          }
+        ]
+      },
+      "nota": "G8 + 'mg' nao pertence ao conjunto canonico: fica colado no nome do produto"
+    },
+    {
+      "id": "sugestao-08",
+      "tipo": "sugestao",
+      "entrada": "racao para cachorro",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ração para cachorro",
+            "quantidade": "1",
+            "unidade": "kg",
+            "categoriaSugerida": "pet"
+          }
+        ]
+      },
+      "nota": "sem sugestao: item claro do lexico"
+    },
+    {
+      "id": "sugestao-09",
+      "tipo": "sugestao",
+      "entrada": "gato",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "gato",
+            "quantidade": "1",
+            "gatilho": "G1"
+          }
+        ]
+      },
+      "nota": "desfechos aplicar/manter sao testados no JUnit"
+    },
+    {
+      "id": "sugestao-10",
+      "tipo": "sugestao",
+      "entrada": "veado",
+      "fonte": "texto",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "veado",
+            "quantidade": "1"
+          }
+        ]
+      },
+      "nota": "conteudo sensivel: nunca sugerido proativamente (sem gatilho)"
+    },
+    {
+      "id": "ocr-01",
+      "tipo": "ocr",
+      "entrada": "arroz 5kg",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arroz",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "5"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-02",
+      "tipo": "ocr",
+      "entrada": "ARROZ    5 KG",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ARROZ",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "5"
+          }
+        ]
+      },
+      "nota": "espaco irregular e caixa alta"
+    },
+    {
+      "id": "ocr-03",
+      "tipo": "ocr",
+      "entrada": "cafe   500  g",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cafe",
+            "quantidade": "1",
+            "unidade": "g",
+            "pesoOuVolume": "500"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-04",
+      "tipo": "ocr",
+      "entrada": "arr0z #",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "arr0z",
+            "motivoContem": "ilegivel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-05",
+      "tipo": "ocr",
+      "entrada": "leite 1l ~",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "leite",
+            "motivoContem": "ilegivel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-06",
+      "tipo": "ocr",
+      "entrada": "açucar 1kg",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "açucar",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-07",
+      "tipo": "ocr",
+      "entrada": "cachorro",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "cachorro",
+            "quantidade": "1"
+          }
+        ]
+      },
+      "nota": "OCR nunca sugere nem converte apelido"
+    },
+    {
+      "id": "ocr-08",
+      "tipo": "ocr",
+      "entrada": "meia duzia de ovo",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "ovo",
+            "quantidade": "6",
+            "unidade": "un"
+          }
+        ]
+      },
+      "nota": "coletivo continua valendo no OCR"
+    },
+    {
+      "id": "ocr-09",
+      "tipo": "ocr",
+      "entrada": "tomate |||",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "tomate",
+            "motivoContem": "ilegivel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ocr-10",
+      "tipo": "ocr",
+      "entrada": "feijao 1 kg",
+      "fonte": "ocr",
+      "modo": "linha",
+      "esperado": {
+        "itens": [
+          {
+            "nomeItem": "feijao",
+            "quantidade": "1",
+            "unidade": "kg",
+            "pesoOuVolume": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

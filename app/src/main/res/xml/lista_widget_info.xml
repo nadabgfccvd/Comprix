@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Descricao do widget da lista: celula minima 250 x 40 dp, redimensionavel nos
+  dois eixos, redesenho periodico de 30 minutos (as mudancas dentro do app
+  atualizam na hora via ComprixApp, o periodo cobre mudancas de fora) e o
+  mesmo layout do provider como inicial.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="40dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/lista_widget"
+    android:widgetCategory="home_screen" />

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Silhueta monocromatica do icone entregue: folha de lista + selo do codigo de barras. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M38,32 h26 a7,7 0 0 1 7,7 v30 a7,7 0 0 1 -7,7 h-26 a7,7 0 0 1 -7,-7 v-30 a7,7 0 0 1 7,-7 Z"
+        android:fillColor="#FF000000" />
+    <path
+        android:pathData="M69,30 m-10,0 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 Z"
+        android:fillColor="#FF000000" />
+</vector>

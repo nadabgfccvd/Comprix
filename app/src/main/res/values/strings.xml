@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Comprix</string>
+
+    <!-- Descricoes de acessibilidade (TalkBack). O restante dos textos fica
+         junto do componente Compose que os exibe - o app e monolingue pt-BR. -->
+    <string name="desc_camera">Escanear produto com a camera</string>
+    <string name="desc_video">Gravar video guiado do produto</string>
+    <string name="desc_codigo_barras">Ler codigo de barras</string>
+    <string name="desc_grafico">Grafico de gastos</string>
+    <string name="desc_economia">Economia estimada</string>
+    <string name="desc_loja">Estabelecimento</string>
+    <string name="desc_arrastar">Arrastar para reordenar</string>
+    <string name="desc_moldura">Area de enquadramento</string>
+</resources>
