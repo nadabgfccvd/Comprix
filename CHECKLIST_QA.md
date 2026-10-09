@@ -5,6 +5,25 @@ Legenda: ✅ verificado · ⚙️ verificado por build/teste automatizado · �
 
 ---
 
+## 0. Estado atual — reconciliação com a versão publicada (v1.4.2)
+
+> **Nota de reconciliação (2026-10-10).** Este documento foi escrito no encerramento da
+> **entrega original (v1.0)** e preserva os números daquela fase (91 testes etc.).
+> As seções 1–4 abaixo são **histórico da v1.0**; o estado corrente do projeto é:
+
+| Evidência | Na entrega v1.0 (histórico) | Atual (v1.4.2, versionCode 8) |
+|---|---|---|
+| Testes unitários JVM | 91 · cobertura do domínio 91,3% instruções | **253** verdes (`./gradlew testDebugUnitTest`) · cobertura via `jacocoDominioReport` |
+| CI automático | não existia | **GitHub Actions** (`.github/workflows/ci.yml`): testes + lint + build em todo push/PR; badge no README |
+| Lint | `abortOnError = false` | `abortOnError = true` (erros falham o build; gate aplicado no CI via `lintDebug`) |
+| Assinatura de release | keystore auto-gerada e versionada no repo (`keystore/`, senha fixa no build.gradle) | **chave aposentada por segurança** — rotação na v1.4.2: chave RSA 4096 privada fora do repo, credenciais em `keystore.properties` (gitignored); release sem credenciais sai não assinado. Histórico git purgado (`git filter-repo`). Ver `SECURITY.md` e `docs/ROTACAO-DE-CHAVE-v1.4.2.md` |
+| OCR / alergênicos | extração + verificação por regras | mesma base, com **disclaimer explícito** na UI (FolhaDeRevisao e ficha do produto): valores são *sugestões* heurísticas — confianças fixas por tipo de campo, não probabilidades calibradas; nada salva sem revisão manual; o rótulo físico prevalece |
+| Funcionalidades novas desde a v1.0 | — | catálogo-semente (1.714 produtos) com autocomplete e tela própria, orçamento por lista, otimizador de compra mista com kits, lixeira com recuperação de 30 dias, backup/restauração com agendamento, alertas de restrição alimentar, widget, splits por ABI |
+
+As 5 jornadas (seção 2) continuam válidas como roteiro de QA e devem ser re-executadas a cada release maior; o critério #10 da seção 1 refere-se aos 91 testes da época.
+
+---
+
 ## 1. Critérios de aceite da Seção 11
 
 | # | Critério | Status | Evidência |
@@ -18,8 +37,8 @@ Legenda: ✅ verificado · ⚙️ verificado por build/teste automatizado · �
 | 7 | Foto e vídeo (até 30 s) extraem nome, preço, peso/volume, código de barras, selos, validade, fabricação, ingredientes e glúten/alergênicos | ✅⚙️ | `ExtratorDeRotulo` (pipeline real sobre o texto do ML Kit) + `MescladorDeLeituras` (voto majoritário entre quadros), cobertos por `RotuloTest` (18 testes com amostras de rótulo). Captura real via CameraX; vídeo de 30 s com extração de quadros por `MediaMetadataRetriever`. Nada mockado. |
 | 8 | Modo técnico desligado por padrão, aviso na 1ª ativação, campos nutricionais customizáveis | ✅🔍 | `ConfiguracoesApp.modoTecnico = false` por padrão; diálogo "Ativar o modo técnico?" em `ConfiguracoesScreen` na primeira ativação; seleção de nutrientes comparados em `NutricionalScreen` (`Nutriente.selecaoPadrao` + chips de escolha). |
 | 9 | Temas claro/escuro/alto contraste funcionam e respeitam a escolha | ✅🔍 | `TipoTema.{SISTEMA, CLARO, ESCURO}` + flag `altoContraste` + `coresDinamicas` (desligada por padrão) em `ComprixTema`; preferência persistida no Room e aplicada já na `MainActivity` antes de montar o grafo. |
-| 10 | Testes unitários do motor de preços e conversão de unidades, >80% de cobertura no domínio | ✅⚙️ | **91 testes** verdes (`./gradlew testDebugUnitTest`). JaCoCo: **91,3% de instruções e 95,2% de linhas** no pacote `domain` (exclui `domain/modelo`, que é só dado). `MotorDePrecos` 95,6% · `ConversorDeUnidades` 94,8%. |
-| 11 | `.apk` instalável via `./gradlew assembleDebug` (ou `assembleRelease` com keystore automática), sem passos manuais | ✅⚙️ | `BUILD SUCCESSFUL` para **ambos**. Debug: 74 MB. Release: 64 MB, R8 + `shrinkResources`, assinado com a keystore gerada pelo próprio build (`keystore/comprix-release.jks`). |
+| 10 | Testes unitários do motor de preços e conversão de unidades, >80% de cobertura no domínio | ✅⚙️ | *(histórico v1.0)* **91 testes** verdes (`./gradlew testDebugUnitTest`). JaCoCo: **91,3% de instruções e 95,2% de linhas** no pacote `domain` (exclui `domain/modelo`, que é só dado). `MotorDePrecos` 95,6% · `ConversorDeUnidades` 94,8%. **Atual (v1.4.2): 253 testes** — ver seção 0. |
+| 11 | `.apk` instalável via `./gradlew assembleDebug` (ou `assembleRelease` com keystore automática), sem passos manuais | ✅⚙️ | *(histórico v1.0)* `BUILD SUCCESSFUL` para **ambos**. Debug: 74 MB. Release: 64 MB, R8 + `shrinkResources`, assinado com a keystore gerada pelo próprio build (`keystore/comprix-release.jks`). **Atual (v1.4.2):** a keystore versionada foi aposentada (rotação, seção 0); release assinado exige `keystore.properties` local — sem ele o APK sai não assinado. Debug e testes seguem sem passos manuais. |
 | 12 | Instalação limpa: app abre, onboarding funciona, as 5 jornadas completam sem travar, sem tela branca e sem internet | ✅🔍 | Gate da Fase 8, seção 2 deste documento (jornada a jornada). Banco é criado e semeado no 1º acesso (`DadosIniciais`: 14 categorias); `MainActivity` mostra uma splash enquanto lê as configurações, evitando tela em branco e remontagem do grafo. |
 | 13 | OCR e código de barras funcionam no primeiro uso, sem download (ML Kit *bundled*) | ✅⚙️ | Dependências `com.google.mlkit:text-recognition:16.0.1` e `com.google.mlkit:barcode-scanning:17.3.0` (variantes bundled). Confirmado dentro do APK: `lib/*/libmlkit_google_ocr_pipeline.so` e `lib/*/libbarhopper_v3.so` nas 4 ABIs. Nenhum `meta-data com.google.mlkit.vision.DEPENDENCIES` (que indicaria modelo baixado sob demanda). |
 | 14 | Busca por `TODO`, `FIXME`, `not implemented`, `em breve`, placeholders não retorna nada em código de produção | ✅⚙️ | `grep -rnE "(^\|[^a-zA-Z])(TODO\|FIXME\|XXX\|HACK)([^a-zA-Z]\|$)"` em `app/src/main` → **0 ocorrências**. `grep -rniE "em breve\|não implementad\|mock\|lorem ipsum"` → **0 ocorrências**. (As ocorrências de `placeholder` são o parâmetro homônimo do `TextField` do Material 3.) |
@@ -112,7 +131,7 @@ esponja · 2 saco de lixo 50l · papel toalha · desinfetante 500ml
 
 ---
 
-## 4. Resumo dos comandos executados nesta entrega
+## 4. Resumo dos comandos executados nesta entrega (histórico v1.0)
 
 ```
 ./gradlew :app:testDebugUnitTest      → BUILD SUCCESSFUL · 91 testes · 0 falhas
@@ -121,6 +140,8 @@ esponja · 2 saco de lixo 50l · papel toalha · desinfetante 500ml
 ./gradlew :app:assembleRelease        → app-release.apk (64 MB, R8 + shrink, assinado)
 aapt2 dump badging app-debug.apk      → minSdk 26 · targetSdk 35 · permissões: CAMERA, VIBRATE
 ```
+
+**Estado atual (v1.4.2):** `./gradlew testDebugUnitTest` → **253 testes · 0 falhas**; `lintDebug` com erros bloqueando; CI no GitHub Actions repete testes + lint + build a cada push (ver seção 0).
 
 Correções feitas em código de produção a partir do que os testes revelaram:
 

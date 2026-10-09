@@ -1,4 +1,4 @@
-import java.io.File
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -9,32 +9,31 @@ plugins {
 }
 
 /**
- * Gera automaticamente (uma unica vez) a keystore usada para assinar o build de
- * release. Assim `./gradlew assembleRelease` funciona sem nenhum passo manual,
- * conforme exigido na Secao 12 do briefing.
+ * Credenciais de assinatura de release — NUNCA mais no repositorio.
+ *
+ * A chave usada até a v1.4.1 (auto-gerada com senha fixa e versionada em
+ * `keystore/`) é considerada COMPROMETIDA e foi removida do projeto e do
+ * historico git; a partir da v1.4.2 os releases sao assinados com a chave
+ * privada v2, que vive FORA do repositorio.
+ *
+ * O build procura as credenciais em `keystore.properties` na raiz (gitignored):
+ *
+ * ```properties
+ * storeFile=/caminho/absoluto/para/comprix-release-v2.jks
+ * storePassword=...
+ * keyAlias=comprix-v2
+ * keyPassword=...
+ * ```
+ *
+ * Sem esse arquivo, o build de release funciona normalmente e produz um APK
+ * NAO ASSINADO (util para CI); a assinatura de producao acontece na maquina
+ * do mantenedor. Veja docs/ROTACAO-DE-CHAVE-v1.4.2.md.
  */
-fun garantirKeystoreDeRelease(): File {
-    val arquivo = rootProject.file("keystore/comprix-release.jks")
-    if (!arquivo.exists()) {
-        arquivo.parentFile.mkdirs()
-        val keytool = File(File(System.getProperty("java.home"), "bin"), "keytool").absolutePath
-        val processo = ProcessBuilder(
-            keytool, "-genkeypair", "-v",
-            "-keystore", arquivo.absolutePath,
-            "-storetype", "PKCS12",
-            "-storepass", "comprix",
-            "-keypass", "comprix",
-            "-alias", "comprix",
-            "-keyalg", "RSA",
-            "-keysize", "2048",
-            "-validity", "10000",
-            "-dname", "CN=Comprix, OU=Mobile, O=Comprix, L=Diamantina, ST=MG, C=BR",
-        ).redirectErrorStream(true).start()
-        processo.inputStream.bufferedReader().readText()
-        processo.waitFor()
+val credenciaisDeAssinatura: Properties? = rootProject.file("keystore.properties")
+    .takeIf { it.exists() }
+    ?.let { arquivo ->
+        Properties().apply { arquivo.inputStream().use { load(it) } }
     }
-    return arquivo
-}
 
 android {
     namespace = "br.com.comprix"
@@ -44,19 +43,20 @@ android {
         applicationId = "br.com.comprix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.4.1"
+        versionCode = 8
+        versionName = "1.4.2"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += listOf("pt-rBR")
     }
 
     signingConfigs {
-        create("comprix") {
-            val ks = garantirKeystoreDeRelease()
-            storeFile = ks
-            storePassword = "comprix"
-            keyAlias = "comprix"
-            keyPassword = "comprix"
+        if (credenciaisDeAssinatura != null) {
+            create("comprix") {
+                storeFile = file(credenciaisDeAssinatura.getProperty("storeFile"))
+                storePassword = credenciaisDeAssinatura.getProperty("storePassword")
+                keyAlias = credenciaisDeAssinatura.getProperty("keyAlias")
+                keyPassword = credenciaisDeAssinatura.getProperty("keyPassword")
+            }
         }
     }
 
@@ -74,7 +74,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("comprix")
+            signingConfig = credenciaisDeAssinatura
+                ?.let { signingConfigs.getByName("comprix") }
         }
     }
 
@@ -126,7 +127,11 @@ android {
     }
 
     lint {
-        abortOnError = false
+        // Erros de lint falham o build (o CI roda `lintDebug` em todo push/PR —
+        // ver .github/workflows/ci.yml). checkReleaseBuilds segue desligado para
+        // o build de release nao re-executar lint localmente (lento); o gate de
+        // qualidade de lint fica no CI.
+        abortOnError = true
         checkReleaseBuilds = false
     }
 }

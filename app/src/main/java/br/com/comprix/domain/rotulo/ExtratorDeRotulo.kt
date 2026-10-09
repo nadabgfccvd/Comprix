@@ -46,6 +46,21 @@ import java.math.RoundingMode
  * costumam trazer "VAL" e "FAB"; quando nao ha rotulo, a data mais distante no
  * futuro vira validade e a mais antiga vira fabricacao.
  *
+ * ## Natureza das confiancas
+ * Os valores em `confiancaPorCampo` sao PESOS HEURISTICOS fixos por tipo de
+ * campo — o quanto cada regra de extracao costuma acertar em gondola — e NAO
+ * probabilidades calibradas do OCR (o ML Kit nao expoe confianca por palavra
+ * na API de texto). Servem para um unico fim: destacar campos suspeitos na
+ * revisao (abaixo de 0,6 ganha aviso ambar em FolhaDeRevisao).
+ *
+ * ## Sugestoes, nao verdade
+ * Tudo o que sai daqui e SUGESTAO: nada entra no banco sem passar pela revisao
+ * do usuario (FolhaDeRevisao), e o resultado depende da qualidade da foto,
+ * da iluminacao e do rotulo. A deteccao de gluten/alergenicos e por texto +
+ * regras (RDC 26/2015) e pode falhar dos dois lados — falso positivo e falso
+ * negativo. O app NAO substitui a leitura do rotulo fisico; em caso de duvida,
+ * o rotulo impresso prevalece.
+ *
  * Nenhum campo e obrigatorio: o que nao for reconhecido simplesmente fica nulo
  * e o usuario preenche na tela de revisao.
  */

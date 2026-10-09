@@ -3,3 +3,8 @@ app/build/
 build/
 local.properties
 *.log
+
+# Credenciais de assinatura — NUNCA versionar (rotacao v1.4.2, docs/ROTACAO-DE-CHAVE-v1.4.2.md)
+keystore.properties
+*.jks
+*.keystore

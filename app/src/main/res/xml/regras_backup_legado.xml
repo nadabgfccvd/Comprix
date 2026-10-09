@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 8-11. -->
+<!-- Android 8-11. Somente o banco entra no backup; o resto do app já fica
+     fora por padrão (include-only). -->
 <full-backup-content>
     <include domain="database" path="." />
-    <exclude domain="file" path="backups" />
 </full-backup-content>

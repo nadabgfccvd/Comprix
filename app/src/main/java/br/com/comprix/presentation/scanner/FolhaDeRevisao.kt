@@ -99,6 +99,32 @@ fun FolhaDeRevisao(
         },
     ) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
+            // Aviso permanente (independente da confianca): a leitura e sugestao.
+            // Cada campo exige conferencia humana; o rotulo fisico prevalece.
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(cores.ambarSuave)
+                    .padding(11.dp),
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                IconeComprix(
+                    Icones.alerta,
+                    null,
+                    tamanho = TamanhoDeIcone.pequeno,
+                    tinta = cores.ambarTinta,
+                )
+                Text(
+                    "Estes campos são sugestões da leitura da câmera — confira e " +
+                        "corrija antes de adicionar. O Comprix não substitui a " +
+                        "leitura do rótulo físico.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = cores.ambarTinta,
+                )
+            }
+            EspacoVertical(12.dp)
             if (leitura != null && leitura.quadrosAnalisados > 1) {
                 Row(
                     Modifier

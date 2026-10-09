@@ -228,6 +228,12 @@ fun ProdutoScreen(viewModel: ProdutoViewModel, aoVoltar: () -> Unit) {
                             }
                         }
                     }
+                    EspacoVertical(6.dp)
+                    Legenda(
+                        "Alertas calculados a partir do texto do rótulo e das suas regras — " +
+                            "podem falhar (falso positivo ou negativo). Sempre confira o " +
+                            "rótulo físico antes de consumir.",
+                    )
                 }
             }
 

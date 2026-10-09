@@ -21,6 +21,12 @@ import br.com.comprix.util.TextoUtil
  *    substring do texto normalizado).
  *
  * Informativo por design: o app avisa, nunca remove nem reordena nada.
+ *
+ * **Limites** (mesma mensagem dada ao usuario na ficha do produto): os dados
+ * do produto vem de OCR/texto e regras — podem falhar para mais (falso
+ * positivo) ou para menos (falso negativo, pior caso: rotulo mal fotografado,
+ * alergenico nao listado). O alerta e lembrete, nao garantia; o rotulo fisico
+ * sempre prevalece.
  */
 object VerificadorDeAlergias {
 
