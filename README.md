@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <em>Compareça — listas de compras inteligentes: compare preços entre mercados.<br/>
+  <em>Compare preços entre mercados — listas de compras inteligentes.<br/>
   Sem login. Sem nuvem. Sem internet.</em>
 </p>
 
