@@ -464,7 +464,7 @@ fun ListaScreen(
                 // Total ANIMADO: ao marcar item ou gravar preco, o numero caminha
                 // ate o novo valor em vez de piscar - o olho acompanha a mudança.
                 val totalAnimado by animateIntAsState(
-                    targetValue = centavosDoTotal(totalAtual).coerceIn(0, Int.MAX_VALUE),
+                    targetValue = centavosDoTotal(totalAtual).coerceIn(0L, Int.MAX_VALUE.toLong()).toInt(),
                     animationSpec = tween(280),
                     label = "totalEstimadoAnimado",
                 )
