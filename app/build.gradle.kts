@@ -142,7 +142,7 @@ ksp {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
+    val composeBom = platform("androidx.compose:compose-bom:2026.09.00")
     implementation(composeBom)
 
     // --- Base Android / Kotlin ---
