@@ -147,7 +147,7 @@ dependencies {
 
     // --- Base Android / Kotlin ---
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // --- Compose / Material 3 ---
     implementation("androidx.activity:activity-compose:1.9.3")
@@ -181,7 +181,7 @@ dependencies {
 
     // --- Testes (camada de dominio, 100% JVM) ---
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
