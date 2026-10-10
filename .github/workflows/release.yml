@@ -2,7 +2,9 @@ name: Release
 
 # Builda e publica os APKs de uma tag v* na release correspondente.
 # Assinatura OPCIONAL: se os segredos abaixo existirem, os APKs saem
-# assinados; sem eles, saem nao assinados (o CI nunca bloqueia por isso).
+# assinados e vão direto para a release; sem eles, os APKs ficam em
+# ARTIFACT do workflow para assinatura local (apksigner) — a release
+# pública nunca recebe APK não assinado (a instalação falha no aparelho).
 #
 # Segredos esperados (Settings > Secrets > Actions):
 #   KEYSTORE_BASE64   - o .jks codificado em base64 (base64 -w0 comprix-release-v2.jks)
@@ -12,6 +14,7 @@ name: Release
 #
 # A chave NUNCA toca o repositorio: e decodificada em $RUNNER_TEMP (fora do
 # checkout) e o keystore.properties e gerado na hora (gitignored).
+# Sem segredos, o mantenedor baixa o artifact e assina com apksigner (v1.5.0).
 
 on:
   push:
@@ -65,14 +68,28 @@ jobs:
       - name: Build release (lint vital incluído)
         run: ./gradlew assembleRelease
 
-      - name: Publicar APKs na release da tag
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Empacotar APKs do release
+        run: |
+          mkdir -p app/build/apks-empacotados
+          cp app/build/outputs/apk/release/*.apk app/build/apks-empacotados/
+          ls -la app/build/apks-empacotados/
+
+      - name: Publicar APKs ASSINADOS na release da tag
+        if: startsWith(github.ref, 'refs/tags/') && env.ASSINADO == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          ls -la app/build/outputs/apk/release/
-          gh release upload "$TAG" app/build/outputs/apk/release/*.apk --clobber \
-            || gh release create "$TAG" app/build/outputs/apk/release/*.apk \
+          gh release upload "$TAG" app/build/apks-empacotados/*.apk --clobber \
+            || gh release create "$TAG" app/build/apks-empacotados/*.apk \
                  --title "$TAG" --generate-notes
-          echo "APKs publicados na release $TAG"
+          echo "APKs ASSINADOS publicados na release $TAG"
+
+      - name: APKs não assinados vão para artifact (release pública nunca recebe APK sem assinatura)
+        if: env.ASSINADO != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: apks-release-nao-assinados${{ startsWith(github.ref, 'refs/tags/') && format('-{0}', github.ref_name) || '' }}
+          path: app/build/apks-empacotados/*.apk
+          if-no-files-found: error
+          retention-days: 14
