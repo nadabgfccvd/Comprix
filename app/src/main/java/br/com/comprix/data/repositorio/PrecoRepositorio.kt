@@ -7,6 +7,7 @@ import br.com.comprix.data.local.Mapeadores
 import br.com.comprix.data.local.PrecoDao
 import br.com.comprix.domain.modelo.Estabelecimento
 import br.com.comprix.domain.modelo.ItemDaLista
+import br.com.comprix.domain.modelo.PrecoDoHistorico
 import br.com.comprix.domain.modelo.PrecoRegistrado
 import br.com.comprix.domain.unidade.ConversorDeUnidades
 import br.com.comprix.util.Formatadores
@@ -207,6 +208,22 @@ class PrecoRepositorio(
                 quando = Mapeadores.epochParaDataHora(entidade.registradoEm),
                 preco = Mapeadores.centavosParaReais(entidade.precoCentavos),
                 estabelecimentoId = entidade.estabelecimentoId,
+            )
+        }
+
+    /**
+     * Historico global de precos do acervo, com produto e loja resolvidos, do
+     * mais recente para o mais antigo. Alimenta o CSV de precos das
+     * Configuracoes - e a visao "tudo que o app ja anotou", em um arquivo.
+     */
+    suspend fun listarHistoricoDePrecos(): List<PrecoDoHistorico> =
+        precoDao.listarHistoricoDePrecos().map { linha ->
+            PrecoDoHistorico(
+                produto = linha.nomeProduto,
+                loja = linha.nomeLoja,
+                preco = Mapeadores.centavosParaReais(linha.precoCentavos),
+                quantidade = linha.quantidadeBase,
+                quando = Mapeadores.epochParaDataHora(linha.registradoEm),
             )
         }
 }

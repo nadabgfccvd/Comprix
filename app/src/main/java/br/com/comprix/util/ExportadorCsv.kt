@@ -1,6 +1,7 @@
 package br.com.comprix.util
 
 import br.com.comprix.domain.modelo.CompraFinalizada
+import br.com.comprix.domain.modelo.PrecoDoHistorico
 
 /**
  * Gerador de CSV do historico de compras - funcao PURA, sem Android, feita
@@ -35,7 +36,22 @@ object ExportadorCsv {
         }
     }
 
-    /** Uma linha do CSV; separada da montagem do arquivo para ficar testavel isolada. */
+    const val CABECALHO_PRECOS = "produto;loja;preco;quantidade;data"
+
+    /**
+     * Cabecalho + uma linha por anotacao de preco do acervo, na ordem
+     * recebida (o repositorio ja entrega do mais recente para o mais antigo).
+     * Mesmas decisoes de formato do [comprasCsv]: BOM, `;` e dinheiro pt-BR.
+     */
+    fun precosCsv(linhas: List<PrecoDoHistorico>): String = buildString {
+        append(BOM)
+        appendLine(CABECALHO_PRECOS)
+        linhas.forEach { linha ->
+            appendLine(linhaDoPreco(linha))
+        }
+    }
+
+    /** Uma linha do CSV de compras; separada da montagem do arquivo para ficar testavel isolada. */
     private fun linhaDaCompra(compra: CompraFinalizada): String = listOf(
         Formatadores.data(compra.data),
         compra.nomeLista,
@@ -43,6 +59,15 @@ object ExportadorCsv {
         compra.quantidadeItens.toString(),
         Formatadores.moedaSemSimbolo(compra.totalPago),
         Formatadores.moedaSemSimbolo(compra.economia),
+    ).joinToString(";") { escapar(it) }
+
+    /** Uma linha do CSV de precos; quantidade vazia sai como `-` para a coluna nao sumir no Calc. */
+    private fun linhaDoPreco(linha: PrecoDoHistorico): String = listOf(
+        linha.produto,
+        linha.loja,
+        Formatadores.moedaSemSimbolo(linha.preco),
+        linha.quantidade.ifBlank { "-" },
+        Formatadores.data(linha.quando),
     ).joinToString(";") { escapar(it) }
 
     /**

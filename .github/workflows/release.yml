@@ -1,0 +1,78 @@
+name: Release
+
+# Builda e publica os APKs de uma tag v* na release correspondente.
+# Assinatura OPCIONAL: se os segredos abaixo existirem, os APKs saem
+# assinados; sem eles, saem nao assinados (o CI nunca bloqueia por isso).
+#
+# Segredos esperados (Settings > Secrets > Actions):
+#   KEYSTORE_BASE64   - o .jks codificado em base64 (base64 -w0 comprix-release-v2.jks)
+#   KEYSTORE_PASSWORD - storePassword
+#   KEY_ALIAS         - keyAlias (ex.: comprix-v2)
+#   KEY_PASSWORD      - keyPassword
+#
+# A chave NUNCA toca o repositorio: e decodificada em $RUNNER_TEMP (fora do
+# checkout) e o keystore.properties e gerado na hora (gitignored).
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build release e publicar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Licenças do Android SDK (pré-instalado no runner)
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Cache do Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Preparar assinatura (opcional, via segredos)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
+            JKS="$RUNNER_TEMP/comprix-release.jks"
+            echo "$KEYSTORE_BASE64" | base64 -d > "$JKS"
+            printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$JKS" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > keystore.properties
+            echo "ASSINADO=true" >> "$GITHUB_ENV"
+            echo "Keystore restaurado em $JKS (fora do checkout)."
+          else
+            echo "Sem segredos de assinatura completos: a release sai NÃO assinada."
+          fi
+
+      - name: Testes unitários (gate)
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Build release (lint vital incluído)
+        run: ./gradlew assembleRelease
+
+      - name: Publicar APKs na release da tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          ls -la app/build/outputs/apk/release/
+          gh release upload "$TAG" app/build/outputs/apk/release/*.apk --clobber \
+            || gh release create "$TAG" app/build/outputs/apk/release/*.apk \
+                 --title "$TAG" --generate-notes
+          echo "APKs publicados na release $TAG"

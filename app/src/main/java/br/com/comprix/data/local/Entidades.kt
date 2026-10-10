@@ -78,6 +78,19 @@ data class ContagemPorCategoria(val categoriaId: Long, val total: Int)
  */
 data class ContagemPorProduto(val produtoId: Long, val total: Int)
 
+/**
+ * Projecao do CSV global de precos: join `historico_precos` + `produtos` +
+ * `estabelecimentos`, com os nomes ja resolvidos. Alimenta o botao
+ * "Exportar histórico de preços (CSV)" das Configuracoes.
+ */
+data class PrecoHistoricoComRotulo(
+    val nomeProduto: String,
+    val nomeLoja: String,
+    val precoCentavos: Long,
+    val quantidadeBase: String,
+    val registradoEm: Long,
+)
+
 @Entity(tableName = "listas")
 data class ListaEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

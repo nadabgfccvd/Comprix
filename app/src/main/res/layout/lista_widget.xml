@@ -48,4 +48,14 @@
         android:textSize="12sp"
         android:textColor="#FFB9C5BD"
         android:text="0 de 0 comprados" />
+
+    <TextView
+        android:id="@+id/texto_estimado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp"
+        android:textColor="#FF9FB0A4"
+        android:text="" />
 </LinearLayout>

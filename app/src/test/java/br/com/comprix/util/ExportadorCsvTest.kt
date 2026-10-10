@@ -1,6 +1,7 @@
 package br.com.comprix.util
 
 import br.com.comprix.domain.modelo.CompraFinalizada
+import br.com.comprix.domain.modelo.PrecoDoHistorico
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import org.junit.Assert.assertEquals
@@ -90,5 +91,56 @@ class ExportadorCsvTest {
         val linha = csv.trim().split("\n")[1]
         assertTrue(linha.contains("Mercado Central"))
         assertTrue(!linha.contains("\""))
+    }
+
+    // ---- CSV de precos (historico global) --------------------------------
+
+    private fun preco(
+        produto: String = "Arroz tipo 1 5kg",
+        loja: String = "Mercado Central",
+        valor: String = "27.90",
+        quantidade: String = "5 kg",
+        data: LocalDateTime = LocalDateTime.of(2026, 3, 9, 10, 30),
+    ) = PrecoDoHistorico(
+        produto = produto,
+        loja = loja,
+        preco = BigDecimal(valor),
+        quantidade = quantidade,
+        quando = data,
+    )
+
+    @Test
+    fun `csv de precos tem cabecalho fixo e linha pt-BR`() {
+        val csv = ExportadorCsv.precosCsv(listOf(preco()))
+        assertTrue(csv.startsWith("\uFEFF"))
+        val linhas = csv.trim().split("\n")
+        assertEquals("produto;loja;preco;quantidade;data", linhas[0])
+        assertEquals(
+            "Arroz tipo 1 5kg;Mercado Central;27,90;5 kg;09/03/2026",
+            linhas[1],
+        )
+    }
+
+    @Test
+    fun `csv de precos escapa produto com ponto e virgula e aspas`() {
+        val csv = ExportadorCsv.precosCsv(
+            listOf(preco(produto = "Óleo \"20L\"; bidão")),
+        )
+        val linha = csv.trim().split("\n")[1]
+        assertTrue(linha.startsWith("\"Óleo \"\"20L\"\"; bidão\";Mercado Central;27,90"))
+    }
+
+    @Test
+    fun `csv de precos sem registros sai so com o cabecalho`() {
+        val csv = ExportadorCsv.precosCsv(emptyList())
+        val linhas = csv.trim().split("\n")
+        assertEquals(1, linhas.size)
+        assertEquals(ExportadorCsv.CABECALHO_PRECOS, linhas[0])
+    }
+
+    @Test
+    fun `csv de precos usa traco quando a quantidade vem vazia`() {
+        val csv = ExportadorCsv.precosCsv(listOf(preco(quantidade = "")))
+        assertTrue(csv.contains(";27,90;-;09/03/2026"))
     }
 }

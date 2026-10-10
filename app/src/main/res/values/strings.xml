@@ -12,4 +12,5 @@
     <string name="desc_loja">Estabelecimento</string>
     <string name="desc_arrastar">Arrastar para reordenar</string>
     <string name="desc_moldura">Area de enquadramento</string>
+    <string name="desc_widget_lista">Progresso da lista de compras em andamento</string>
 </resources>

@@ -11,4 +11,6 @@
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/lista_widget"
+    android:previewLayout="@layout/lista_widget"
+    android:description="@string/desc_widget_lista"
     android:widgetCategory="home_screen" />

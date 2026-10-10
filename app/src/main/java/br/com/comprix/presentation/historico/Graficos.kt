@@ -381,13 +381,18 @@ fun GraficoDeLinha(
     val minimo = pontos.minOf { it.valor }
     val amplitude = (maximo - minimo).coerceAtLeast(BigDecimal.ONE)
     val descricao = pontos.joinToString("; ") { "${it.rotulo}: ${Formatadores.moeda(it.valor)}" }
+    /** Media simples do periodo - a linha tracejada que dá referência de leitura. */
+    val media = pontos.fold(BigDecimal.ZERO) { soma, ponto -> soma + ponto.valor }
+        .divide(BigDecimal(pontos.size), 2, RoundingMode.HALF_UP)
 
     Column(modifier.fillMaxWidth()) {
         Canvas(
             Modifier
                 .fillMaxWidth()
                 .height(altura)
-                .clearAndSetSemantics { contentDescription = "Variação de preço. $descricao" },
+                .clearAndSetSemantics {
+                    contentDescription = "Variação de preço. Média ${Formatadores.moeda(media)}. $descricao"
+                },
         ) {
             if (pontos.size == 1) {
                 drawCircle(cores.marca, radius = 7f, center = Offset(size.width / 2f, size.height / 2f))
@@ -410,6 +415,21 @@ fun GraficoDeLinha(
                 )
             }
             drawPath(caminho, cores.marca, style = Stroke(width = 2.5f, cap = StrokeCap.Round))
+            // Linha de media: mesma escala dos pontos, tracejada em verde para
+            // nao competir com a linha do preco. Responde "estou pagando na
+            // media ou acima dela?" sem precisar de calculadora.
+            val fracaoDaMedia = (media - minimo)
+                .divide(amplitude, 4, RoundingMode.HALF_UP)
+                .toFloat()
+                .coerceIn(0f, 1f)
+            val yDaMedia = size.height - (size.height * 0.84f * fracaoDaMedia) - size.height * 0.08f
+            drawLine(
+                color = cores.verdeTinta,
+                start = Offset(0f, yDaMedia),
+                end = Offset(size.width, yDaMedia),
+                strokeWidth = 1.8f,
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f)),
+            )
         }
         Row(
             Modifier.fillMaxWidth().padding(top = 5.dp),
@@ -418,6 +438,12 @@ fun GraficoDeLinha(
             Legenda(pontos.first().rotulo)
             Legenda(pontos.last().rotulo)
         }
+        LegendaDoGrafico(
+            listOf(
+                cores.marca to "Preço registrado",
+                cores.verdeTinta to "Média: ${Formatadores.moeda(media)}",
+            ),
+        )
     }
 }
 

@@ -9,12 +9,14 @@ import br.com.comprix.data.local.DecisaoDoParserEntity
 import br.com.comprix.data.local.Mapeadores
 import br.com.comprix.data.repositorio.CatalogoRepositorio
 import br.com.comprix.data.repositorio.ConfiguracoesRepositorio
+import br.com.comprix.data.repositorio.PrecoRepositorio
 import br.com.comprix.domain.modelo.Alergeno
 import br.com.comprix.domain.modelo.AlergiaCustomizada
 import br.com.comprix.domain.modelo.ConfiguracoesApp
 import br.com.comprix.domain.modelo.PerfilRestricoes
 import br.com.comprix.domain.modelo.Produto
 import br.com.comprix.domain.modelo.TipoTema
+import br.com.comprix.util.ExportadorCsv
 import br.com.comprix.util.Formatadores
 import br.com.comprix.util.TextoUtil
 import java.io.File
@@ -40,6 +42,7 @@ class ConfiguracoesViewModel(
     private val configuracoesRepositorio: ConfiguracoesRepositorio,
     private val catalogoRepositorio: CatalogoRepositorio,
     private val backup: GerenciadorDeBackup,
+    private val precoRepositorio: PrecoRepositorio,
 ) : ViewModel() {
 
     data class EstadoDasConfiguracoes(
@@ -265,6 +268,29 @@ class ConfiguracoesViewModel(
             configuracoesRepositorio.registrarBackup()
             _mensagem.value = if (resultado.isSuccess) "Backup exportado." else "Não consegui exportar."
             recarregarExtras()
+        }
+    }
+
+    /**
+     * Exporta o historico global de precos (tabela `historico_precos` + nomes
+     * resolvidos) como CSV pelo seletor do sistema. Mesmo padrao do backup:
+     * arquivo montado em memoria e escrito de uma vez, sem permissao.
+     */
+    fun exportarCsvDePrecos(contexto: Context, destino: Uri) {
+        viewModelScope.launch {
+            val resultado = runCatching {
+                withContext(Dispatchers.IO) {
+                    val csv = ExportadorCsv.precosCsv(precoRepositorio.listarHistoricoDePrecos())
+                    contexto.contentResolver.openOutputStream(destino)?.use { saida ->
+                        saida.write(csv.toByteArray(Charsets.UTF_8))
+                    } ?: error("destino inválido")
+                }
+            }
+            _mensagem.value = if (resultado.isSuccess) {
+                "CSV de preços salvo com todo o histórico."
+            } else {
+                "Não consegui exportar o CSV de preços."
+            }
         }
     }
 

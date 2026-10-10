@@ -6,11 +6,14 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import android.widget.RemoteViews
 import br.com.comprix.R
 import br.com.comprix.di.ServiceLocator
 import br.com.comprix.domain.modelo.ResumoDeLista
 import br.com.comprix.presentation.MainActivity
+import br.com.comprix.util.Formatadores
+import java.math.BigDecimal
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -28,9 +31,10 @@ import kotlinx.coroutines.runBlocking
  *    remoto, padrao comum para widgets) le o resumo pelo
  *    `listaRepositorio.resumos`: contagem de itens e de comprados sai do
  *    Room, sem rede nem ViewModel - o widget funciona offline por construcao;
- * 3. as `RemoteViews` recebem nome, barra e contagem, e o widget inteiro
- *    abre o app ao toque (o toque numa view remota nao roda codigo do app -
- *    so PendingIntent).
+ * 3. as `RemoteViews` recebem nome, barra, contagem e o total estimado da
+ *    lista (a linha do estimado some quando nao ha preco anotado), e o widget
+ *    inteiro abre o app ao toque (o toque numa view remota nao roda codigo do
+ *    app - so PendingIntent).
  *
  * Quando o app esta aberto e muda qualquer lista/item, o `ComprixApp` coleta o
  * mesmo Flow de resumos e pede o redesenho via [atualizarTudo] - a logica de
@@ -88,6 +92,20 @@ class ListaWidgetProvider : AppWidgetProvider() {
                 R.id.texto_contagem,
                 if (total == 0) "Abra o app para comecar" else "$comprados de $total comprados",
             )
+
+            // Total estimado da lista: some quando nao ha precos anotados ainda,
+            // para o widget vazio ficar com duas linhas limpas, nao tres.
+            val estimado: BigDecimal = resumo?.totalEstimado ?: BigDecimal.ZERO
+            visoes.setViewVisibility(
+                R.id.texto_estimado,
+                if (estimado.signum() > 0) View.VISIBLE else View.GONE,
+            )
+            if (estimado.signum() > 0) {
+                visoes.setTextViewText(
+                    R.id.texto_estimado,
+                    "≈ ${Formatadores.moeda(estimado)} estimados",
+                )
+            }
 
             // Widget inteiro clicavel: abre o app (unica Activity, MainActivity).
             val intencao = Intent(contexto, MainActivity::class.java)

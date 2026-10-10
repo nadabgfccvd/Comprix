@@ -123,6 +123,12 @@ fun ConfiguracoesScreen(
         ActivityResultContracts.CreateDocument("text/plain"),
     ) { destino -> destino?.let { viewModel.exportarPara(contexto, it) } }
 
+    // Mesmo padrao do CreateDocument do backup, com MIME de planilha: o CSV
+    // de precos sai pelo seletor do sistema, sem permissao de armazenamento.
+    val escolherDestinoCsvDePrecos = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv"),
+    ) { destino -> destino?.let { viewModel.exportarCsvDePrecos(contexto, it) } }
+
     val escolherOrigem = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { origem -> origem?.let { viewModel.restaurar(contexto, it) } }
@@ -536,12 +542,29 @@ fun ConfiguracoesScreen(
                     )
                     EspacoVertical(9.dp)
                     BotaoComprix(
+                        "Exportar histórico de preços (CSV)",
+                        {
+                            escolherDestinoCsvDePrecos.launch(
+                                "comprix-historico-de-precos-${Formatadores.carimboDeArquivo()}.csv",
+                            )
+                        },
+                        bloco = true,
+                        estilo = EstiloDeBotao.CONTORNADO,
+                        icone = Icones.grafico,
+                    )
+                    EspacoVertical(9.dp)
+                    BotaoComprix(
                         "Restaurar de um arquivo",
                         { confirmandoRestauracaoDeArquivo = true },
                         bloco = true,
                         estilo = EstiloDeBotao.CONTORNADO,
                         icone = Icones.baixar,
                         habilitado = !estado.ocupado,
+                    )
+                    EspacoVertical(10.dp)
+                    Legenda(
+                        "O CSV de preços reúne cada anotação do acervo: produto, loja, " +
+                            "valor, quantidade e data — abre direto no Excel ou no Calc.",
                     )
                     EspacoVertical(10.dp)
                     Legenda(

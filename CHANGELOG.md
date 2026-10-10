@@ -2,6 +2,16 @@
 
 Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas notas de cada [release](https://github.com/nadabgfccvd/Comprix/releases). O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.5.0] — 2026-10-09
+
+### Adicionado
+- **CSV do histórico de preços** (Configurações → Backup): cada anotação do acervo em um arquivo — `produto;loja;preco;quantidade;data`, com BOM e separador `;` para abrir direto no Excel/Calc. Responde "onde e quando esse item custou menos" fora do app.
+- **Widget da lista mostra o total estimado**: linha nova "≈ R$ X estimados" (some quando não há preço anotado); pré-visualização real do widget no seletor (Android 12+) e descrição acessível.
+- **Linha de média no gráfico de preço do produto**: tracejada em verde, com legenda "Média: R$ X" — responde "estou pagando na média ou acima dela?" de relance, junto do selo de menor preço.
+
+### Interno
+- Workflow de **release** (`.github/workflows/release.yml`): ao empurrar uma tag `v*`, o CI roda os testes, builda `assembleRelease` e publica os APKs na release — assinados automaticamente se os segredos de assinatura estiverem configurados (a chave nunca toca o repositório), não assinados caso contrário.
+
 ## [1.4.2] — 2026-10-09
 
 ### Segurança
@@ -59,6 +69,7 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 ### Primeira versão arquivada
 - Fase v1.0 da reconstrução do Comprix (versionCode 1, 91 testes). Builds arquivadas em `.tgz` preservando os nomes originais dos APKs (`tar -xzf` para extrair).
 
+[1.5.0]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.2...v1.5.0
 [1.4.2]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/nadabgfccvd/Comprix/compare/v1.3.1...v1.4.0

@@ -260,6 +260,23 @@ interface PrecoDao {
             "GROUP BY produtoId ORDER BY total DESC, MAX(registradoEm) DESC LIMIT :limite",
     )
     suspend fun produtosMaisRegistrados(limite: Int): List<ContagemPorProduto>
+
+    /**
+     * Historico global de precos com o nome do produto e da loja ja resolvidos
+     * (join com produtos e estabelecimentos), do mais recente para o mais
+     * antigo. E a fonte do CSV de precos: um registro por anotacao, com a
+     * quantidade base do momento e a data - abre no Excel/Calc e permite
+     * comparar "onde e quando esse item custou menos" fora do app.
+     */
+    @Query(
+        "SELECT prd.nome AS nomeProduto, e.nome AS nomeLoja, h.precoCentavos AS precoCentavos, " +
+            "h.quantidadeBase AS quantidadeBase, h.registradoEm AS registradoEm " +
+            "FROM historico_precos h " +
+            "INNER JOIN produtos prd ON prd.id = h.produtoId " +
+            "INNER JOIN estabelecimentos e ON e.id = h.estabelecimentoId " +
+            "ORDER BY h.registradoEm DESC",
+    )
+    suspend fun listarHistoricoDePrecos(): List<PrecoHistoricoComRotulo>
 }
 
 @Dao

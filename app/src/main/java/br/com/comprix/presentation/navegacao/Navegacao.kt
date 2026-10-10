@@ -440,6 +440,7 @@ fun NavegacaoComprix(
                         ServiceLocator.configuracoesRepositorio,
                         ServiceLocator.catalogoRepositorio,
                         ServiceLocator.gerenciadorDeBackup,
+                        ServiceLocator.precoRepositorio,
                     )
                 },
             )

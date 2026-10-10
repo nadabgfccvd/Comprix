@@ -20,7 +20,7 @@
   <a href="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml"><img src="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>&nbsp;
   <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
   <img src="https://img.shields.io/badge/release-v1.4.2-8A5CF6" alt="Release: v1.4.2"/>&nbsp;
-  <img src="https://img.shields.io/badge/unit_tests-253_passing-4CAF50" alt="Unit tests: 253 passing"/>&nbsp;
+  <img src="https://img.shields.io/badge/unit_tests-257_passing-4CAF50" alt="Unit tests: 257 passing"/>&nbsp;
   <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
   <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>
@@ -38,7 +38,7 @@ Comprix keeps your grocery lists and compares prices between the stores you regi
 | 📷 **Label OCR** | Scan product labels and barcodes (ML Kit, on-device) to extract name, price, quantity, nutrition info and allergens — **suggestions only**: every field is reviewed and confirmed by you before saving; always double-check the physical label |
 | 💰 **Budgets** | Set a monthly/list budget and track spending with a progress bar |
 | 🚨 **Allergy alerts** | Custom restrictions + allergen detection from label text — **informational reminders, not a guarantee**: text-based matching can produce false positives/negatives; the physical label always wins |
-| 🗑️ **Trash & history** | 30-day recoverable trash, purchase history with CSV export and spending stats |
+| 🗑️ **Trash & history** | 30-day recoverable trash, purchase history with CSV export, spending stats — plus a **full price-history CSV** (product, store, price, qty, date) in Settings |
 | 💾 **Backup & restore** | Full local backup (JSON) to any file provider; automatic backups |
 | 🎨 **4 themes** | Light, dark and high-contrast variants |
 | 🔒 **No internet** | The APK requests no `INTERNET` permission — everything stays on your device |
@@ -65,7 +65,7 @@ Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/r
 Requirements: **JDK 17** and the **Android SDK** (platform 35 + build-tools 35.0.0). The Gradle wrapper is versioned — no Gradle install needed.
 
 ```bash
-./gradlew testDebugUnitTest      # 253 JVM unit tests
+./gradlew testDebugUnitTest      # 257 JVM unit tests
 ./gradlew lintDebug              # Android lint (errors fail the build, also enforced by CI)
 ./gradlew assembleDebug          # debug APK
 ```
@@ -86,11 +86,11 @@ See [`SECURITY.md`](SECURITY.md) for why the signing key is no longer in the rep
 - **Kotlin** + **Jetpack Compose** (Material 3, 4 complete theme sets)
 - **Room** for persistence, **ML Kit** for on-device OCR/barcodes
 - Clean-ish architecture: `domain/` (pure Kotlin, fully unit-tested) · `data/` (Room repositories, backup) · `presentation/` (Compose screens + ViewModels)
-- Hand-rolled pt-BR quantity parser (`domain/parser/`) covered by a 253-test suite
+- Hand-rolled pt-BR quantity parser (`domain/parser/`) covered by a 257-test suite
 
 ## 🤖 CI
 
-Every push and pull request runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on GitHub Actions: **253 unit tests → Android lint (errors are blocking) → debug build**. The lint gate is enforced in CI; local release builds skip lint for speed (`checkReleaseBuilds = false`).
+Every push and pull request runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on GitHub Actions: **257 unit tests → Android lint (errors are blocking) → debug build**. Lint is a hard gate (`abortOnError = true`), including the lint-vital pass that release builds run. Pushing a `v*` tag triggers [`.github/workflows/release.yml`](.github/workflows/release.yml): tests + signed release build + APK upload (signing via repository secrets; unsigned without them).
 
 ## 📦 Repository structure
 

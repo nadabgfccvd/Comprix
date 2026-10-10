@@ -247,6 +247,16 @@ data class PrecoRegistrado(
     val disponivel: Boolean = true,
 )
 
+/** Uma anotacao do acervo de precos (CSV global e tendencias): produto + loja + quando. */
+data class PrecoDoHistorico(
+    val produto: String,
+    val loja: String,
+    val preco: BigDecimal,
+    /** Quantidade base do momento da anotacao ("1 kg", "1 un"); vazia = sem. */
+    val quantidade: String,
+    val quando: LocalDateTime,
+)
+
 /** Linha da tela "Minhas listas". */
 data class ResumoDeLista(
     val lista: ListaDeCompras,
