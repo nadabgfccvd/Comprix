@@ -146,7 +146,7 @@ dependencies {
     implementation(composeBom)
 
     // --- Base Android / Kotlin ---
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.19.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // --- Compose / Material 3 ---
