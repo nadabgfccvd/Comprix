@@ -2,6 +2,7 @@ package br.com.comprix.util
 
 import br.com.comprix.domain.modelo.CompraFinalizada
 import br.com.comprix.domain.modelo.PrecoDoHistorico
+import java.math.BigDecimal
 
 /**
  * Gerador de CSV do historico de compras - funcao PURA, sem Android, feita
@@ -69,6 +70,48 @@ object ExportadorCsv {
         linha.quantidade.ifBlank { "-" },
         Formatadores.data(linha.quando),
     ).joinToString(";") { escapar(it) }
+
+    /**
+     * Uma linha da matriz de comparacao ja achatada para CSV: descricao,
+     * detalhe de embalagem, um preco por loja (na mesma ordem de
+     * [matrizCsv]) e o indice da loja de menor preco, ou null se ninguem
+     * respondeu. Funcao PURA: montada pela tela a partir da matriz viva.
+     */
+    data class LinhaDaMatrizCsv(
+        val descricao: String,
+        val detalhe: String,
+        val precoPorLoja: List<BigDecimal?>,
+        val indiceDoMelhor: Int? = null,
+    )
+
+    /**
+     * CSV da matriz de comparacao: uma linha por produto, uma coluna por
+     * loja - a tabela inteira da tela "Comparar estabelecimentos" em
+     * planilha. Mesmas decisoes de formato das outras exportacoes: BOM, `;`
+     * e dinheiro pt-BR. Celula sem preco sai como `-`; a coluna final
+     * "melhor loja" repete o nome do mercado vencedor da linha, para quem
+     * ordenar por outra coluna nao perder a resposta.
+     */
+    fun matrizCsv(
+        nomesDasLojas: List<String>,
+        linhas: List<LinhaDaMatrizCsv>,
+    ): String = buildString {
+        append(BOM)
+        appendLine(
+            (listOf("produto", "detalhe") + nomesDasLojas.map { escapar(it) } + listOf("melhor loja"))
+                .joinToString(";"),
+        )
+        linhas.forEach { linha ->
+            val celulas = linha.precoPorLoja.map { preco ->
+                if (preco == null || preco.signum() <= 0) "-" else Formatadores.moedaSemSimbolo(preco)
+            }
+            val melhor = linha.indiceDoMelhor?.let { nomesDasLojas.getOrNull(it) } ?: "-"
+            appendLine(
+                (listOf(linha.descricao, linha.detalhe.ifBlank { "-" }) + celulas + listOf(melhor))
+                    .joinToString(";") { escapar(it) },
+            )
+        }
+    }
 
     /**
      * Envolve o campo em aspas apenas quando preciso, dobrando as aspas

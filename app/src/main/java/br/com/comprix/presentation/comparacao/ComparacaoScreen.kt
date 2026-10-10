@@ -16,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -110,6 +113,14 @@ fun ComparacaoScreen(
     var editando by remember { mutableStateOf<Pair<Long, Long>?>(null) }
     var novaLoja by remember { mutableStateOf(false) }
     var copiandoPrecos by remember { mutableStateOf(false) }
+
+    // Exportar a matriz em CSV pelo SAF: o seletor do sistema pede o destino,
+    // sem permissao de armazenamento. O conteudo e lido do estado no momento
+    // em que o arquivo e criado - sempre a versao mais recente da matriz.
+    val contextoDeArquivos = LocalContext.current
+    val salvarMatrizCsv = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv"),
+    ) { destino -> destino?.let { viewModel.exportarMatrizCsv(contextoDeArquivos, it) } }
     var usarCompraMista by remember { mutableStateOf(true) }
     var concluida by remember { mutableStateOf(false) }
     var lojaEmAcao by remember { mutableStateOf<Estabelecimento?>(null) }
@@ -152,6 +163,7 @@ fun ComparacaoScreen(
                 conflitosDeAlergenicos = matriz?.linhas?.count { it.alertaRestricao != null } ?: 0,
                 aoVerHistorico = aoVerHistorico,
                 aoVoltarParaListas = aoVoltarParaListas,
+                nomeDaLista = estado.lista?.nome,
             )
         }
         return
@@ -162,6 +174,12 @@ fun ComparacaoScreen(
         barra = {
             BarraSimples("Comparar estabelecimentos", aoVoltar = aoVoltar) {
                 BotaoDeIcone(Icones.duplicar, "Copiar preços entre lojas", { copiandoPrecos = true })
+                BotaoDeIcone(
+                    Icones.baixar,
+                    "Exportar matriz em CSV",
+                    { salvarMatrizCsv.launch("comprix-matriz-${Formatadores.carimboDeArquivo()}.csv") },
+                    habilitado = matriz?.temDados == true,
+                )
                 BotaoDeIcone(Icones.loja, "Gerenciar lojas", aoGerenciarLojas)
                 BotaoDeIcone(Icones.adicionar, "Adicionar loja", { novaLoja = true })
             }

@@ -2,11 +2,15 @@ package br.com.comprix.presentation.comum
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +19,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -32,14 +38,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -56,6 +67,7 @@ import br.com.comprix.presentation.tema.Tema
 import br.com.comprix.util.Feedback
 import br.com.comprix.util.Feedback.TipoDeSom
 import br.com.comprix.util.Feedback.TipoDeVibracao
+import kotlinx.coroutines.delay
 
 /**
  * Biblioteca de componentes do Comprix.
@@ -697,3 +709,60 @@ val LARGURA_MINIMA_DE_CELULA: Dp = 104.dp
 /** Modificador de celula da matriz, com largura fixa e alvo de toque cheio. */
 fun Modifier.celulaDaMatriz(largura: Dp = LARGURA_MINIMA_DE_CELULA): Modifier =
     this.widthIn(min = largura).defaultMinSize(minHeight = ALVO_MINIMO)
+
+/**
+ * Barra de rolagem fina que aparece enquanto a lista rola e some sozinha
+ * depois de um segundo. Detalhe de acabamento para listas longas (lista de
+ * compras, historico): a pessoa enxerga onde esta no rolo sem perder o fio
+ * da navegação.
+ *
+ * Desenhada por cima do conteudo em um Box irmão do [androidx.compose.foundation.lazy.LazyColumn]
+ * - NAO recebe toque: qualquer gesto passa direto para a lista. A matematica
+ * do polegar e aproximada por item (alturas parecidas dao um polegar fiel o
+ * bastante); com item único ou tudo visível, nada e desenhado.
+ */
+@Composable
+fun BarraDeRolagem(
+    estado: LazyListState,
+    modifier: Modifier = Modifier,
+) {
+    val cores = Tema.cores
+    val visibilidade = remember { Animatable(0f) }
+    LaunchedEffect(estado.isScrollInProgress) {
+        if (estado.isScrollInProgress) {
+            visibilidade.snapTo(1f)
+        } else {
+            delay(1_100)
+            visibilidade.animateTo(0f, tween(320))
+        }
+    }
+    val info = estado.layoutInfo
+    val total = info.totalItemsCount
+    val visiveis = info.visibleItemsInfo
+    if (total == 0 || visiveis.size >= total) return
+    val primeiro = visiveis.firstOrNull() ?: return
+
+    Box(
+        modifier
+            .width(9.dp)
+            .fillMaxHeight()
+            .graphicsLayer { alpha = visibilidade.value },
+    ) {
+        Canvas(Modifier.fillMaxSize()) {
+            val altura = size.height
+            if (altura < 40f) return@Canvas
+            val proporcaoVisivel = (visiveis.size.toFloat() / total).coerceIn(0.04f, 1f)
+            val alturaDoPolegar = altura * proporcaoVisivel
+            val passos = (total - visiveis.size).coerceAtLeast(1)
+            val fracaoDoPrimeiro = primeiro.offset.toFloat() / primeiro.size.coerceAtLeast(1)
+            val progresso = ((primeiro.index + fracaoDoPrimeiro) / passos).coerceIn(0f, 1f)
+            val largura = 4.dp.toPx()
+            drawRoundRect(
+                color = cores.contornoForte.copy(alpha = 0.55f),
+                topLeft = Offset(size.width - largura - 1.dp.toPx(), progresso * (altura - alturaDoPolegar)),
+                size = Size(largura, alturaDoPolegar),
+                cornerRadius = CornerRadius(largura / 2f),
+            )
+        }
+    }
+}

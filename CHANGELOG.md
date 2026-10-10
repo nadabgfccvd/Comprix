@@ -2,6 +2,23 @@
 
 Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas notas de cada [release](https://github.com/nadabgfccvd/Comprix/releases). O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.6.0] — 2026-10-10
+
+### Adicionado
+- **Gasto por mercado** (Histórico): gráfico novo "onde o dinheiro foi", somando o total pago por loja no período escolhido — a leitura que faltava ao lado de "gasto por categoria": qual mercado fica com a maior fatia da conta, com valor absoluto e percentual por loja.
+- **Compartilhar resumo da compra** (folha de celebração): o complemento do "compartilhar lista" da ida — texto plano com data, itens, total, economia e o pedaço de cada loja na compra mista, pronto para colar no grupo da família.
+- **Exportar a matriz de comparação em CSV** (Comparar estabelecimentos): a tabela inteira em planilha — uma linha por produto, uma coluna por loja, célula "-" sem preço e coluna final "melhor loja". Mesmo padrão das outras exportações (BOM, `;`, dinheiro pt-BR).
+
+### Refinado
+- **Total estimado animado**: ao marcar item ou gravar preço, o número da doca caminha até o novo valor em vez de piscar.
+- **Item comprado afunda suave**: a opacidade do cartão marcado agora é animada (220 ms) em vez de trocar num frame.
+- **Barra de rolagem fina** na lista de compras e no histórico: aparece enquanto rola e some sozinha — orientação em listas longas sem ocupar espaço.
+
+### Interno
+- **Room 2.6.1 → 2.8.5** (runtime, ktx e compiler via PRs do Dependabot, CI verde).
+- Dependabot com regras de `ignore` para atualizações que exigem troca de toolchain (AGP 9/Gradle 9, compileSdk 36, Kotlin 2.1+) — os PRs continuam virando issues para não se perderem.
+- 269 testes unitários (eram 257).
+
 ## [1.5.0] — 2026-10-09
 
 ### Adicionado
@@ -69,6 +86,7 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 ### Primeira versão arquivada
 - Fase v1.0 da reconstrução do Comprix (versionCode 1, 91 testes). Builds arquivadas em `.tgz` preservando os nomes originais dos APKs (`tar -xzf` para extrair).
 
+[1.6.0]: https://github.com/nadabgfccvd/Comprix/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.2...v1.5.0
 [1.4.2]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/nadabgfccvd/Comprix/compare/v1.4.0...v1.4.1

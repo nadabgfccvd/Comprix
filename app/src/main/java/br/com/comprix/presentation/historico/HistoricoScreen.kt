@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.comprix.domain.compra.AnalisadorDeHistorico
 import br.com.comprix.domain.modelo.CompraFinalizada
+import br.com.comprix.presentation.comum.BarraDeRolagem
 import br.com.comprix.presentation.comum.BarraSimples
 import br.com.comprix.presentation.comum.BotaoComprix
 import br.com.comprix.presentation.comum.CartaoComprix
@@ -110,7 +112,11 @@ fun HistoricoScreen(
             }
         },
     ) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+        // BarraDeRolagem: o Box envolve a lista para sobrepor a barra fina no
+        // canto direito; o conteudo segue com a indentacao de sempre.
+        val rolagemDaLista = rememberLazyListState()
+        Box(Modifier.fillMaxSize()) {
+        LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA, state = rolagemDaLista) {
             item {
                 TituloDaTela("Histórico e economia")
                 EspacoVertical(14.dp)
@@ -262,6 +268,20 @@ fun HistoricoScreen(
 
             item {
                 EspacoVertical(18.dp)
+                Text(
+                    "Gasto por mercado",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = cores.texto,
+                )
+                Legenda("Onde o dinheiro foi, somado por loja")
+                EspacoVertical(12.dp)
+                CartaoComprix(preenchimento = PaddingValues(15.dp)) {
+                    BarraDeMercados(estado.resumo.gastosPorMercado)
+                }
+            }
+
+            item {
+                EspacoVertical(18.dp)
                 Text("Meta do mês", style = MaterialTheme.typography.titleMedium, color = cores.texto)
                 Legenda("Economia das compras do mês corrente")
                 EspacoVertical(12.dp)
@@ -309,6 +329,8 @@ fun HistoricoScreen(
                 )
                 EspacoVertical(16.dp)
             }
+        }
+        BarraDeRolagem(rolagemDaLista, Modifier.align(Alignment.CenterEnd))
         }
     }
 

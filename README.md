@@ -19,8 +19,8 @@
 <p align="center">
   <a href="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml"><img src="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>&nbsp;
   <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
-  <img src="https://img.shields.io/badge/release-v1.4.2-8A5CF6" alt="Release: v1.4.2"/>&nbsp;
-  <img src="https://img.shields.io/badge/unit_tests-257_passing-4CAF50" alt="Unit tests: 257 passing"/>&nbsp;
+  <img src="https://img.shields.io/badge/release-v1.5.0-8A5CF6" alt="Release: v1.5.0"/>&nbsp;
+  <img src="https://img.shields.io/badge/unit_tests-269_passing-4CAF50" alt="Unit tests: 269 passing"/>&nbsp;
   <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
   <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>

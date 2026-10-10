@@ -1,5 +1,7 @@
 package br.com.comprix.presentation.precos
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.comprix.data.repositorio.CatalogoRepositorio
@@ -19,7 +21,9 @@ import br.com.comprix.domain.compra.CalculadoraDeCompra
 import br.com.comprix.domain.preco.AuditoriaDeCobertura
 import br.com.comprix.domain.preco.MotorDePrecos
 import br.com.comprix.util.Formatadores
+import br.com.comprix.util.ExportadorCsv
 import br.com.comprix.data.local.DadosIniciais
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +32,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 
 /**
@@ -292,6 +297,49 @@ class PrecosViewModel(
 
     fun descartarDesfazer() {
         _desfazer.value = null
+    }
+
+    /**
+     * Exporta a matriz de comparacao atual em CSV (uma linha por produto, uma
+     * coluna por loja + "melhor loja") pelo SAF, sem permissao de armazenamento
+     * - mesma rota do backup e do CSV de precos. So ha conteudo quando a
+     * matriz esta montada (2+ lojas e itens na lista); sem isso, a mensagem
+     * avisa e nada e escrito.
+     */
+    fun exportarMatrizCsv(contexto: Context, destino: Uri) {
+        viewModelScope.launch {
+            val resultado = runCatching {
+                withContext(Dispatchers.IO) {
+                    val matriz = estado.value.matriz
+                        ?: error("matriz indisponivel (precisa de 2 lojas e itens)")
+                    val csv = ExportadorCsv.matrizCsv(
+                        nomesDasLojas = matriz.estabelecimentos.map { it.nome },
+                        linhas = matriz.linhas.map { linha ->
+                            ExportadorCsv.LinhaDaMatrizCsv(
+                                descricao = linha.descricao,
+                                detalhe = linha.detalhe,
+                                precoPorLoja = matriz.estabelecimentos.map { loja ->
+                                    linha.celulas.firstOrNull { celula -> celula.estabelecimentoId == loja.id }
+                                        ?.takeIf { celula -> celula.registrado && celula.disponivel }
+                                        ?.preco
+                                },
+                                indiceDoMelhor = linha.melhorEstabelecimentoId
+                                    ?.let { melhor -> matriz.estabelecimentos.indexOfFirst { it.id == melhor } }
+                                    ?.takeIf { indice -> indice >= 0 },
+                            )
+                        },
+                    )
+                    contexto.contentResolver.openOutputStream(destino)?.use { saida ->
+                        saida.write(csv.toByteArray(Charsets.UTF_8))
+                    } ?: error("destino invalido")
+                }
+            }
+            _mensagem.value = if (resultado.isSuccess) {
+                "Matriz exportada: uma linha por produto, uma coluna por loja."
+            } else {
+                "Não consegui exportar a matriz agora."
+            }
+        }
     }
 
     fun mensagemExibida() {

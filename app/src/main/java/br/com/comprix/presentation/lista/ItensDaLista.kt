@@ -1,6 +1,8 @@
 package br.com.comprix.presentation.lista
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -99,6 +101,14 @@ fun CartaoDeItem(
     val produto = itemComProduto.produto
     val comprado = item.comprado
 
+    // Opacidade ANIMADA: marcar comprado nao faz o cartao piscar de 100% para
+    // 65% num frame - ele afunda suave, sinal de "ja passou pela esteira".
+    val opacidadeDoCartao by animateFloatAsState(
+        targetValue = if (comprado) 0.65f else 1f,
+        animationSpec = tween(220),
+        label = "opacidadeDoItemComprado",
+    )
+
     val embalagem = Formatadores.descricaoEmbalagem(item.quantidade, item.unidade, item.pesoOuVolume, item.itensPorKit)
     val precoBase = MotorDePrecos.precoPorUnidadeBase(preco, item)
 
@@ -108,7 +118,7 @@ fun CartaoDeItem(
             .clip(RoundedCornerShape(17.dp))
             .background(cores.cartao)
             .border(1.dp, cores.contorno, RoundedCornerShape(17.dp))
-            .alpha(if (comprado) 0.65f else 1f)
+            .alpha(opacidadeDoCartao)
             .padding(11.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

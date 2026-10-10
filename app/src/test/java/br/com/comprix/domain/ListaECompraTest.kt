@@ -359,6 +359,49 @@ class ListaECompraTest {
     }
 
     @Test
+    fun `gasto por mercado soma por loja e ordena do maior para o menor`() {
+        val hoje = LocalDate.of(2026, 6, 20)
+        val compras = listOf(
+            compra(0, "100").copy(descricaoEstabelecimento = "Mercado A"),
+            compra(0, "250").copy(descricaoEstabelecimento = "Mercado B"),
+            compra(1, "50").copy(descricaoEstabelecimento = "Mercado A"),
+        )
+
+        val serie = AnalisadorDeHistorico.resumir(compras, AnalisadorDeHistorico.Periodo.TUDO, hoje)
+            .gastosPorMercado
+
+        assertEquals(2, serie.size)
+        assertEquals("Mercado B", serie[0].rotulo)
+        assertEquals(0, serie[0].valor.compareTo(BigDecimal("250")))
+        assertEquals("Mercado A", serie[1].rotulo)
+        assertEquals(0, serie[1].valor.compareTo(BigDecimal("150")))
+    }
+
+    @Test
+    fun `compra sem loja identificada cai como nao informado no gasto por mercado`() {
+        val hoje = LocalDate.of(2026, 6, 20)
+        val compras = listOf(compra(0, "80").copy(descricaoEstabelecimento = ""))
+
+        val serie = AnalisadorDeHistorico.resumir(compras, AnalisadorDeHistorico.Periodo.TUDO, hoje)
+            .gastosPorMercado
+
+        assertEquals(listOf("Não informado"), serie.map { it.rotulo })
+        assertEquals(0, serie[0].valor.compareTo(BigDecimal("80")))
+    }
+
+    @Test
+    fun `gasto por mercado vazio quando nao ha compras no periodo`() {
+        val hoje = LocalDate.of(2026, 6, 20)
+        val resumo = AnalisadorDeHistorico.resumir(
+            listOf(compra(8, "500")),
+            AnalisadorDeHistorico.Periodo.TRES_MESES,
+            hoje,
+        )
+        assertTrue(resumo.vazio)
+        assertTrue(resumo.gastosPorMercado.isEmpty())
+    }
+
+    @Test
     fun `variacao mensal compara o mes atual com o anterior`() {
         val hoje = LocalDate.of(2026, 6, 20)
         val compras = listOf(

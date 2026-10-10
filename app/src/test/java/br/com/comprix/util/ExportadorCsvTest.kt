@@ -145,4 +145,67 @@ class ExportadorCsvTest {
         val csv = ExportadorCsv.precosCsv(listOf(preco(quantidade = "")))
         assertTrue(csv.contains(";27,90;-;09/03/2026"))
     }
+
+    // --- matriz de comparacao ------------------------------------------------------------
+
+    @Test
+    fun `csv da matriz sai com uma coluna por loja e melhor loja`() {
+        val csv = ExportadorCsv.matrizCsv(
+            nomesDasLojas = listOf("Mercado A", "Mercado B"),
+            linhas = listOf(
+                ExportadorCsv.LinhaDaMatrizCsv(
+                    descricao = "Arroz tipo 1",
+                    detalhe = "5 kg",
+                    precoPorLoja = listOf(BigDecimal("27.90"), BigDecimal("26.50")),
+                    indiceDoMelhor = 1,
+                ),
+            ),
+        )
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
+        assertEquals(2, linhas.size)
+        assertEquals("produto;detalhe;Mercado A;Mercado B;melhor loja", linhas[0])
+        assertEquals("Arroz tipo 1;5 kg;27,90;26,50;Mercado B", linhas[1])
+    }
+
+    @Test
+    fun `csv da matriz usa traco para celula sem preco e sem melhor`() {
+        val csv = ExportadorCsv.matrizCsv(
+            nomesDasLojas = listOf("Mercado A", "Mercado B"),
+            linhas = listOf(
+                ExportadorCsv.LinhaDaMatrizCsv(
+                    descricao = "Café torrado 500g",
+                    detalhe = "",
+                    precoPorLoja = listOf(null, BigDecimal.ZERO),
+                ),
+            ),
+        )
+        val linha = csv.removePrefix("\uFEFF").trim().split("\n")[1]
+        assertEquals("Café torrado 500g;-;-;-;-", linha)
+    }
+
+    @Test
+    fun `csv da matriz escapa loja com ponto e virgula no cabecalho e na melhor loja`() {
+        val csv = ExportadorCsv.matrizCsv(
+            nomesDasLojas = listOf("Mercado; Atacado"),
+            linhas = listOf(
+                ExportadorCsv.LinhaDaMatrizCsv(
+                    descricao = "Leite integral",
+                    detalhe = "1 L",
+                    precoPorLoja = listOf(BigDecimal("5.49")),
+                    indiceDoMelhor = 0,
+                ),
+            ),
+        )
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
+        assertEquals("produto;detalhe;\"Mercado; Atacado\";melhor loja", linhas[0])
+        assertEquals("Leite integral;1 L;5,49;\"Mercado; Atacado\"", linhas[1])
+    }
+
+    @Test
+    fun `csv da matriz sem linhas sai so com o cabecalho`() {
+        val csv = ExportadorCsv.matrizCsv(nomesDasLojas = listOf("Mercado A"), linhas = emptyList())
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
+        assertEquals(1, linhas.size)
+        assertEquals("produto;detalhe;Mercado A;melhor loja", linhas[0])
+    }
 }

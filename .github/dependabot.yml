@@ -11,3 +11,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # Exigem troca de toolchain, não só bump: AGP 9 pede Gradle 9;
+      # core-ktx 1.17+ pede compileSdk 36; coroutines 1.11+ e navigation 2.9+
+      # são compilados com Kotlin 2.1/2.2 (metadata incompatível com 2.0.21).
+      # A migração é uma rodada própria (issue #5 rastreia o AGP).
+      - dependency-name: "com.android.application"
+        versions: [">=9.0.0"]
+      - dependency-name: "androidx.core:core-ktx"
+        versions: [">=1.17.0"]
+      - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines-android"
+        versions: [">=1.11.0"]
+      - dependency-name: "androidx.navigation:navigation-compose"
+        versions: [">=2.9.0"]

@@ -134,6 +134,7 @@ data class ResumoHistorico(
     val ticketMedio: BigDecimal = BigDecimal.ZERO,
     val gastosPorPeriodo: List<PontoGrafico> = emptyList(),
     val gastosPorCategoria: List<PontoGrafico> = emptyList(),
+    val gastosPorMercado: List<PontoGrafico> = emptyList(),
 ) {
     val vazio: Boolean get() = quantidadeCompras == 0
 }

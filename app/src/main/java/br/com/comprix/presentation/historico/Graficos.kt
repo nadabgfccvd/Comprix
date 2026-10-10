@@ -361,6 +361,92 @@ fun BarraDeCategorias(
 }
 
 /**
+ * Barra proporcional "onde o dinheiro foi": gasto somado por mercado no
+ * período. Espelha [BarraDeCategorias], mas a legenda mostra o valor absoluto
+ * junto do percentual - "quanto deixei em cada mercado" e a pergunta que a
+ * proporcao sozinha nao responde.
+ */
+@Composable
+fun BarraDeMercados(
+    pontos: List<PontoGrafico>,
+    modifier: Modifier = Modifier,
+) {
+    val cores = Tema.cores
+    if (pontos.isEmpty()) {
+        Legenda("Finalize uma compra para ver o gasto por mercado.")
+        return
+    }
+    val total = pontos.fold(BigDecimal.ZERO) { soma, p -> soma + p.valor }
+    if (total.signum() <= 0) {
+        Legenda("Finalize uma compra para ver o gasto por mercado.")
+        return
+    }
+    val maiores = pontos.sortedByDescending { it.valor }.take(6)
+    val paleta = maiores.indices.map { cores.tintaDaCategoria(it) }
+    val descricao = maiores.joinToString("; ") { ponto ->
+        val pct = ponto.valor.multiply(BigDecimal(100)).divide(total, 0, RoundingMode.HALF_UP)
+        "${ponto.rotulo}: ${moedaCompacta(ponto.valor)} ($pct por cento)"
+    }
+
+    Column(modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(22.dp)
+                .clip(RoundedCornerShape(7.dp))
+                .clearAndSetSemantics { contentDescription = "Gasto por mercado. $descricao" },
+        ) {
+            maiores.forEachIndexed { indice, ponto ->
+                val peso = ponto.valor.divide(total, 4, RoundingMode.HALF_UP).toFloat().coerceAtLeast(0.01f)
+                Box(
+                    Modifier
+                        .weight(peso)
+                        .fillMaxWidth()
+                        .background(paleta[indice]),
+                )
+            }
+        }
+        FlowRow(
+            Modifier.fillMaxWidth().padding(top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            maiores.forEachIndexed { indice, ponto ->
+                val pct = ponto.valor.multiply(BigDecimal(100)).divide(total, 0, RoundingMode.HALF_UP)
+                Row(
+                    // Largura fixa por entrada: o percentual termina sempre na
+                    // mesma coluna, mesmo com rotulos de tamanhos diferentes.
+                    Modifier.fillMaxWidth(0.44f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    Box(Modifier.size(9.dp).clip(CircleShape).background(paleta[indice]))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            ponto.rotulo,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = cores.texto,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            moedaCompacta(ponto.valor),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = cores.apagado,
+                        )
+                    }
+                    Text(
+                        "$pct%",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = cores.apagado,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * Linha simples da variacao de preco de um produto ao longo do tempo.
  *
  * Usada na ficha do produto; com um ponto so, vira um ponto - e isso e a

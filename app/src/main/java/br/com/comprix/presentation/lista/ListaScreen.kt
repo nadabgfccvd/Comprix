@@ -21,8 +21,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,6 +66,7 @@ import br.com.comprix.domain.preco.AuditoriaDeCobertura
 import br.com.comprix.domain.preco.MotorDePrecos
 import br.com.comprix.presentation.comum.ALVO_MINIMO
 import br.com.comprix.presentation.comum.BarraDeProgresso
+import br.com.comprix.presentation.comum.BarraDeRolagem
 import br.com.comprix.presentation.comum.BarraSimples
 import br.com.comprix.presentation.comum.BotaoComprix
 import br.com.comprix.presentation.comum.BotaoDeIcone
@@ -457,6 +461,14 @@ fun ListaScreen(
                 // O Total continua sendo o mesmo totalEstimado; o orcamento,
                 // quando existe, entra como linha propria com barra e alerta.
                 val totalAtual = totalEstimado(estado.itens, estadoDePrecos)
+                // Total ANIMADO: ao marcar item ou gravar preco, o numero caminha
+                // ate o novo valor em vez de piscar - o olho acompanha a mudança.
+                val totalAnimado by animateIntAsState(
+                    targetValue = centavosDoTotal(totalAtual).coerceIn(0, Int.MAX_VALUE),
+                    animationSpec = tween(280),
+                    label = "totalEstimadoAnimado",
+                )
+                val totalExibido = centavosParaReais(totalAnimado.toLong())
                 val orcamentoCentavos = estado.orcamentoCentavos?.takeIf { it > 0 }
                 val estourou = orcamentoCentavos != null && ListaRepositorio.nivelDoOrcamento(
                     centavosDoTotal(totalAtual),
@@ -474,7 +486,7 @@ fun ListaScreen(
                     )
                     Text("•", color = cores.contornoForte)
                     Text(
-                        "Total: ${Formatadores.moeda(totalAtual)}",
+                        "Total: ${Formatadores.moeda(totalExibido)}",
                         style = MaterialTheme.typography.titleSmall,
                         // Estourou o orcamento: o Total grita em vermelho.
                         color = if (estourou) cores.vermelhoTinta else cores.verdeTinta,
@@ -487,7 +499,7 @@ fun ListaScreen(
                 if (orcamentoCentavos != null) {
                     EspacoVertical(7.dp)
                     LinhaDoOrcamento(
-                        totalCentavos = centavosDoTotal(totalAtual),
+                        totalCentavos = totalAnimado.toLong(),
                         orcamentoCentavos = orcamentoCentavos,
                     )
                 }
@@ -528,7 +540,11 @@ fun ListaScreen(
             }
         },
     ) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+        // BarraDeRolagem: o Box envolve a lista para sobrepor a barra fina no
+        // canto direito; o conteudo segue com a indentacao de sempre.
+        val rolagemDaLista = rememberLazyListState()
+        Box(Modifier.fillMaxSize()) {
+        LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA, state = rolagemDaLista) {
             if (estado.carregando) {
                 // Mesmo padrao da LojasScreen: corpo centrado enquanto o banco
                 // emite o primeiro estado (barra e doca ficam no lugar).
@@ -886,6 +902,8 @@ fun ListaScreen(
                 }
                 EspacoVertical(18.dp)
             }
+        }
+        BarraDeRolagem(rolagemDaLista, Modifier.align(Alignment.CenterEnd))
         }
     }
 

@@ -1,5 +1,6 @@
 package br.com.comprix.presentation.comparacao
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,9 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import br.com.comprix.domain.compra.CalculadoraDeCompra
+import br.com.comprix.domain.compra.ResumoParaCompartilhar
 import br.com.comprix.domain.modelo.CompraMistaOtima
 import br.com.comprix.domain.modelo.TotalEstabelecimento
 import br.com.comprix.presentation.comum.BotaoComprix
@@ -68,6 +71,7 @@ fun ResumoDaCompraConcluida(
     conflitosDeAlergenicos: Int,
     aoVerHistorico: () -> Unit,
     aoVoltarParaListas: () -> Unit,
+    nomeDaLista: String? = null,
     modifier: Modifier = Modifier,
 ) {
     val cores = Tema.cores
@@ -245,6 +249,37 @@ fun ResumoDaCompraConcluida(
 
         EspacoVertical(22.dp)
         BotaoComprix("Ver gráficos no histórico", aoVerHistorico, bloco = true, icone = Icones.grafico)
+        EspacoVertical(9.dp)
+        // Compartilhar resumo: o complemento do "compartilhar lista" da ida -
+        // agora a volta também sai em texto plano (total, economia, lojas).
+        val contexto = LocalContext.current
+        BotaoComprix(
+            "Compartilhar resumo",
+            {
+                val texto = ResumoParaCompartilhar.texto(
+                    nomeDaLista = nomeDaLista,
+                    quando = java.time.LocalDateTime.now(),
+                    totalPago = resultado.totalPago,
+                    economia = resultado.economia,
+                    economiaPercentual = resultado.economiaPercentual,
+                    quantidadeItens = resultado.quantidadeItens,
+                    descricaoDoEstabelecimento = resultado.descricaoEstabelecimento,
+                    totaisPorLoja = totaisPorLoja,
+                )
+                val intencao = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, texto)
+                }
+                runCatching {
+                    contexto.startActivity(
+                        Intent.createChooser(intencao, "Compartilhar resumo da compra"),
+                    )
+                }
+            },
+            bloco = true,
+            estilo = EstiloDeBotao.CONTORNADO,
+            icone = Icones.compartilhar,
+        )
         EspacoVertical(9.dp)
         BotaoComprix(
             "Voltar para Minhas listas",

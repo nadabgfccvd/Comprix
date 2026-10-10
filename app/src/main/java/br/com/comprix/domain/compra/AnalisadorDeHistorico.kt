@@ -59,6 +59,7 @@ object AnalisadorDeHistorico {
             ticketMedio = ticketMedio,
             gastosPorPeriodo = seriePorMes(consideradas, periodo, hoje),
             gastosPorCategoria = seriePorCategoria(consideradas),
+            gastosPorMercado = seriePorMercado(consideradas),
         )
     }
 
@@ -115,6 +116,26 @@ object AnalisadorDeHistorico {
                 )
             }
     }
+
+    /**
+     * Divisao por mercado ("onde o dinheiro foi"): soma o total pago por
+     * [CompraFinalizada.descricaoEstabelecimento] - a mesma rotulagem que os
+     * cartoes do historico mostram, inclusive o rotulo da compra mista.
+     * Empate de rotulo em branco cai como "Não informado" para nao sumir do
+     * grafico. Da maior fatia para a menor.
+     */
+    private fun seriePorMercado(compras: List<CompraFinalizada>): List<PontoGrafico> =
+        compras
+            .groupBy { it.descricaoEstabelecimento.ifBlank { "Não informado" } }
+            .map { (mercado, grupo) ->
+                PontoGrafico(
+                    rotulo = mercado,
+                    valor = grupo
+                        .fold(BigDecimal.ZERO) { soma, compra -> soma.add(compra.totalPago) }
+                        .setScale(Constantes.ESCALA_MOEDA, RoundingMode.HALF_EVEN),
+                )
+            }
+            .sortedWith(compareByDescending<PontoGrafico> { it.valor }.thenBy { it.rotulo })
 
     /** Variacao percentual do mes corrente contra o anterior (null se nao der). */
     fun variacaoMensal(compras: List<CompraFinalizada>, hoje: LocalDate = LocalDate.now()): BigDecimal? {
