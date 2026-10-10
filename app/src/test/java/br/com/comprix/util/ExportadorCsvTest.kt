@@ -113,7 +113,9 @@ class ExportadorCsvTest {
     fun `csv de precos tem cabecalho fixo e linha pt-BR`() {
         val csv = ExportadorCsv.precosCsv(listOf(preco()))
         assertTrue(csv.startsWith("\uFEFF"))
-        val linhas = csv.trim().split("\n")
+        // O trim() do JVM NAO remove o BOM (U+FEFF vem depois do espaco na
+        // tabela): tiramos na mao antes de fatiar, igual o Excel enxerga.
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
         assertEquals("produto;loja;preco;quantidade;data", linhas[0])
         assertEquals(
             "Arroz tipo 1 5kg;Mercado Central;27,90;5 kg;09/03/2026",
@@ -133,7 +135,7 @@ class ExportadorCsvTest {
     @Test
     fun `csv de precos sem registros sai so com o cabecalho`() {
         val csv = ExportadorCsv.precosCsv(emptyList())
-        val linhas = csv.trim().split("\n")
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
         assertEquals(1, linhas.size)
         assertEquals(ExportadorCsv.CABECALHO_PRECOS, linhas[0])
     }
