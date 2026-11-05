@@ -136,37 +136,16 @@ class GerenciadorDeBackup(
     /**
      * Le um `.cbk` e substitui o conteudo atual.
      *
-     * A restauracao e "tudo ou nada" no sentido pratico: primeiro o arquivo e
-     * validado (cabecalho + tabelas conhecidas) e so entao o banco e limpo.
-     * Arquivo invalido nao apaga nada.
+     * A validacao ocorre antes de qualquer escrita e a substituicao usa uma
+     * transacao. O formato v1 nao tem checksum e nao permite detectar todos os
+     * arquivos truncados, mesmo quando passam pela validacao estrutural.
      */
     suspend fun restaurar(entrada: InputStream): ResultadoRestauracao {
         val linhas = runCatching { entrada.bufferedReader(Charsets.UTF_8).readLines() }
             .getOrElse { return ResultadoRestauracao(false, "Não foi possível ler o arquivo.") }
 
-        if (linhas.isEmpty() || !linhas.first().trim().startsWith("#COMPRIX-BACKUP")) {
-            return ResultadoRestauracao(false, "Este arquivo não é um backup do Comprix.")
-        }
-
-        val porTabela = LinkedHashMap<String, MutableList<Map<String, String>>>()
-        var tabelaAtual: String? = null
-        linhas.drop(1).forEach { linha ->
-            val texto = linha.trim()
-            when {
-                texto.isBlank() -> Unit
-                texto.startsWith(MARCA_TABELA) -> {
-                    tabelaAtual = texto.removePrefix(MARCA_TABELA).trim()
-                    porTabela.getOrPut(tabelaAtual!!) { mutableListOf() }
-                }
-                texto.startsWith("{") -> {
-                    val dados = JsonSimples.deJson(texto)
-                    if (dados.isNotEmpty() && tabelaAtual != null) porTabela[tabelaAtual]?.add(dados)
-                }
-            }
-        }
-        if (!backupPossuiTabelasEssenciais(porTabela.keys)) {
-            return ResultadoRestauracao(false, "Backup incompleto ou inválido; nenhum dado foi alterado.")
-        }
+        val porTabela = lerBackupV1(linhas)
+            ?: return ResultadoRestauracao(false, "Backup incompleto ou inválido; nenhum dado foi alterado.")
 
         return try {
             banco.withTransaction {
