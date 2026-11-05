@@ -231,6 +231,12 @@ interface PrecoDao {
     @Insert
     suspend fun registrarHistorico(historico: HistoricoPrecoEntity)
 
+    @Query("SELECT * FROM historico_precos ORDER BY id")
+    suspend fun listarHistoricoCompleto(): List<HistoricoPrecoEntity>
+
+    @Query("SELECT COUNT(*) FROM historico_precos")
+    suspend fun contarHistorico(): Int
+
     @Query(
         "SELECT * FROM historico_precos WHERE produtoId = :produtoId ORDER BY registradoEm DESC LIMIT :limite",
     )

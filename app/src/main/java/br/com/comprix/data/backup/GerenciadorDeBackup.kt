@@ -8,6 +8,7 @@ import br.com.comprix.data.local.DecisaoDoParserEntity
 import br.com.comprix.data.local.ComprixDatabase
 import br.com.comprix.data.local.EstabelecimentoEntity
 import br.com.comprix.data.local.ItemEntity
+import br.com.comprix.data.local.HistoricoPrecoEntity
 import br.com.comprix.data.local.ListaEntity
 import br.com.comprix.data.local.MemoriaCategoriaEntity
 import br.com.comprix.data.local.PrecoEntity
@@ -95,6 +96,11 @@ class GerenciadorDeBackup(
             escritor.appendLine(MARCA_TABELA + "precos")
             banco.precoDao().listarTodos().forEach { escritor.appendLine(JsonSimples.paraJson(dePreco(it))) }
 
+            escritor.appendLine(MARCA_TABELA + "historico_precos")
+            banco.precoDao().listarHistoricoCompleto().forEach {
+                escritor.appendLine(JsonSimples.paraJson(deHistoricoPreco(it)))
+            }
+
             escritor.appendLine(MARCA_TABELA + "compras")
             banco.compraDao().listarTodas().forEach { escritor.appendLine(JsonSimples.paraJson(deCompra(it))) }
 
@@ -149,6 +155,15 @@ class GerenciadorDeBackup(
 
         return try {
             banco.withTransaction {
+                // Backups antigos nao carregam historico. Nao podemos combinar
+                // ids de bancos diferentes sem correr o risco de associar precos
+                // aos produtos errados, nem apagar o historico existente.
+                if ("historico_precos" !in porTabela && banco.precoDao().contarHistorico() > 0) {
+                    return@withTransaction ResultadoRestauracao(
+                        false,
+                        "Este backup antigo não contém histórico de preços. A restauração foi cancelada para proteger os dados atuais.",
+                    )
+                }
                 val manutencao = banco.manutencaoDao()
                 manutencao.apagarPrecos()
                 manutencao.apagarItens()
@@ -184,6 +199,10 @@ class GerenciadorDeBackup(
                 porTabela["precos"]?.forEach { dados ->
                     banco.precoDao().salvar(paraPreco(dados))
                     contagem["precos"] = (contagem["precos"] ?: 0) + 1
+                }
+                porTabela["historico_precos"]?.forEach { dados ->
+                    banco.precoDao().registrarHistorico(paraHistoricoPreco(dados))
+                    contagem["histórico de preços"] = (contagem["histórico de preços"] ?: 0) + 1
                 }
                 porTabela["compras"]?.forEach { dados ->
                     banco.compraDao().inserir(paraCompra(dados))
@@ -318,6 +337,21 @@ class GerenciadorDeBackup(
         precoCentavos = d["cent"]?.toLongOrNull() ?: 0,
         dataRegistro = d["data"]?.toLongOrNull() ?: System.currentTimeMillis(),
         disponivel = d["disp"]?.toBooleanStrictOrNull() ?: true,
+    )
+
+    private fun deHistoricoPreco(e: HistoricoPrecoEntity) = mapOf(
+        "id" to e.id.toString(), "prod" to e.produtoId.toString(),
+        "loja" to e.estabelecimentoId.toString(), "cent" to e.precoCentavos.toString(),
+        "qtd" to e.quantidadeBase, "data" to e.registradoEm.toString(),
+    )
+
+    private fun paraHistoricoPreco(d: Map<String, String>) = HistoricoPrecoEntity(
+        id = d.getValue("id").toLong(),
+        produtoId = d.getValue("prod").toLong(),
+        estabelecimentoId = d.getValue("loja").toLong(),
+        precoCentavos = d.getValue("cent").toLong(),
+        quantidadeBase = d.getValue("qtd"),
+        registradoEm = d.getValue("data").toLong(),
     )
 
     private fun deCompra(e: CompraEntity) = mapOf(
