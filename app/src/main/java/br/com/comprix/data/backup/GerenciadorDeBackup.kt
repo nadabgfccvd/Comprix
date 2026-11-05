@@ -303,7 +303,8 @@ class GerenciadorDeBackup(
     private fun deProduto(e: ProdutoEntity) = mapOf(
         "id" to e.id.toString(), "nome" to e.nome, "norm" to e.nomeNormalizado,
         "cat" to e.categoriaId.toString(), "ean" to e.codigoBarras, "un" to e.unidadePadrao,
-        "nutri" to e.infoNutricionalJson?.replace("\"", "'"), "selos" to e.selosAltoEm,
+        "nutri" to e.infoNutricionalJson?.replace("\"", "'"),
+        "nutri_raw" to e.infoNutricionalJson, "selos" to e.selosAltoEm,
         "ingr" to e.ingredientes, "gluten" to e.gluten, "alerg" to e.alergenos,
         "val" to e.dataValidade?.toString(), "fab" to e.dataFabricacao?.toString(),
         "peso" to e.pesoMedioEstimadoEmBase, "att" to e.atualizadoEm.toString(),
@@ -317,7 +318,7 @@ class GerenciadorDeBackup(
         categoriaId = d["cat"]?.toLongOrNull() ?: 0,
         codigoBarras = d["ean"],
         unidadePadrao = d["un"] ?: "UNIDADE",
-        infoNutricionalJson = d["nutri"]?.replace("'", "\""),
+        infoNutricionalJson = d["nutri_raw"] ?: d["nutri"]?.replace("'", "\""),
         selosAltoEm = d["selos"].orEmpty(),
         ingredientes = d["ingr"],
         gluten = d["gluten"] ?: "INDETERMINADO",
@@ -460,6 +461,7 @@ class GerenciadorDeBackup(
         "econ" to e.economiaCentavos.toString(), "itens" to e.quantidadeItens.toString(),
         "estab" to e.descricaoEstabelecimento, "estabId" to e.estabelecimentoPrincipalId?.toString(),
         "cats" to e.gastosPorCategoriaJson.replace("\"", "'"),
+        "cats_raw" to e.gastosPorCategoriaJson,
     )
 
     private fun paraCompra(d: Map<String, String>) = CompraEntity(
@@ -472,7 +474,7 @@ class GerenciadorDeBackup(
         quantidadeItens = d["itens"]?.toIntOrNull() ?: 0,
         descricaoEstabelecimento = d["estab"].orEmpty(),
         estabelecimentoPrincipalId = d["estabId"]?.toLongOrNull(),
-        gastosPorCategoriaJson = d["cats"]?.replace("'", "\"") ?: "{}",
+        gastosPorCategoriaJson = d["cats_raw"] ?: d["cats"]?.replace("'", "\"") ?: "{}",
     )
 
     private fun deDecisaoDoParser(e: DecisaoDoParserEntity) = mapOf(
