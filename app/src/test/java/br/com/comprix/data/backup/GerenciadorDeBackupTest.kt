@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import br.com.comprix.data.local.ComprixDatabase
 import br.com.comprix.data.local.ListaEntity
+import br.com.comprix.data.local.HistoricoPrecoEntity
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.runBlocking
@@ -73,4 +74,54 @@ class GerenciadorDeBackupTest {
         assertFalse(resultado.sucesso)
         assertEquals("Original", banco.listaDao().porId(1)?.nome)
     }
+    @Test fun backupPreservaHistoricoDePrecos() = runBlocking {
+        val historico = HistoricoPrecoEntity(1, 7, 8, 1234, "500", 1000)
+        banco.precoDao().registrarHistorico(historico)
+        val saida = ByteArrayOutputStream()
+        gerenciador.exportar(saida)
+        banco.precoDao().registrarHistorico(HistoricoPrecoEntity(2, 7, 8, 999, "500", 2000))
+        val resultado = gerenciador.restaurar(ByteArrayInputStream(saida.toByteArray()))
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(listOf(historico), banco.precoDao().listarHistoricoCompleto())
+    }
+
+    @Test fun backupLegadoNaoApagaHistoricoAtual() = runBlocking {
+        val historico = HistoricoPrecoEntity(1, 7, 8, 1234, "500", 1000)
+        banco.listaDao().inserir(lista("Original"))
+        banco.precoDao().registrarHistorico(historico)
+        val legado = """
+            #COMPRIX-BACKUP v1
+            #TABELA categorias
+            #TABELA produtos
+            #TABELA estabelecimentos
+            #TABELA listas
+            #TABELA itens
+            #TABELA precos
+            #TABELA compras
+        """.trimIndent()
+        val resultado = gerenciador.restaurar(legado.byteInputStream())
+        assertFalse(resultado.sucesso)
+        assertEquals("Original", banco.listaDao().porId(1)?.nome)
+        assertEquals(listOf(historico), banco.precoDao().listarHistoricoCompleto())
+    }
+
+    @Test fun historicoInvalidoReverteRestauracao() = runBlocking {
+        banco.listaDao().inserir(lista("Original"))
+        val invalido = """
+            #COMPRIX-BACKUP v1
+            #TABELA categorias
+            #TABELA produtos
+            #TABELA estabelecimentos
+            #TABELA listas
+            #TABELA itens
+            #TABELA precos
+            #TABELA historico_precos
+            {"id":"1","prod":"invalido"}
+            #TABELA compras
+        """.trimIndent()
+        val resultado = gerenciador.restaurar(invalido.byteInputStream())
+        assertFalse(resultado.sucesso)
+        assertEquals("Original", banco.listaDao().porId(1)?.nome)
+    }
+
 }
