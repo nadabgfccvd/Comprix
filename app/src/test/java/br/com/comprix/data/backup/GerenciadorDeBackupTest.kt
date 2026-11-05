@@ -124,4 +124,17 @@ class GerenciadorDeBackupTest {
         assertEquals("Original", banco.listaDao().porId(1)?.nome)
     }
 
+    @Test fun backupV2DetectaTruncamentoEAlteracoes() = runBlocking {
+        banco.listaDao().inserir(lista("Original"))
+        val saida = ByteArrayOutputStream()
+        gerenciador.exportar(saida)
+        val backup = saida.toString(Charsets.UTF_8.name())
+        assertTrue(backup.startsWith("#COMPRIX-BACKUP v2\n"))
+        assertTrue(backup.contains("#SHA256 "))
+        val semRodape = backup.substringBefore("#SHA256 ")
+        assertFalse(gerenciador.restaurar(semRodape.byteInputStream()).sucesso)
+        assertFalse(gerenciador.restaurar(backup.replace("Original", "Alterado").byteInputStream()).sucesso)
+        assertEquals("Original", banco.listaDao().porId(1)?.nome)
+    }
+
 }
