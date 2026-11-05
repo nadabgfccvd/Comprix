@@ -332,6 +332,9 @@ interface ConfiguracoesDao {
     @Upsert
     suspend fun salvar(configuracoes: ConfiguracoesEntity)
 
+    @Query("DELETE FROM configuracoes")
+    suspend fun limparConfiguracoes()
+
     @Query("SELECT * FROM perfil_restricoes WHERE id = 1")
     fun observarPerfil(): Flow<PerfilRestricoesEntity?>
 

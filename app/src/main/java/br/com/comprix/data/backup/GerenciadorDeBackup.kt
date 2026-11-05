@@ -5,6 +5,8 @@ import androidx.room.withTransaction
 import br.com.comprix.data.local.CategoriaEntity
 import br.com.comprix.data.local.AlergiaCustomizadaEntity
 import br.com.comprix.data.local.PerfilRestricoesEntity
+import br.com.comprix.data.local.ConfiguracoesEntity
+import br.com.comprix.data.local.RegistroDeLixeiraEntity
 import br.com.comprix.data.local.CompraEntity
 import br.com.comprix.data.local.DecisaoDoParserEntity
 import br.com.comprix.data.local.ComprixDatabase
@@ -109,6 +111,15 @@ class GerenciadorDeBackup(
 
             escritor.appendLine(MARCA_TABELA + "compras")
             banco.compraDao().listarTodas().forEach { escritor.appendLine(JsonSimples.paraJson(deCompra(it))) }
+
+            escritor.appendLine(MARCA_TABELA + "configuracoes")
+            banco.configuracoesDao().carregar()?.let {
+                escritor.appendLine(JsonSimples.paraJson(deConfiguracoes(it)))
+            }
+            escritor.appendLine(MARCA_TABELA + "lixeira")
+            banco.lixeiraDao().listarTodas().forEach {
+                escritor.appendLine(JsonSimples.paraJson(deLixeira(it)))
+            }
 
             escritor.appendLine(MARCA_TABELA + "perfil_restricoes")
             banco.configuracoesDao().carregarPerfil()?.let {
@@ -225,6 +236,17 @@ class GerenciadorDeBackup(
                     banco.compraDao().inserir(paraCompra(dados))
                     contagem["compras"] = (contagem["compras"] ?: 0) + 1
                 }
+                porTabela["configuracoes"]?.let { configuracoes ->
+                    require(configuracoes.size <= 1)
+                    banco.configuracoesDao().limparConfiguracoes()
+                    configuracoes.singleOrNull()?.let { banco.configuracoesDao().salvar(paraConfiguracoes(it)) }
+                    contagem["configurações"] = configuracoes.size
+                }
+                porTabela["lixeira"]?.let { registros ->
+                    banco.lixeiraDao().removerTudo()
+                    registros.forEach { banco.lixeiraDao().inserir(paraLixeira(it)) }
+                    contagem["lixeira"] = registros.size
+                }
                 porTabela["perfil_restricoes"]?.let { perfis ->
                     require(perfis.size <= 1)
                     banco.configuracoesDao().limparPerfil()
@@ -237,14 +259,16 @@ class GerenciadorDeBackup(
                     contagem["alergias"] = alergias.size
                 }
 
-                porTabela["memoria_categorias"]?.forEach { dados ->
-                    banco.memoriaCategoriaDao().salvar(paraMemoria(dados))
-                    contagem["memória"] = (contagem["memória"] ?: 0) + 1
+                porTabela["memoria_categorias"]?.let { registros ->
+                    banco.memoriaCategoriaDao().limpar()
+                    registros.forEach { banco.memoriaCategoriaDao().salvar(paraMemoria(it)) }
+                    contagem["memória"] = registros.size
                 }
 
-                porTabela["decisoes_parser"]?.forEach { dados ->
-                    banco.decisaoDoParserDao().salvar(paraDecisaoDoParser(dados))
-                    contagem["parser"] = (contagem["parser"] ?: 0) + 1
+                porTabela["decisoes_parser"]?.let { registros ->
+                    banco.decisaoDoParserDao().limpar()
+                    registros.forEach { banco.decisaoDoParserDao().salvar(paraDecisaoDoParser(it)) }
+                    contagem["parser"] = registros.size
                 }
 
                 ResultadoRestauracao(
@@ -366,6 +390,36 @@ class GerenciadorDeBackup(
         precoCentavos = d["cent"]?.toLongOrNull() ?: 0,
         dataRegistro = d["data"]?.toLongOrNull() ?: System.currentTimeMillis(),
         disponivel = d["disp"]?.toBooleanStrictOrNull() ?: true,
+    )
+
+    private fun deConfiguracoes(e: ConfiguracoesEntity) = mapOf(
+        "tema" to e.tema, "altoContraste" to e.altoContraste.toString(),
+        "escala" to e.escalaDaFonte.toString(), "coresDinamicas" to e.coresDinamicas.toString(),
+        "sons" to e.sons.toString(), "vibracao" to e.vibracao.toString(),
+        "modoTecnico" to e.modoTecnico.toString(), "onboarding" to e.onboardingConcluido.toString(),
+        "nutrientes" to e.nutrientesComparados, "dicas" to e.dicasVistas,
+        "meta" to e.metaEconomiaCentavos?.toString(),
+    )
+
+    private fun paraConfiguracoes(d: Map<String, String>) = ConfiguracoesEntity(
+        tema = d.getValue("tema"), altoContraste = d.getValue("altoContraste").toBooleanStrict(),
+        escalaDaFonte = d.getValue("escala").toInt(), coresDinamicas = d.getValue("coresDinamicas").toBooleanStrict(),
+        sons = d.getValue("sons").toBooleanStrict(), vibracao = d.getValue("vibracao").toBooleanStrict(),
+        modoTecnico = d.getValue("modoTecnico").toBooleanStrict(), onboardingConcluido = d.getValue("onboarding").toBooleanStrict(),
+        nutrientesComparados = d.getValue("nutrientes"), dicasVistas = d.getValue("dicas"),
+        // O horario do ultimo backup e local ao dispositivo, nao ao arquivo importado.
+        ultimoBackupMs = 0L, metaEconomiaCentavos = d["meta"]?.toLong(),
+    )
+
+    private fun deLixeira(e: RegistroDeLixeiraEntity) = mapOf(
+        "id" to e.id.toString(), "tipo" to e.tipo, "titulo" to e.titulo, "detalhe" to e.detalhe,
+        "ref" to e.refId.toString(), "payload" to e.payload, "enviada" to e.enviadaEm.toString(),
+    )
+
+    private fun paraLixeira(d: Map<String, String>) = RegistroDeLixeiraEntity(
+        id = d.getValue("id").toLong().also { require(it > 0) }, tipo = d.getValue("tipo"),
+        titulo = d.getValue("titulo"), detalhe = d["detalhe"], refId = d.getValue("ref").toLong(),
+        payload = d.getValue("payload"), enviadaEm = d.getValue("enviada").toLong(),
     )
 
     private fun dePerfil(e: PerfilRestricoesEntity) = mapOf(
