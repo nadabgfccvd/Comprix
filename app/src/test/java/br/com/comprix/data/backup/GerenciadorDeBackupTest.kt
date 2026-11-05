@@ -11,6 +11,8 @@ import br.com.comprix.data.local.ConfiguracoesEntity
 import br.com.comprix.data.local.RegistroDeLixeiraEntity
 import br.com.comprix.data.local.MemoriaCategoriaEntity
 import br.com.comprix.data.local.DecisaoDoParserEntity
+import br.com.comprix.data.local.ProdutoEntity
+import br.com.comprix.data.local.CompraEntity
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.runBlocking
@@ -226,6 +228,27 @@ class GerenciadorDeBackupTest {
         assertTrue(resultado.mensagem, resultado.sucesso)
         assertEquals(config, banco.configuracoesDao().carregar())
         assertEquals(listOf(lixo), banco.lixeiraDao().listarTodas())
+    }
+
+    @Test fun backupPreservaAspasEApostrofosEmJsonAninhado() = runBlocking {
+        val nutricao = "{\"porcao\":\"D'água\"}"
+        val categorias = "{\"D'água\":\"123\"}"
+        val produto = ProdutoEntity(id = 1, nome = "Produto", nomeNormalizado = "produto", categoriaId = 1,
+            codigoBarras = null, unidadePadrao = "UNIDADE", infoNutricionalJson = nutricao,
+            selosAltoEm = "", ingredientes = null, gluten = "INDETERMINADO", alergenos = "",
+            dataValidade = null, dataFabricacao = null, pesoMedioEstimadoEmBase = null, atualizadoEm = 1)
+        val compra = CompraEntity(id = 1, listaId = null, nomeLista = "Lista", data = 1,
+            totalPagoCentavos = 123, economiaCentavos = 0, quantidadeItens = 1,
+            descricaoEstabelecimento = "Loja", estabelecimentoPrincipalId = null,
+            gastosPorCategoriaJson = categorias)
+        banco.produtoDao().salvar(produto)
+        banco.compraDao().inserir(compra)
+        val saida = ByteArrayOutputStream()
+        gerenciador.exportar(saida)
+        val resultado = gerenciador.restaurar(ByteArrayInputStream(saida.toByteArray()))
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(nutricao, banco.produtoDao().porId(1)?.infoNutricionalJson)
+        assertEquals(categorias, banco.compraDao().porId(1)?.gastosPorCategoriaJson)
     }
 
 }
