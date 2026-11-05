@@ -46,6 +46,8 @@ internal fun lerBackupV1(linhas: List<String>): Map<String, List<Map<String, Str
 private fun lerTabelas(linhas: List<String>): Map<String, List<Map<String, String>>>? {
     val tabelas = linkedMapOf<String, MutableList<Map<String, String>>>()
     var atual: MutableList<Map<String, String>>? = null
+    var nomeAtual: String? = null
+    val chavesVistas = mutableSetOf<Pair<String, String>>()
     for (linha in linhas.drop(1)) {
         val texto = linha.trim()
         when {
@@ -54,6 +56,7 @@ private fun lerTabelas(linhas: List<String>): Map<String, List<Map<String, Strin
                 val nome = texto.removePrefix(MARCA_TABELA).trim()
                 if (nome.isEmpty() || nome in tabelas) return null
                 atual = mutableListOf()
+                nomeAtual = nome
                 tabelas[nome] = atual
             }
             texto.startsWith("{") -> {
@@ -62,6 +65,16 @@ private fun lerTabelas(linhas: List<String>): Map<String, List<Map<String, Strin
                 // deJson e deliberadamente tolerante; comparar com a escrita
                 // canonica impede que aceite um objeto parcial ou malformado.
                 if (dados.isEmpty() || JsonSimples.paraJson(dados) != texto) return null
+                val nome = nomeAtual ?: return null
+                if (!registroPossuiIdentidadeValida(nome, dados)) return null
+                val chave = when (nome) {
+                    "categorias", "produtos", "estabelecimentos", "listas", "itens", "precos",
+                    "compras", "historico_precos", "lixeira", "alergias_customizadas" -> dados["id"]?.toLongOrNull()?.toString()
+                    "memoria_categorias" -> dados["nome"]
+                    "decisoes_parser" -> dados["termo"]
+                    else -> null
+                }
+                if (chave != null && !chavesVistas.add(nome to chave)) return null
                 destino.add(dados)
             }
             else -> return null
@@ -69,4 +82,18 @@ private fun lerTabelas(linhas: List<String>): Map<String, List<Map<String, Strin
     }
     if (!tabelas.keys.containsAll(TABELAS_ESSENCIAIS)) return null
     return tabelas
+}
+
+/** Valida identidades usadas para restaurar vinculos sem inventar IDs padrao. */
+private fun registroPossuiIdentidadeValida(tabela: String, dados: Map<String, String>): Boolean {
+    fun id(chave: String) = dados[chave]?.toLongOrNull()?.let { it > 0 } == true
+    return when (tabela) {
+        "categorias", "produtos", "estabelecimentos", "listas", "compras", "lixeira", "alergias_customizadas" -> id("id")
+        "itens" -> id("id") && id("lista") && id("prod")
+        "precos" -> id("id") && id("item") && id("loja")
+        "historico_precos" -> id("id") && id("prod") && id("loja")
+        "memoria_categorias" -> !dados["nome"].isNullOrBlank() && id("cat")
+        "decisoes_parser" -> !dados["termo"].isNullOrBlank()
+        else -> true // secoes adicionadas em outras versoes nao sao descartadas
+    }
 }

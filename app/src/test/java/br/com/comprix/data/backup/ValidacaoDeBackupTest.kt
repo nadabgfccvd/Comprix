@@ -33,4 +33,11 @@ class ValidacaoDeBackupTest {
         assertNull(lerBackupV1(listOf("#COMPRIX-BACKUP v2") + backup().drop(1)))
         assertNull(lerBackupV1(listOf("#COMPRIX-BACKUP v1", "{\"id\":\"1\"}") + backup().drop(1)))
     }
+    @Test fun rejeitaIdentidadesAusentesInvalidasOuDuplicadas() {
+        assertNull(lerBackupV1(backup("{\"nome\":\"Sem id\"}")))
+        assertNull(lerBackupV1(backup("{\"id\":\"0\"}")))
+        assertNull(lerBackupV1(backup("{\"id\":\"xyz\"}")))
+        assertNull(lerBackupV1(backup("{\"id\":\"1\"}", "{\"id\":\"1\"}")))
+    }
+
 }
