@@ -18,6 +18,8 @@ import br.com.comprix.util.JsonSimples
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.security.DigestOutputStream
+import java.security.MessageDigest
 import kotlinx.coroutines.CancellationException
 
 /**
@@ -25,11 +27,12 @@ import kotlinx.coroutines.CancellationException
  *
  * ## Formato (texto puro, uma entidade por linha)
  * ```
- * #COMPRIX-BACKUP v1
+ * #COMPRIX-BACKUP v2
  * #TABELA categorias
  * {"id":"1","nome":"Hortifrúti",...}
  * #TABELA produtos
  * {"id":"7","nome":"Arroz",...}
+ * #SHA256 <soma do conteudo anterior em UTF-8>
  * ```
  *
  * Por que texto e nao uma copia do arquivo .db: o `.cbk` e legivel, resiste a
@@ -48,7 +51,7 @@ class GerenciadorDeBackup(
 ) {
 
     companion object {
-        const val CABECALHO = "#COMPRIX-BACKUP v1"
+        const val CABECALHO = "#COMPRIX-BACKUP v2"
         private const val MARCA_TABELA = "#TABELA "
         const val EXTENSAO = "cbk"
         private const val MAXIMO_AUTOMATICOS = 5
@@ -73,7 +76,8 @@ class GerenciadorDeBackup(
 
     /** Escreve o backup completo no fluxo recebido (arquivo local ou SAF). */
     suspend fun exportar(saida: OutputStream) {
-        saida.bufferedWriter(Charsets.UTF_8).use { escritor ->
+        val digest = MessageDigest.getInstance("SHA-256")
+        DigestOutputStream(saida, digest).bufferedWriter(Charsets.UTF_8).use { escritor ->
             escritor.appendLine(CABECALHO)
 
             escritor.appendLine(MARCA_TABELA + "categorias")
@@ -113,6 +117,8 @@ class GerenciadorDeBackup(
                 escritor.appendLine(JsonSimples.paraJson(deDecisaoDoParser(it)))
             }
             escritor.flush()
+            val soma = digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
+            escritor.appendLine("#SHA256 $soma")
         }
     }
 
@@ -143,14 +149,14 @@ class GerenciadorDeBackup(
      * Le um `.cbk` e substitui o conteudo atual.
      *
      * A validacao ocorre antes de qualquer escrita e a substituicao usa uma
-     * transacao. O formato v1 nao tem checksum e nao permite detectar todos os
-     * arquivos truncados, mesmo quando passam pela validacao estrutural.
+     * transacao. O formato v2 verifica integridade; arquivos v1 continuam
+     * suportados, mas nao permitem detectar todos os truncamentos.
      */
     suspend fun restaurar(entrada: InputStream): ResultadoRestauracao {
         val linhas = runCatching { entrada.bufferedReader(Charsets.UTF_8).readLines() }
             .getOrElse { return ResultadoRestauracao(false, "Não foi possível ler o arquivo.") }
 
-        val porTabela = lerBackupV1(linhas)
+        val porTabela = lerBackup(linhas)
             ?: return ResultadoRestauracao(false, "Backup incompleto ou inválido; nenhum dado foi alterado.")
 
         return try {

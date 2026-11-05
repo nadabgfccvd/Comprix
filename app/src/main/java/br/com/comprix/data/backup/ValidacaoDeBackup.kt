@@ -1,20 +1,49 @@
 package br.com.comprix.data.backup
 
 import br.com.comprix.util.JsonSimples
+import java.security.MessageDigest
 
-private const val CABECALHO = "#COMPRIX-BACKUP v1"
+private const val CABECALHO_V1 = "#COMPRIX-BACKUP v1"
+private const val CABECALHO_V2 = "#COMPRIX-BACKUP v2"
 private const val MARCA_TABELA = "#TABELA "
 private val TABELAS_ESSENCIAIS = setOf(
     "categorias", "produtos", "estabelecimentos", "listas", "itens", "precos", "compras",
 )
 
 /**
- * Aceita o formato canonico emitido pelo exportador v1. O formato antigo nao
- * contem rodape nem checksum: nao e possivel detectar todo arquivo truncado.
+ * Valida o formato canonico dos backups. O v2 usa SHA-256 para detectar
+ * corrupcao acidental; v1 nao tem rodape e nao detecta todo truncamento.
  * Nao altera o banco; um erro em qualquer linha invalida o arquivo inteiro.
+ * O checksum nao autentica a origem e nao protege contra alteracao deliberada.
  */
+internal fun lerBackup(linhas: List<String>): Map<String, List<Map<String, String>>>? {
+    return when (linhas.firstOrNull()) {
+        CABECALHO_V1 -> lerBackupV1(linhas)
+        CABECALHO_V2 -> {
+            val rodape = linhas.lastOrNull() ?: return null
+            if (!rodape.matches(Regex("#SHA256 [0-9a-f]{64}"))) return null
+            val corpo = linhas.dropLast(1)
+            val digest = MessageDigest.getInstance("SHA-256")
+            corpo.forEach { linha ->
+                digest.update(linha.toByteArray(Charsets.UTF_8))
+                digest.update('\n'.code.toByte())
+            }
+            val calculado = digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
+            if (rodape != "#SHA256 $calculado") return null
+            val tabelas = lerTabelas(corpo) ?: return null
+            if ("historico_precos" !in tabelas) return null
+            tabelas
+        }
+        else -> null
+    }
+}
+
 internal fun lerBackupV1(linhas: List<String>): Map<String, List<Map<String, String>>>? {
-    if (linhas.firstOrNull()?.trim() != CABECALHO) return null
+    if (linhas.firstOrNull()?.trim() != CABECALHO_V1) return null
+    return lerTabelas(linhas)
+}
+
+private fun lerTabelas(linhas: List<String>): Map<String, List<Map<String, String>>>? {
     val tabelas = linkedMapOf<String, MutableList<Map<String, String>>>()
     var atual: MutableList<Map<String, String>>? = null
     for (linha in linhas.drop(1)) {
