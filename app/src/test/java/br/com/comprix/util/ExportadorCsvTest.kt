@@ -208,4 +208,19 @@ class ExportadorCsvTest {
         assertEquals(1, linhas.size)
         assertEquals("produto;detalhe;Mercado A;melhor loja", linhas[0])
     }
+    @Test
+    fun `csv da matriz alinha precos incompletos ou excedentes ao cabecalho`() {
+        val csv = ExportadorCsv.matrizCsv(
+            nomesDasLojas = listOf("Loja A", "Loja B"),
+            linhas = listOf(
+                ExportadorCsv.LinhaDaMatrizCsv("Arroz", "1 kg", listOf(BigDecimal("5.00")), 1),
+                ExportadorCsv.LinhaDaMatrizCsv("Feijão", "1 kg", listOf(BigDecimal("6.00"), null, BigDecimal("9.00")), 0),
+            ),
+        )
+        val linhas = csv.removePrefix("\uFEFF").trim().split("\n")
+        assertEquals("produto;detalhe;Loja A;Loja B;melhor loja", linhas[0])
+        assertEquals("Arroz;1 kg;5,00;-;Loja B", linhas[1])
+        assertEquals("Feijão;1 kg;6,00;-;Loja A", linhas[2])
+    }
+
 }

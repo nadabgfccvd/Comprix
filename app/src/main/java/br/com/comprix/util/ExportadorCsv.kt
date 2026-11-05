@@ -102,7 +102,8 @@ object ExportadorCsv {
                 .joinToString(";"),
         )
         linhas.forEach { linha ->
-            val celulas = linha.precoPorLoja.map { preco ->
+            val celulas = nomesDasLojas.indices.map { indice ->
+                val preco = linha.precoPorLoja.getOrNull(indice)
                 if (preco == null || preco.signum() <= 0) "-" else Formatadores.moedaSemSimbolo(preco)
             }
             val melhor = linha.indiceDoMelhor?.let { nomesDasLojas.getOrNull(it) } ?: "-"
