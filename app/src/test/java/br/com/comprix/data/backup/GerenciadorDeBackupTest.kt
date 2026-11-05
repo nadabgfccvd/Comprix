@@ -5,6 +5,8 @@ import androidx.room.Room
 import br.com.comprix.data.local.ComprixDatabase
 import br.com.comprix.data.local.ListaEntity
 import br.com.comprix.data.local.HistoricoPrecoEntity
+import br.com.comprix.data.local.PerfilRestricoesEntity
+import br.com.comprix.data.local.AlergiaCustomizadaEntity
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.runBlocking
@@ -135,6 +137,42 @@ class GerenciadorDeBackupTest {
         assertFalse(gerenciador.restaurar(semRodape.byteInputStream()).sucesso)
         assertFalse(gerenciador.restaurar(backup.replace("Original", "Alterado").byteInputStream()).sucesso)
         assertEquals("Original", banco.listaDao().porId(1)?.nome)
+    }
+
+    @Test fun backupPreservaRestricoesEAlergias() = runBlocking {
+        val perfil = PerfilRestricoesEntity(alergenos = "LEITE|SOJA", semGluten = true)
+        val alergia = AlergiaCustomizadaEntity(id = 1, nome = "Castanha", palavras = "castanha|nozes")
+        banco.configuracoesDao().salvarPerfil(perfil)
+        banco.alergiaCustomizadaDao().inserir(alergia)
+        val saida = ByteArrayOutputStream()
+        gerenciador.exportar(saida)
+        banco.configuracoesDao().salvarPerfil(PerfilRestricoesEntity(alergenos = "", semGluten = false))
+        banco.alergiaCustomizadaDao().inserir(AlergiaCustomizadaEntity(2, "Outro", "outro"))
+        val resultado = gerenciador.restaurar(ByteArrayInputStream(saida.toByteArray()))
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(perfil, banco.configuracoesDao().carregarPerfil())
+        assertEquals(listOf(alergia), banco.alergiaCustomizadaDao().listarTodas())
+    }
+
+    @Test fun backupLegadoSemRestricoesPreservaDadosLocais() = runBlocking {
+        val perfil = PerfilRestricoesEntity(alergenos = "LEITE", semGluten = true)
+        val alergia = AlergiaCustomizadaEntity(1, "Castanha", "castanha")
+        banco.configuracoesDao().salvarPerfil(perfil)
+        banco.alergiaCustomizadaDao().inserir(alergia)
+        val legado = """
+            #COMPRIX-BACKUP v1
+            #TABELA categorias
+            #TABELA produtos
+            #TABELA estabelecimentos
+            #TABELA listas
+            #TABELA itens
+            #TABELA precos
+            #TABELA compras
+        """.trimIndent()
+        val resultado = gerenciador.restaurar(legado.byteInputStream())
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(perfil, banco.configuracoesDao().carregarPerfil())
+        assertEquals(listOf(alergia), banco.alergiaCustomizadaDao().listarTodas())
     }
 
 }

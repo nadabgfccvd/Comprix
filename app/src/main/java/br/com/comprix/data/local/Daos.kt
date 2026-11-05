@@ -340,6 +340,9 @@ interface ConfiguracoesDao {
 
     @Upsert
     suspend fun salvarPerfil(perfil: PerfilRestricoesEntity)
+
+    @Query("DELETE FROM perfil_restricoes")
+    suspend fun limparPerfil()
 }
 
 /** Alergias e restricoes criadas pelo proprio usuario (fora da lista RDC 26/2015). */
@@ -356,6 +359,9 @@ interface AlergiaCustomizadaDao {
 
     @Query("DELETE FROM alergias_customizadas WHERE id = :id")
     suspend fun remover(id: Long)
+
+    @Query("DELETE FROM alergias_customizadas")
+    suspend fun limpar()
 }
 
 /** Operacoes que tocam varias tabelas de uma vez (backup e restauracao). */
