@@ -7,6 +7,10 @@ import br.com.comprix.data.local.ListaEntity
 import br.com.comprix.data.local.HistoricoPrecoEntity
 import br.com.comprix.data.local.PerfilRestricoesEntity
 import br.com.comprix.data.local.AlergiaCustomizadaEntity
+import br.com.comprix.data.local.ConfiguracoesEntity
+import br.com.comprix.data.local.RegistroDeLixeiraEntity
+import br.com.comprix.data.local.MemoriaCategoriaEntity
+import br.com.comprix.data.local.DecisaoDoParserEntity
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.runBlocking
@@ -173,6 +177,55 @@ class GerenciadorDeBackupTest {
         assertTrue(resultado.mensagem, resultado.sucesso)
         assertEquals(perfil, banco.configuracoesDao().carregarPerfil())
         assertEquals(listOf(alergia), banco.alergiaCustomizadaDao().listarTodas())
+    }
+
+    @Test fun backupRestauraConfiguracoesLixeiraEAprendizados() = runBlocking {
+        val config = ConfiguracoesEntity(tema = "ESCURO", altoContraste = true, escalaDaFonte = 120,
+            coresDinamicas = false, sons = true, vibracao = false, modoTecnico = true,
+            onboardingConcluido = true, nutrientesComparados = "SODIO", dicasVistas = "DICA",
+            ultimoBackupMs = 1234L, metaEconomiaCentavos = 500L)
+        val lixo = RegistroDeLixeiraEntity(1, "LISTA", "Compras", null, 7, "{}", 1000)
+        val memoria = MemoriaCategoriaEntity("arroz", 1, 2, 3)
+        val decisao = DecisaoDoParserEntity("leite", "REJEITADO", null, 1, 4)
+        banco.configuracoesDao().salvar(config)
+        banco.lixeiraDao().inserir(lixo)
+        banco.memoriaCategoriaDao().salvar(memoria)
+        banco.decisaoDoParserDao().salvar(decisao)
+        val saida = ByteArrayOutputStream()
+        gerenciador.exportar(saida)
+        banco.lixeiraDao().removerTudo()
+        banco.memoriaCategoriaDao().salvar(MemoriaCategoriaEntity("outro", 2, 1, 5))
+        banco.decisaoDoParserDao().salvar(DecisaoDoParserEntity("outro", "REJEITADO", null, 1, 5))
+        val resultado = gerenciador.restaurar(ByteArrayInputStream(saida.toByteArray()))
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(config.copy(ultimoBackupMs = 0), banco.configuracoesDao().carregar())
+        assertEquals(listOf(lixo), banco.lixeiraDao().listarTodas())
+        assertEquals(listOf(memoria), banco.memoriaCategoriaDao().listarTodas())
+        assertEquals(listOf(decisao), banco.decisaoDoParserDao().listarTodas())
+    }
+
+    @Test fun backupLegadoPreservaConfiguracoesELixeiraAusentes() = runBlocking {
+        val config = ConfiguracoesEntity(tema = "CLARO", altoContraste = false, escalaDaFonte = 100,
+            coresDinamicas = false, sons = true, vibracao = true, modoTecnico = false,
+            onboardingConcluido = true, nutrientesComparados = "", dicasVistas = "",
+            ultimoBackupMs = 1234L, metaEconomiaCentavos = null)
+        val lixo = RegistroDeLixeiraEntity(1, "LISTA", "Compras", null, 7, "{}", 1000)
+        banco.configuracoesDao().salvar(config)
+        banco.lixeiraDao().inserir(lixo)
+        val legado = """
+            #COMPRIX-BACKUP v1
+            #TABELA categorias
+            #TABELA produtos
+            #TABELA estabelecimentos
+            #TABELA listas
+            #TABELA itens
+            #TABELA precos
+            #TABELA compras
+        """.trimIndent()
+        val resultado = gerenciador.restaurar(legado.byteInputStream())
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(config, banco.configuracoesDao().carregar())
+        assertEquals(listOf(lixo), banco.lixeiraDao().listarTodas())
     }
 
 }
