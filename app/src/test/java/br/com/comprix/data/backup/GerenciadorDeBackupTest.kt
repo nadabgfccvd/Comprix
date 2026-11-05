@@ -204,4 +204,28 @@ class GerenciadorDeBackupTest {
         assertEquals(listOf(decisao), banco.decisaoDoParserDao().listarTodas())
     }
 
+    @Test fun backupLegadoPreservaConfiguracoesELixeiraAusentes() = runBlocking {
+        val config = ConfiguracoesEntity(tema = "CLARO", altoContraste = false, escalaDaFonte = 100,
+            coresDinamicas = false, sons = true, vibracao = true, modoTecnico = false,
+            onboardingConcluido = true, nutrientesComparados = "", dicasVistas = "",
+            ultimoBackupMs = 1234L, metaEconomiaCentavos = null)
+        val lixo = RegistroDeLixeiraEntity(1, "LISTA", "Compras", null, 7, "{}", 1000)
+        banco.configuracoesDao().salvar(config)
+        banco.lixeiraDao().inserir(lixo)
+        val legado = """
+            #COMPRIX-BACKUP v1
+            #TABELA categorias
+            #TABELA produtos
+            #TABELA estabelecimentos
+            #TABELA listas
+            #TABELA itens
+            #TABELA precos
+            #TABELA compras
+        """.trimIndent()
+        val resultado = gerenciador.restaurar(legado.byteInputStream())
+        assertTrue(resultado.mensagem, resultado.sucesso)
+        assertEquals(config, banco.configuracoesDao().carregar())
+        assertEquals(listOf(lixo), banco.lixeiraDao().listarTodas())
+    }
+
 }
