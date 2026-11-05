@@ -1,6 +1,7 @@
 package br.com.comprix.data.backup
 
 import android.content.Context
+import androidx.room.withTransaction
 import br.com.comprix.data.local.CategoriaEntity
 import br.com.comprix.data.local.CompraEntity
 import br.com.comprix.data.local.DecisaoDoParserEntity
@@ -16,6 +17,7 @@ import br.com.comprix.util.JsonSimples
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import kotlinx.coroutines.CancellationException
 
 /**
  * Exportacao e restauracao do banco em arquivo `.cbk` (Comprix Backup).
@@ -134,91 +136,80 @@ class GerenciadorDeBackup(
     /**
      * Le um `.cbk` e substitui o conteudo atual.
      *
-     * A restauracao e "tudo ou nada" no sentido pratico: primeiro o arquivo e
-     * validado (cabecalho + tabelas conhecidas) e so entao o banco e limpo.
-     * Arquivo invalido nao apaga nada.
+     * A validacao ocorre antes de qualquer escrita e a substituicao usa uma
+     * transacao. O formato v1 nao tem checksum e nao permite detectar todos os
+     * arquivos truncados, mesmo quando passam pela validacao estrutural.
      */
     suspend fun restaurar(entrada: InputStream): ResultadoRestauracao {
         val linhas = runCatching { entrada.bufferedReader(Charsets.UTF_8).readLines() }
             .getOrElse { return ResultadoRestauracao(false, "Não foi possível ler o arquivo.") }
 
-        if (linhas.isEmpty() || !linhas.first().trim().startsWith("#COMPRIX-BACKUP")) {
-            return ResultadoRestauracao(false, "Este arquivo não é um backup do Comprix.")
-        }
+        val porTabela = lerBackupV1(linhas)
+            ?: return ResultadoRestauracao(false, "Backup incompleto ou inválido; nenhum dado foi alterado.")
 
-        val porTabela = LinkedHashMap<String, MutableList<Map<String, String>>>()
-        var tabelaAtual: String? = null
-        linhas.drop(1).forEach { linha ->
-            val texto = linha.trim()
-            when {
-                texto.isBlank() -> Unit
-                texto.startsWith(MARCA_TABELA) -> {
-                    tabelaAtual = texto.removePrefix(MARCA_TABELA).trim()
-                    porTabela.getOrPut(tabelaAtual!!) { mutableListOf() }
+        return try {
+            banco.withTransaction {
+                val manutencao = banco.manutencaoDao()
+                manutencao.apagarPrecos()
+                manutencao.apagarItens()
+                manutencao.apagarListas()
+                manutencao.apagarCompras()
+                manutencao.apagarProdutos()
+                manutencao.apagarEstabelecimentos()
+                manutencao.apagarHistoricoPrecos()
+                manutencao.apagarCategoriasDoUsuario()
+
+                val contagem = LinkedHashMap<String, Int>()
+
+                porTabela["categorias"]?.forEach { dados ->
+                    banco.categoriaDao().inserir(paraCategoria(dados))
+                    contagem["categorias"] = (contagem["categorias"] ?: 0) + 1
                 }
-                texto.startsWith("{") -> {
-                    val dados = JsonSimples.deJson(texto)
-                    if (dados.isNotEmpty() && tabelaAtual != null) porTabela[tabelaAtual]?.add(dados)
+                porTabela["produtos"]?.forEach { dados ->
+                    banco.produtoDao().salvar(paraProduto(dados))
+                    contagem["produtos"] = (contagem["produtos"] ?: 0) + 1
                 }
+                porTabela["estabelecimentos"]?.forEach { dados ->
+                    banco.estabelecimentoDao().inserir(paraEstabelecimento(dados))
+                    contagem["estabelecimentos"] = (contagem["estabelecimentos"] ?: 0) + 1
+                }
+                porTabela["listas"]?.forEach { dados ->
+                    banco.listaDao().inserir(paraLista(dados))
+                    contagem["listas"] = (contagem["listas"] ?: 0) + 1
+                }
+                porTabela["itens"]?.forEach { dados ->
+                    banco.itemDao().inserir(paraItem(dados))
+                    contagem["itens"] = (contagem["itens"] ?: 0) + 1
+                }
+                porTabela["precos"]?.forEach { dados ->
+                    banco.precoDao().salvar(paraPreco(dados))
+                    contagem["precos"] = (contagem["precos"] ?: 0) + 1
+                }
+                porTabela["compras"]?.forEach { dados ->
+                    banco.compraDao().inserir(paraCompra(dados))
+                    contagem["compras"] = (contagem["compras"] ?: 0) + 1
+                }
+                porTabela["memoria_categorias"]?.forEach { dados ->
+                    banco.memoriaCategoriaDao().salvar(paraMemoria(dados))
+                    contagem["memória"] = (contagem["memória"] ?: 0) + 1
+                }
+
+                porTabela["decisoes_parser"]?.forEach { dados ->
+                    banco.decisaoDoParserDao().salvar(paraDecisaoDoParser(dados))
+                    contagem["parser"] = (contagem["parser"] ?: 0) + 1
+                }
+
+                ResultadoRestauracao(
+                    sucesso = true,
+                    mensagem = "Backup restaurado: ${contagem.values.sum()} registros.",
+                    tabelas = contagem,
+                )
             }
+        } catch (cancelamento: CancellationException) {
+            throw cancelamento
+        } catch (erro: Exception) {
+            ResultadoRestauracao(false, "Não foi possível restaurar o backup; nenhum dado foi alterado.")
         }
-        if (porTabela.isEmpty()) return ResultadoRestauracao(false, "O backup está vazio.")
-
-        val manutencao = banco.manutencaoDao()
-        manutencao.apagarPrecos()
-        manutencao.apagarItens()
-        manutencao.apagarListas()
-        manutencao.apagarCompras()
-        manutencao.apagarProdutos()
-        manutencao.apagarEstabelecimentos()
-        manutencao.apagarHistoricoPrecos()
-        manutencao.apagarCategoriasDoUsuario()
-
-        val contagem = LinkedHashMap<String, Int>()
-
-        porTabela["categorias"]?.forEach { dados ->
-            banco.categoriaDao().inserir(paraCategoria(dados))
-            contagem["categorias"] = (contagem["categorias"] ?: 0) + 1
-        }
-        porTabela["produtos"]?.forEach { dados ->
-            banco.produtoDao().salvar(paraProduto(dados))
-            contagem["produtos"] = (contagem["produtos"] ?: 0) + 1
-        }
-        porTabela["estabelecimentos"]?.forEach { dados ->
-            banco.estabelecimentoDao().inserir(paraEstabelecimento(dados))
-            contagem["estabelecimentos"] = (contagem["estabelecimentos"] ?: 0) + 1
-        }
-        porTabela["listas"]?.forEach { dados ->
-            banco.listaDao().inserir(paraLista(dados))
-            contagem["listas"] = (contagem["listas"] ?: 0) + 1
-        }
-        porTabela["itens"]?.forEach { dados ->
-            banco.itemDao().inserir(paraItem(dados))
-            contagem["itens"] = (contagem["itens"] ?: 0) + 1
-        }
-        porTabela["precos"]?.forEach { dados ->
-            banco.precoDao().salvar(paraPreco(dados))
-            contagem["precos"] = (contagem["precos"] ?: 0) + 1
-        }
-        porTabela["compras"]?.forEach { dados ->
-            banco.compraDao().inserir(paraCompra(dados))
-            contagem["compras"] = (contagem["compras"] ?: 0) + 1
-        }
-        porTabela["memoria_categorias"]?.forEach { dados ->
-            banco.memoriaCategoriaDao().salvar(paraMemoria(dados))
-            contagem["memória"] = (contagem["memória"] ?: 0) + 1
-        }
-
-        porTabela["decisoes_parser"]?.forEach { dados ->
-            banco.decisaoDoParserDao().salvar(paraDecisaoDoParser(dados))
-            contagem["parser"] = (contagem["parser"] ?: 0) + 1
-        }
-
-        return ResultadoRestauracao(
-            sucesso = true,
-            mensagem = "Backup restaurado: ${contagem.values.sum()} registros.",
-            tabelas = contagem,
-        )
     }
 
     // --- serializacao por tabela -----------------------------------------------------
