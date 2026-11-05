@@ -3,6 +3,8 @@ package br.com.comprix.data.backup
 import android.content.Context
 import androidx.room.withTransaction
 import br.com.comprix.data.local.CategoriaEntity
+import br.com.comprix.data.local.AlergiaCustomizadaEntity
+import br.com.comprix.data.local.PerfilRestricoesEntity
 import br.com.comprix.data.local.CompraEntity
 import br.com.comprix.data.local.DecisaoDoParserEntity
 import br.com.comprix.data.local.ComprixDatabase
@@ -107,6 +109,15 @@ class GerenciadorDeBackup(
 
             escritor.appendLine(MARCA_TABELA + "compras")
             banco.compraDao().listarTodas().forEach { escritor.appendLine(JsonSimples.paraJson(deCompra(it))) }
+
+            escritor.appendLine(MARCA_TABELA + "perfil_restricoes")
+            banco.configuracoesDao().carregarPerfil()?.let {
+                escritor.appendLine(JsonSimples.paraJson(dePerfil(it)))
+            }
+            escritor.appendLine(MARCA_TABELA + "alergias_customizadas")
+            banco.alergiaCustomizadaDao().listarTodas().forEach {
+                escritor.appendLine(JsonSimples.paraJson(deAlergia(it)))
+            }
 
             escritor.appendLine(MARCA_TABELA + "memoria_categorias")
             banco.memoriaCategoriaDao().listarTodas().forEach {
@@ -214,6 +225,18 @@ class GerenciadorDeBackup(
                     banco.compraDao().inserir(paraCompra(dados))
                     contagem["compras"] = (contagem["compras"] ?: 0) + 1
                 }
+                porTabela["perfil_restricoes"]?.let { perfis ->
+                    require(perfis.size <= 1)
+                    banco.configuracoesDao().limparPerfil()
+                    perfis.singleOrNull()?.let { banco.configuracoesDao().salvarPerfil(paraPerfil(it)) }
+                    contagem["perfil de restrições"] = perfis.size
+                }
+                porTabela["alergias_customizadas"]?.let { alergias ->
+                    banco.alergiaCustomizadaDao().limpar()
+                    alergias.forEach { banco.alergiaCustomizadaDao().inserir(paraAlergia(it)) }
+                    contagem["alergias"] = alergias.size
+                }
+
                 porTabela["memoria_categorias"]?.forEach { dados ->
                     banco.memoriaCategoriaDao().salvar(paraMemoria(dados))
                     contagem["memória"] = (contagem["memória"] ?: 0) + 1
@@ -343,6 +366,23 @@ class GerenciadorDeBackup(
         precoCentavos = d["cent"]?.toLongOrNull() ?: 0,
         dataRegistro = d["data"]?.toLongOrNull() ?: System.currentTimeMillis(),
         disponivel = d["disp"]?.toBooleanStrictOrNull() ?: true,
+    )
+
+    private fun dePerfil(e: PerfilRestricoesEntity) = mapOf(
+        "alergenos" to e.alergenos, "semGluten" to e.semGluten.toString(),
+    )
+
+    private fun paraPerfil(d: Map<String, String>) = PerfilRestricoesEntity(
+        alergenos = d.getValue("alergenos"), semGluten = d.getValue("semGluten").toBooleanStrict(),
+    )
+
+    private fun deAlergia(e: AlergiaCustomizadaEntity) = mapOf(
+        "id" to e.id.toString(), "nome" to e.nome, "palavras" to e.palavras,
+    )
+
+    private fun paraAlergia(d: Map<String, String>) = AlergiaCustomizadaEntity(
+        id = d.getValue("id").toLong().also { require(it > 0) },
+        nome = d.getValue("nome"), palavras = d.getValue("palavras"),
     )
 
     private fun deHistoricoPreco(e: HistoricoPrecoEntity) = mapOf(
