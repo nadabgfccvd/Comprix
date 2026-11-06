@@ -463,7 +463,10 @@ fun NavegacaoComprix(
         composable(Rotas.LIXEIRA) {
             val vm: LixeiraViewModel = viewModel(
                 factory = fabricaDe {
-                    LixeiraViewModel(ServiceLocator.lixeiraRepositorio)
+                    LixeiraViewModel(
+                        ServiceLocator.lixeiraRepositorio,
+                        ServiceLocator.catalogoRepositorio,
+                    )
                 },
             )
             LixeiraScreen(
