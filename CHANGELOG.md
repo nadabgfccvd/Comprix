@@ -2,7 +2,7 @@
 
 Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas notas de cada [release](https://github.com/nadabgfccvd/Comprix/releases). O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [1.8.0] — 2026-11-06
 
 ### Adicionado
 

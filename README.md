@@ -19,8 +19,8 @@
 <p align="center">
   <a href="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml"><img src="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>&nbsp;
   <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
-  <img src="https://img.shields.io/badge/release-v1.7.0-8A5CF6" alt="Release: v1.7.0"/>&nbsp;
-  <img src="https://img.shields.io/badge/unit_tests-340_passing-4CAF50" alt="Unit tests: 340 passing"/>&nbsp;
+  <img src="https://img.shields.io/badge/release-v1.8.0-8A5CF6" alt="Release: v1.8.0"/>&nbsp;
+  <img src="https://img.shields.io/badge/unit_tests-351_passing-4CAF50" alt="Unit tests: 351 passing"/>&nbsp;
   <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
   <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>
@@ -45,16 +45,16 @@ Comprix keeps your grocery lists and compares prices between the stores you regi
 
 ## 📥 Download
 
-Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.7.0` is archived there. Detailed per-version history lives in [CHANGELOG.md](CHANGELOG.md) (pt-BR).
+Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.8.0` is archived there. Detailed per-version history lives in [CHANGELOG.md](CHANGELOG.md) (pt-BR).
 
-**Latest (v1.7.0):**
+**Latest (v1.8.0):**
 
 | File | For | Size |
 |---|---|---|
-| `comprix-v1.7.0-arm64-v8a-release.apk` | Most modern phones (2016+) — **recommended** | ~21 MB |
-| `comprix-v1.7.0-armeabi-v7a-release.apk` | Older 32-bit phones | ~15 MB |
-| `comprix-v1.7.0-release.apk` | Universal (all ABIs) | ~64 MB |
-| `comprix-v1.7.0-x86_64-release.apk` / `-x86-` | Emulators | ~22 MB |
+| `comprix-v1.8.0-arm64-v8a-release.apk` | Most modern phones (2016+) — **recommended** | ~21 MB |
+| `comprix-v1.8.0-armeabi-v7a-release.apk` | Older 32-bit phones | ~15 MB |
+| `comprix-v1.8.0-release.apk` | Universal (all ABIs) | ~64 MB |
+| `comprix-v1.8.0-x86_64-release.apk` / `-x86-` | Emulators | ~22 MB |
 
 > **Upgrading from v1.4.1 or earlier?** See [Key rotation](#-key-rotation-v142) — v1.4.2 is signed with a new key, so Android requires uninstall → reinstall (your data is safe via the in-app backup).
 
@@ -63,7 +63,7 @@ Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/r
 Requirements: **JDK 17** and the **Android SDK** (platform 35 + build-tools 35.0.0). The Gradle wrapper is versioned — no Gradle install needed.
 
 ```bash
-./gradlew testDebugUnitTest      # 340 JVM unit tests
+./gradlew testDebugUnitTest      # 351 JVM unit tests
 ./gradlew lintDebug              # Android lint (errors fail the build, also enforced by CI)
 ./gradlew assembleDebug          # debug APK
 ```
