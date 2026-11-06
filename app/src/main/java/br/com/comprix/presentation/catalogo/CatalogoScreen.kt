@@ -109,7 +109,17 @@ fun CatalogoScreen(
                     }
                 }
                 EspacoVertical(4.dp)
-                Legenda(if (estado.total == 1) "1 produto" else "${estado.total} produtos")
+                Legenda(
+                    when {
+                        // Busca grande demais para caber no rol: dizer isso em
+                        // vez de exibir "120 produtos" como se fosse tudo.
+                        estado.buscaLimitada ->
+                            "${estado.total} produtos — teto da busca; " +
+                                "refine o termo para afinar o resultado."
+                        estado.total == 1 -> "1 produto"
+                        else -> "${estado.total} produtos"
+                    },
+                )
             }
 
             if (estado.carregando) {
