@@ -5,6 +5,9 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 ## [Não lançado]
 
 ### Interno
+- **A ficha do produto entrou na série de ViewModels com estado real**: `ProdutoViewModel` — ficha + categoria, histórico de preços, favorito e alertas do perfil — não tinha teste. 6 testes novos com repositórios reais sobre Room em memória pinam: ficha de **id inexistente carrega vazia sem travar** (produto/categoria nulos, sem alertas); o histórico vem ordenado do **mais antigo para o mais recente** (a tela pede a inversão da série decrescente do repositório) e o menor preço recente sai em reais; `atualizar` recarrega depois de anotar preço noutra tela; `alternarFavorito` é **otimista** (a estrela liga na hora) e termina persistido; e os sinônimos do acervo ("também buscar: mexerica, bergamota") saem da semente, computados junto do estado derivado. Nenhuma mudança em código de produção.
+
+### Interno
 - **A tela de categorias entrou na série de ViewModels com estado real**: `CategoriasViewModel` — lista ordenada, contagens, aprendizado e reordenação acessível — não tinha teste. 13 testes novos com o catálogo real sobre Room em memória pinam: as 14 categorias de fábrica abrem o estado e **não são removíveis** (a torrada avisa "As categorias originais não podem ser removidas, só renomeadas."); criar/renomear/remover-do-usuário têm mensagens congeladas (com aspas tipográficas "Categoria “Bazar” criada."), nome em branco/igual é ignorado; remover do usuário vai para a lixeira; `aprendidos` reflete a memória de correções e `esquecerAprendizado` zera com torrada; **mover por setas** (o caminho acessível com TalkBack) e o **arrasto** reordenam e gravam múltiplos de 10 no banco; `restaurarOrdemPadrao` devolve "Hortifrúti" ao topo com a torrada. Nenhuma mudança em código de produção.
 
 ### Interno
