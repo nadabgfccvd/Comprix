@@ -551,3 +551,43 @@ aberta (mantenedor).
 de recursos (strings desc_* e cores sem uso — conferir referências antes de apagar),
 strings do widget para @string e label redundante do manifesto. (3) Na próxima release:
 congelar contagem (351) e sincronizar docs/badge.
+
+---
+
+## 2026-11-06 — Sessão 4, iteração 4: higiene de recursos — widget e manifesto (PR #49, mergeado)
+
+**Foco.** A segunda leva da varredura de lint, executada com verificação de referências
+ANTES de qualquer exclusão (lição de método: lint aponta "sem uso", mas a intenção
+documentada decide).
+
+**Mudança (PR #49, mergeado; zero mudança de comportamento).**
+- `lista_widget.xml`: os dois textos hardcoded ("Comprix", "0 de 0 comprados") eram
+  placeholders de preview — confirmado que o `ListaWidgetProvider` sobrescreve os dois
+  campos com `setTextViewText` antes de exibir. Agora em `@string` (`app_name` e a nova
+  `widget_contagem_padrao`, com comentário explicando o papel de preview).
+  Avisos `HardcodedText` ×2 sumiram.
+- `AndroidManifest`: `android:label` da `MainActivity` duplicava o do `<application>`
+  (ambos `@string/app_name`); a activity herda — removido. Aviso `RedundantLabel` sumiu.
+- **`UnusedResources` avaliado e MANTIDO** (13 cores + 8 strings desc_*): o cabeçalho do
+  `colors.xml` documenta que os tokens XML espelham de propósito a paleta Compose
+  (alinhamento + evitar a "piscada" na abertura) — apagar contradiria a decisão
+  documentada. As `desc_*` são descrições de acessibilidade com uso futuro imediato.
+  Registrado no corpo do PR para o próximo agente não "consertar" de volta.
+
+**Verificação.** `./gradlew :app:lintDebug :app:assembleDebug :app:testDebugUnitTest`
+→ verdes; **351 testes · 0 falhas**; lint **48 → 45 avisos**. CI do PR verde (~5 min);
+main verde após o merge (895c510b).
+
+**Acompanhamento do lint na sessão.** 50 warnings + 3 infos → **45 warnings**
+(8 eliminados: 5 no PR #48, 3 no #49). Os 45 restantes são os deferidos com motivo
+(deps grandes, StaticFieldLeak falso-positivo, IconLauncherShape, Overdraw,
+ModifierParameter) — nada acionável sem decisão de produto ou teste em dispositivo.
+
+**Estado do GitHub.** main em CI verde (895c510b); 0 PRs abertos; issue #38 a única
+aberta (mantenedor).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor (APKs da v1.7.0). (2) Na próxima
+release: congelar contagem (351), sincronizar docs/badge e rotular o "Não lançado"
+(sinônimos no Histórico + Seus produtos + higiene de recomposição). (3) Candidatas de
+UX com decisão de produto: filtro por setor para "Seus produtos" (só com feedback);
+favoritos na lista de produtos.
