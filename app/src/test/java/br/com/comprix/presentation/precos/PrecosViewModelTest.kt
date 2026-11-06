@@ -431,12 +431,25 @@ class PrecosViewModelTest {
         espera { vm.estado.value.itens.size == 2 }
         vm.anotarPreco(arroz, a, BigDecimal("5.00"))
         vm.marcarIndisponivel(cafe, a)
-        espera { vm.estado.value.situacaoDe(cafe, a) == INDISPONIVEL }
+        // Espera TOTAL pelas DUAS escritas: anotarPreco e marcarIndisponivel são launches
+        // INDEPENDENTES no viewModelScope — as gravações correm no executor de I/O do Room
+        // (arch_disk_io_0..3) e podem COMMITAR FORA DE ORDEM. Num runner de 4 núcleos o CI
+        // viu a emissão do indisponível SEM o preço do arroz, e o snapshot lido por
+        // copiarPrecosEntreLojas (= estado.value) ficou sem nada disponível — a cópia
+        // legítima virou "Nenhum preço" (falha 4/4 só-CI, local 2 núcleos nunca viu).
+        // Exigir o estado FINAL de ambas elimina a janela sem mascarar nada.
+        espera {
+            vm.estado.value.situacaoDe(cafe, a) == INDISPONIVEL &&
+                vm.estado.value.precoDe(arroz, a)?.compareTo(BigDecimal("5.00")) == 0
+        }
         vm.copiarPrecosEntreLojas(deId = a, paraId = b)
         // predicado TOTAL pelo VALOR: presença != estado final sob join rasgado
         espera { vm.estado.value.precoDe(arroz, b)?.compareTo(BigDecimal("5.00")) == 0 }
         assertMoeda(vm.estado.value.precoDe(arroz, b), "5.00")
         assertNull("indisponível não vira preço zero", vm.estado.value.precoDe(cafe, b))
+        // A mensagem é gravada DEPOIS das gravações no mesmo coroutine — a emissão do
+        // preço pode chegar ao estado antes da torrada; esperar a mensagem, não sortear.
+        espera { vm.mensagem.value?.contains("copiados") == true }
         assertTrue(vm.mensagem.value!!.contains("copiados"))
         vm.mensagemExibida()
         val c = loja("Mercado C") // origem de verdade sem nada
