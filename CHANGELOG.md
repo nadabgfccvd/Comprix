@@ -2,6 +2,18 @@
 
 Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas notas de cada [release](https://github.com/nadabgfccvd/Comprix/releases). O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Segurança
+- **Backups à prova de truncamento e corrupção**: o exportador incluiu verificação de integridade nos novos arquivos (PR #23), os identificadores de registros inválidos, duplicados ou sem identidade são rejeitados na importação (PR #28) e o formato v2 passou a ter checksum cobrindo também o cabeçalho (PR #29).
+- **Restauração atômica**: exclusões e inserções passaram a rodar dentro de uma transação Room — falha no meio da restauração reverte o banco ao estado anterior, sem dados parcialmente apagados (PRs #19 e #29).
+- **Restauração legada (v1) com rede de proteção**: backups antigos, cujo truncamento na cauda é indistinguível de um arquivo válido, só são restaurados após gravar uma cópia de segurança do estado atual, que fica na pasta de backups como "desfazer" (PR #29); layouts divergentes são rejeitados antes de qualquer escrita.
+- **Nada escapa do backup**: histórico de preços (PR #22), restrições e alergias (PR #25), configurações, lixeira e aprendizados de substituição (PR #26), JSON aninhado preservado byte a byte (PR #27) e colunas da matriz CSV alinhadas com as lojas (PR #21).
+
+### Interno
+- Arquivos de ambiente e segredos locais fora do controle de versão (PR #17).
+- Scanner usa `LocalLifecycleOwner` do `lifecycle-runtime-compose` (a variante de `compose.ui.platform` está deprecada); zero avisos de deprecação no código de produção.
+
 ## [1.6.0] — 2026-10-10
 
 ### Adicionado
