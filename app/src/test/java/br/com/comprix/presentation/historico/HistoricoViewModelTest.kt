@@ -16,6 +16,8 @@ import java.time.LocalDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -91,6 +93,9 @@ class HistoricoViewModelTest {
         val prazo = System.currentTimeMillis() + 5_000
         while (!condicao()) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10)
         }
     }
@@ -111,7 +116,11 @@ class HistoricoViewModelTest {
         historico.registrar(null, "Lista", resultado(totalPago, descricao), momento)
 
     private fun teste(bloco: suspend (HistoricoViewModel) -> Unit): Unit = runBlocking {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val catalogo = CatalogoRepositorio(
                 categoriaDao = banco.categoriaDao(),
@@ -165,7 +174,12 @@ class HistoricoViewModelTest {
         val agora = LocalDateTime.now()
         registrarCompra("100.00", "Mercado do Bairro", agora)
         registrarCompra("40.00", "Mercearia da esquina", agora.minusYears(1))
-        espera { viewModel.estado.value.compras.size == 2 }
+        // Lista e resumo são correntes separadas: espera os DOIS assentarem
+        // (com o Main no event loop do runBlocking, eles chegam em ticks distintos).
+        espera {
+            viewModel.estado.value.compras.size == 2 &&
+                viewModel.estado.value.resumo.quantidadeCompras == 1
+        }
 
         // Padrão SEIS_MESES: o resumo do cabeçalho vê só a compra do mês atual.
         assertEquals(1, viewModel.estado.value.resumo.quantidadeCompras)
@@ -200,7 +214,12 @@ class HistoricoViewModelTest {
         espera { viewModel.comprasVisiveis.value.size == 2 }
 
         viewModel.definirLoja("Mercearia da esquina")
-        espera { viewModel.comprasVisiveis.value.single().descricaoEstabelecimento == "Mercearia da esquina" }
+        // guarda de tamanho: o tick anterior (2 compras) não pode derrubar o predicado
+        espera {
+            val visiveis = viewModel.comprasVisiveis.value
+            visiveis.size == 1 &&
+                visiveis.single().descricaoEstabelecimento == "Mercearia da esquina"
+        }
 
         viewModel.definirLoja(null)
         espera { viewModel.comprasVisiveis.value.size == 2 }
@@ -213,9 +232,12 @@ class HistoricoViewModelTest {
         registrarCompra("40.00", "Mercearia da esquina", LocalDateTime.now())
         espera { viewModel.estado.value.compras.size == 3 }
 
-        val lojas = viewModel.lojasDisponiveis.value.associate { it.rotulo to it.quantidade }
-        espera { lojas.getValue("Mercado do Bairro") == 2 }
-        assertEquals(1, lojas.getValue("Mercearia da esquina"))
+        // lojasDisponiveis é corrente própria: o snapshot congelado fora da espera
+        // enxergaria estado velho (ou vazio) — lê DENTRO da condição, os dois juntos
+        espera {
+            val lojas = viewModel.lojasDisponiveis.value.associate { it.rotulo to it.quantidade }
+            lojas["Mercado do Bairro"] == 2 && lojas["Mercearia da esquina"] == 1
+        }
     }
 
     // --- acoes e torradas -------------------------------------------------------------------

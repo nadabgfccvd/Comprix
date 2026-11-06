@@ -12,6 +12,8 @@ import br.com.comprix.util.Formatadores
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -101,6 +103,9 @@ class ListasViewModelTest {
         val prazo = System.currentTimeMillis() + 5_000
         while (!condicao()) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10) // suspende (cede o event-loop); Thread.sleep bloquearia
         }
     }
@@ -111,7 +116,11 @@ class ListasViewModelTest {
      * sobe com observador vivo. Entrega o ViewModel pronto para o bloco.
      */
     private fun teste(bloco: suspend (ListasViewModel) -> Unit): Unit = runBlocking {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val viewModel = ListasViewModel(repositorio, configuracoes)
             val coletor = launch { viewModel.estado.collect {} }
@@ -124,11 +133,15 @@ class ListasViewModelTest {
     }
 
     private suspend fun novaLista(nome: String, favorita: Boolean = false): Long {
-        val id = banco.listaDao().inserir(
-            ListaEntity(nome = nome, criadaEm = 1_700_000_000_000L, finalizada = false, finalizadaEm = null),
+        // favorita vai no INSERT (um write só): gravar false e depois favoritar
+        // abria uma janela em que o fluxo de resumos emitia C em "abertas" — e a
+        // decisão de maioria do VM via C como não favorita (msg "3 listas...").
+        return banco.listaDao().inserir(
+            ListaEntity(
+                nome = nome, criadaEm = 1_700_000_000_000L, finalizada = false, finalizadaEm = null,
+                favorita = favorita,
+            ),
         )
-        if (favorita) repositorio.favoritarLista(id, true)
-        return id
     }
 
     // --- estado -------------------------------------------------------------------------
@@ -335,25 +348,36 @@ class ListasViewModelTest {
 
     @Test
     fun `alternarFavoritas decide pelo voto da maioria e sempre avanca o grupo`() = teste { viewModel ->
+        suspend fun depurar(rotulo: String, cond: suspend () -> Boolean) {
+            try {
+                espera { cond() }
+            } catch (e: AssertionError) {
+                val e0 = viewModel.estado.value
+                System.err.println("!!TRAVOU EM: $rotulo")
+                System.err.println("  fav=${e0.favoritas.map { it.lista.nome }} abertas=${e0.abertas.map { it.lista.nome }} fin=${e0.finalizadas.map { it.lista.nome }}")
+                System.err.println("  msg=${viewModel.mensagem.value} total=${e0.favoritas.size + e0.abertas.size + e0.finalizadas.size}")
+                throw e
+            }
+        }
         val a = novaLista("A")
         val b = novaLista("B")
         val c = novaLista("C", favorita = true)
         // o estado precisa refletir as tres listas (C fica na secao Favoritas)
-        espera {
+        depurar("inicial-total-3") {
             viewModel.estado.value.let { it.favoritas.size + it.abertas.size + it.finalizadas.size } == 3
         }
         viewModel.selecionarTodas(listOf(a, b, c))
 
         viewModel.alternarFavoritas() // A e B nao sao favoritas: maioria -> favorita
-        espera { viewModel.mensagem.value == "2 listas marcadas como favoritas." }
-        espera { banco.listaDao().listarTodas().all { it.favorita } }
+        depurar("msg-2-favoritas") { viewModel.mensagem.value == "2 listas marcadas como favoritas." }
+        depurar("dao-todas-favoritas") { banco.listaDao().listarTodas().all { it.favorita } }
         // o estado precisa refletir a fase 1 (as tres saem de abertas/finalizadas)
-        espera { (viewModel.estado.value.abertas + viewModel.estado.value.finalizadas).isEmpty() }
+        depurar("abertas-finalizadas-vazias") { (viewModel.estado.value.abertas + viewModel.estado.value.finalizadas).isEmpty() }
 
         viewModel.selecionarTodas(listOf(a, b, c))
         viewModel.alternarFavoritas() // quirk real: a contagem olha so abertas/finalizadas (0),
         // mas o forEach aplica a decisao a TODAS as ids selecionadas.
-        espera { viewModel.mensagem.value == "0 listas tiradas dos favoritos." }
-        espera { banco.listaDao().listarTodas().none { it.favorita } }
+        depurar("msg-0-tiradas") { viewModel.mensagem.value == "0 listas tiradas dos favoritos." }
+        depurar("dao-nenhuma-favorita") { banco.listaDao().listarTodas().none { it.favorita } }
     }
 }

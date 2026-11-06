@@ -17,6 +17,8 @@ import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -96,6 +98,9 @@ class LojasViewModelTest {
         val prazo = System.currentTimeMillis() + 5_000
         while (!condicao()) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10)
         }
     }
@@ -114,12 +119,19 @@ class LojasViewModelTest {
         while (!condicao(viewModel.estado.value.lojas)) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
             viewModel.atualizar()
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(20)
         }
     }
 
     private fun teste(bloco: suspend (LojasViewModel) -> Unit): Unit = runBlocking {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val viewModel = LojasViewModel(precos, listas)
             val coletor = launch { viewModel.estado.collect {} }
@@ -157,7 +169,8 @@ class LojasViewModelTest {
     fun `adicionar publica a mensagem e a loja entra no estado`() = teste { viewModel ->
         viewModel.adicionar("  Mercado A  ")
         espera { viewModel.estado.value.mensagem == "Loja \"Mercado A\" adicionada." }
-        esperaLojas(viewModel) { it.single().estabelecimento.nome == "Mercado A" }
+        // guarda de tamanho: o estado anterior (0 ou 2 lojas) não pode derrubar o predicado
+        esperaLojas(viewModel) { it.size == 1 && it.single().estabelecimento.nome == "Mercado A" }
     }
 
     @Test
@@ -230,7 +243,11 @@ class LojasViewModelTest {
         precos.registrarPreco(item3, item3.produtoId, lojaId, BigDecimal("0.00"), disponivel = false)
         viewModel.atualizar()
 
-        espera { viewModel.estado.value.lojas.single().quantidadeDePrecos == 2 } // só os válidos
+        // guarda de tamanho: o estado inicial vazio não pode derrubar o predicado
+        espera {
+            val l = viewModel.estado.value.lojas
+            l.size == 1 && l.single().quantidadeDePrecos == 2
+        } // só os válidos
         val cartao = viewModel.estado.value.lojas.single()
         assertEquals(1, cartao.itensDistintos) // Arroz (2 listas) conta 1; Feijão indisponível nem entra
         assertEquals(listOf("Arroz"), cartao.produtosDaLoja)
