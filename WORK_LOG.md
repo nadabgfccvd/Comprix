@@ -607,6 +607,13 @@ desenhada para a próxima sessão.
 (mantenedor). Suíte do main: **351 testes** (PRs #46/#47/#48/#49 mergeados nesta
 sessão). Lint: 50 warnings + 3 infos → 45 warnings (8 eliminados).
 
+**Bônus de des-risco da release: `./gradlew :app:assembleRelease` verde** (5 min) —
+R8/minify sem erro, 3 APKs não-assinados gerados por ABI splits (arm64-v8a 21,7 MB,
+armeabi-v7a 15,7 MB, universal 67,1 MB). O CI só roda `assembleDebug`, então este é o
+check que faltava para a v1.8.0. O único warning do manifest merger é o padrão
+deliberado `tools:node="remove"` nas permissões INTERNET/NETWORK_STATE/WAKE_LOCK
+(critério #1 do CHECKLIST_QA — app 100% modo avião). Nada a consertar.
+
 **Sessão 4 em resumo.** 4 PRs mergeados, todos CI verde antes do merge:
 - **#46** — busca do Histórico entende sinônimos do acervo (receita dos `candidatos`).
 - **#47** — "Seus produtos" do catálogo também entende sinônimos (mesma receita).
