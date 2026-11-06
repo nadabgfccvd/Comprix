@@ -268,3 +268,28 @@ a anotação do work log estava obsoleta e cai fora da lista de pendências.
 (issue #38; artifact expira em ~14 dias). (2) Exploração do catálogo ainda lista só o
 acervo de fábrica (1.714 itens) — incluir os produtos locais do Room como seção
 "seus produtos" na mesma busca seria a próxima melhoria funcional de peso.
+
+## 2026-11-06 — Sessão 2, iteração 5: aviso de teto da busca no catálogo (PR #41, aguardando CI)
+
+**Foco.** Última iteração da janela: a busca da exploração corta silenciosamente em 120
+resultados; o usuário lia "120 produtos" como se fosse tudo.
+
+**Mudança (PR #41 — ABERTO, não mergeado nesta janela).**
+- `EstadoDoCatalogo.buscaLimitada`: verdadeiro quando a busca bruta atinge o
+  `LIMITE_DA_BUSCA` e nenhum filtro de setor está ativo (o rol exibido é a busca inteira;
+  com setor ativo a contagem já é recorte, aviso não ajuda).
+- Legenda: "120 produtos — teto da busca; refine o termo para afinar o resultado".
+- Entrada no CHANGELOG ("Não lançado" → Refinado).
+
+**Verificação local.** Compilação e suíte: 334 testes; o único reprovado é o gate de
+tempo `ParserDeTextoLivreTest "parse cabe folgado no orcamento de 16 ms"` —
+**REPRODUZÍVEL NESTE SANDBOX** (1,061 e 1,174 ms contra orçamento local de 1,0 ms):
+máquina compartilhada mais lenta que a de calibração; o teste só tem folga para
+`CI=true` (3×) e JaCoCo (3×). NÃO é regressão — parser intocado, e no CI o limite é 3×.
+Ação sugerida ao próximo ciclo: medir steady-state (lote de aquecimento + mínimo de
+vários lotes, prática padrão de microbenchmark) em vez de média única fria — mata o
+ruído sem afrouxar o gate.
+
+**Estado do GitHub no fechamento.** main em CI verde; issue #38 (mantenedor) a única
+aberta; **PR #41 aguardando CI no GitHub** — o próximo ciclo deve conferir o resultado
+e mergeá-lo se verde (ou corrigir se vermelho) ANTES de escolher novo foco.
