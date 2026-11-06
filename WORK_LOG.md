@@ -591,3 +591,51 @@ release: congelar contagem (351), sincronizar docs/badge e rotular o "Não lanç
 (sinônimos no Histórico + Seus produtos + higiene de recomposição). (3) Candidatas de
 UX com decisão de produto: filtro por setor para "Seus produtos" (só com feedback);
 favoritos na lista de produtos.
+
+---
+
+## 2026-11-06 — Sessão 4, encerramento: varredura de estado + desenho da release v1.8.0
+
+**Foco.** Janela restante (~40 min): sem iteração nova de código — as candidatas de UX
+exigem decisão de produto (feedback) e a release v1.8.0 é um lote maior que não cabe
+com folga no relógio. Em vez de uma release apressada (que nasceria sem APKs assinados
+e ACRESCENTARIA à dívida já rastreada na #38), verificar o estado e deixar a release
+desenhada para a próxima sessão.
+
+**Verificação de estado.** main CI verde (75804be, e todos os 4 merges desta sessão:
+414a68ee, 900e0a38, d809f951, 895c510b); 0 PRs abertos; única issue aberta é a #38
+(mantenedor). Suíte do main: **351 testes** (PRs #46/#47/#48/#49 mergeados nesta
+sessão). Lint: 50 warnings + 3 infos → 45 warnings (8 eliminados).
+
+**Sessão 4 em resumo.** 4 PRs mergeados, todos CI verde antes do merge:
+- **#46** — busca do Histórico entende sinônimos do acervo (receita dos `candidatos`).
+- **#47** — "Seus produtos" do catálogo também entende sinônimos (mesma receita).
+- **#48** — higiene de recomposição (scrollbar desenha sem recompor, offset por lambda,
+  estados primitivos).
+- **#49** — higiene de recursos (widget @string, label redundante; UnusedResources
+  MANTIDO por decisão documentada no colors.xml).
+
+**Desenho pronto — release v1.8.0 (executar numa janela com ≥50 min):**
+1. Branch `release/v1.8.0`: `versionCode = 12`, `versionName = "1.8.0"` (hoje linha
+   46–47 de `app/build.gradle.kts`).
+2. CHANGELOG: "Não lançado" → "[1.8.0] — 2026-11-06" (Adicionado: Seus produtos;
+   Refinado: teto da busca, sinônimos no Histórico e em Seus produtos, busca no
+   Histórico, filtro por loja; Interno: gate do parser, higiene de recomposição,
+   recursos/widget/manifesto).
+3. README: badge `unit_tests-351_passing` + contagem no comentário; CHECKLIST_QA
+   seção 0: coluna "Atual (v1.8.0, versionCode 12)" com 351 (mantendo o histórico
+   "v1.7.0 tinha 317").
+4. Verificação local completa (testes + lint + build), PR, CI verde, merge.
+5. Tag `v1.8.0` no main pós-merge; GitHub Release via API com as notas do CHANGELOG.
+6. **APKs: a release nascerá sem APKs assinados** (mesma dívida da #38 — o keystore
+   está fora do repo por design). Anexar o artifact `apks-release-nao-assinados-*` do
+   CI se existir e referenciar a #38 nas notas. A issue #38 pede explicitamente APKs
+   ASSINADOS; reportar isso na release para não parecer omissão.
+7. Pós-release: reexecutar as 5 jornadas do CHECKLIST_QA seção 2 é "a cada release
+   maior" — v1.8.0 é minor; registrar a decisão de não reexecutar (sem device).
+
+**Estado do GitHub.** main verde; 0 PRs; #38 a única issue aberta.
+
+**Próximo passo útil.** (1) Executar o desenho da v1.8.0 (iteração 1 da sessão 5).
+(2) #38 segue com o mantenedor. (3) Candidatas de UX com decisão de produto ficam na
+prateleira: filtro por setor para "Seus produtos"; favoritos na lista de produtos.
