@@ -27,6 +27,9 @@ import kotlinx.coroutines.launch
  * @param setores os setores do acervo, para os chips de filtro.
  * @param grupos itens agrupados por subcategoria, na ordem do arquivo.
  * @param total quantos itens estao visiveis agora (ja com filtro aplicado).
+ * @param buscaLimitada verdadeiro quando a busca bruta atingiu o teto de
+ * [LIMITE_DA_BUSCA] resultados (e nenhum filtro de setor esta ativo): a
+ * contagem da tela explica que existe mais alem do recorte mostrado.
  */
 data class EstadoDoCatalogo(
     val consulta: String = "",
@@ -35,6 +38,7 @@ data class EstadoDoCatalogo(
     val setores: List<SetorDoCatalogo> = emptyList(),
     val grupos: List<GrupoDoCatalogo> = emptyList(),
     val total: Int = 0,
+    val buscaLimitada: Boolean = false,
 )
 
 /** Bloco de uma subcategoria com seus itens, pronto para a lista agrupada. */
@@ -126,10 +130,13 @@ class CatalogoViewModel(
         val subPorId = subvisiveis.associateBy { it.id }
 
         val termo = consulta.trim()
-        val itensVisiveis = if (termo.isBlank()) {
+        // A busca bruta (antes do filtro de setor) e guardada para saber se o
+        // teto foi alcancado - o detalhe que a contagem da tela mostra.
+        val buscaBruta = if (termo.isBlank()) null else catalogo.buscar(termo, LIMITE_DA_BUSCA)
+        val itensVisiveis = if (buscaBruta == null) {
             catalogo.itens.filter { it.subcategoriaId in subPorId }
         } else {
-            catalogo.buscar(termo, LIMITE_DA_BUSCA).filter { it.subcategoriaId in subPorId }
+            buscaBruta.filter { it.subcategoriaId in subPorId }
         }
 
         val grupos = itensVisiveis
@@ -146,6 +153,11 @@ class CatalogoViewModel(
             setores = catalogo.setores,
             grupos = grupos,
             total = itensVisiveis.size,
+            // Com filtro de setor ativo a contagem ja e um recorte menor; o
+            // aviso de teto so ajuda quando o rol inteiro vem da busca.
+            buscaLimitada = buscaBruta != null &&
+                buscaBruta.size >= LIMITE_DA_BUSCA &&
+                setorSelecionado == null,
         )
     }
 
