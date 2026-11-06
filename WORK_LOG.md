@@ -35,14 +35,43 @@ segurança de “[Não lançado]” como nova release, seguindo o workflow de ta
   anexadas (v1.5.0+ publica apenas APKs de release).
 - `WORK_LOG.md`: criado (este arquivo).
 
-**Verificações:** `./gradlew :app:testDebugUnitTest` local (baseline) — ver resultado
-registrado ao final da sessão; CI do repositório roda em cada PR.
+**Verificações:** baseline local na árvore compartilhada abortado (outra sessão trabalhando
+nos mesmos arquivos); verificação real da suíte feita depois, no commit exato da tag — ver
+abaixo. CI do repositório rodou em cada PR (verde nos dois).
 
-**Estado GitHub:** PR `xiosto/readme-release-refresh` aberto a partir desta entrada.
+**Estado GitHub:** PR #32 (`xiosto/readme-release-refresh`) aberto e **mergeado** com CI verde.
 
-**Próxima tarefa útil:** publicar v1.6.1 (versão `versionCode 11`, `[Não lançado]` →
-`[1.6.1] — 2026-11-06` no CHANGELOG), empurrar a tag `v1.6.1` e conferir o workflow de
-release de ponta a ponta (APKs anexados e assinados).
+**Desdobramento da mesma sessão — publicação da release:**
+- O main avançou no meio do caminho (merge do #31, Busca na Lixeira); a release preparada
+  como v1.6.1 virou **v1.7.0** (SemVer: funcionalidade nova pede minor), `versionCode 11`.
+- PR #33 (v1.6.1) fechado; rebase com push reescrito foi recusado pelas regras do repo →
+  substituído por branch novo `xiosto/release-v1.7.0` no **PR #34**, mergeado com CI verde.
+- Tag anotada `v1.7.0` em origin/main; release criada com notas pt-BR ("Comprix v1.7.0 —
+  backup blindado e busca na lixeira").
+- Workflow de Release (run 3): **verde** (testes no gate + lint vital + `assembleRelease`).
+  **Porém** os segredos `KEYSTORE_*` não estão configurados ⇒ o passo de publicar APKs é
+  pulado por design (a release pública nunca recebe APK não assinado); os **5 APKs não
+  assinados** estão no artifact `apks-release-nao-assinados-v1.7.0` (20.6 / 15.0 / 64.0 /
+  22.3 / 22.1 MB). O corpo da release documenta o status e o caminho para anexar.
+- Verificação local no commit exato da tag (`--rerun`): **317 testes**; 1 falha transiente
+  no teste de orçamento de performance do parser (1.048 ms vs 1.0 ms) num sandbox de 2 CPUs
+  sob carga de outro processo — reexecução isolada da classe: **48/48 verdes**. Não é
+  regressão; o teste documenta folga de 3× para runners ruidosos.
+
+**Documentação pós-release:** PR com README (badge v1.7.0, testes 317, tabela Download
+v1.7.0) e a atualização deste log.
+
+**Próximas tarefas úteis (ordem):**
+1. Anexar APKs assinados à release v1.7.0: configurar segredos `KEYSTORE_BASE64`,
+   `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` e re rodar o workflow
+   (`workflow_dispatch`), ou baixar o artifact e assinar com `apksigner` (procedimento da
+   v1.5.0) — exige a chave privada do mantenedor, fora do alcance do agente.
+2. Atualizar a linha "Atual (v1.6.0, versionCode 10)" do `CHECKLIST_QA.md` para
+   v1.7.0 / versionCode 11.
+3. Próxima melhoria de UX: busca na tela de Histórico, na mesma receita da Lixeira
+   (`FiltroDaLixeira` generaliza) — sugerido pela sessão da Lixeira.
+4. O branch remoto `xiosto/release-v1.6.1` ficou órfão (não deletável pelas regras do repo,
+   aponta para commit não mergeado); ignorável, mas vale saber que existe.
 
 ---
 
