@@ -6,6 +6,56 @@ e a próxima tarefa útil. Mantido em pt-BR, no padrão dos demais documentos.
 
 ---
 
+## 2026-11-06 — Sessão 2, iteração 3 (agente autônomo): filtro por loja no Histórico
+
+**Contexto e foco.** CI do main verde (4 runs seguidas), sem issues acionáveis — a única
+aberta (#38) fica no mantenedor: anexar os APKs assinados na release v1.7.0 (artifact
+`apks-release-nao-assinados-v1.7.0` expira em ~14 dias; o keystore, por design, não está
+no repo). Sem defeitos e sem PRs pendentes, a prioridade foi o enhancement sugerido na
+iteração anterior: **filtro por loja no Histórico**, complemento natural da busca do PR #35.
+
+**Mudanças (PR #39, mergeado).**
+- `HistoricoScreen`: linha de pastilhas logo abaixo de "Buscar compras" — "Todas (N)" +
+  uma pastilha por loja com contagem, mesma receita das categorias da Lixeira
+  (`PastilhaSelecionavel`, toque na ativa recolhe). Rótulos idênticos aos dos cartões:
+  "Mercado do Bairro", "Mercado do Bairro + 2 loja(s)" (compras multi-loja ficam agrupadas
+  no rótulo combinado — preveível).
+- O cartão "Nada encontrado" cobre busca e loja: a mensagem diz qual filtro apertou
+  (só loja, só busca, ou os dois) e o botão virou "Limpar filtros", que abre os dois.
+- `FiltroDeHistorico` (domain puro): pastilhas ordenadas por contagem (empate alfabético),
+  casamento por rótulo exato e interseção **loja E busca** com o `TextoUtil.correspondeBusca`
+  compartilhado. Documenta por que filtro por rótulo e não por id de loja.
+- `HistoricoViewModel`: `lojaSelecionada`/`definirLoja`/`limparFiltros` + `lojasDisponiveis`
+  derivado do estado (acompanha troca de período sem estado duplicado). Analíticas e
+  números do topo seguem sobre TODAS as compras — filtro afina a lista, nunca reescreve
+  a estatística.
+
+**Verificação.** `./gradlew testDebugUnitTest` → **334 testes, 0 falhas** (eram 321;
+13 novos em `FiltroDeHistoricoTest`, todos na JVM). `./gradlew lintDebug` e
+`./gradlew assembleDebug` → verdes. Nota de ambiente: uma execução falhou com
+`OutOfMemoryError: Metaspace` (sandbox com ~4 GB e servidor de dev da infra consumindo
+memória); resolver repetindo com `-Pkotlin.daemon.jvm.options=-Xmx512m,...` via linha de
+comando, sem tocar no `gradle.properties` do repo. CI do PR #39 verde no runner; main
+verde após o merge. Diff revisado: sem segredos, sem mudança em dados/backup.
+
+**Coordenação.** Arquivos disjuntos dos PRs recentes (#34–#37); sem colisões. Nota de
+ferramenta: ao criar o PR via `gh.sh`, o corpo JSON vai direto no 3º argumento (sem o
+`-d` do curl) — duas tentativas iniciais falharam com "Problems parsing JSON" por esse
+detalhe de uso, corrigido na terceira.
+
+**Estado do GitHub.** main em CI verde; 0 issues acionáveis (#38 é do mantenedor); PRs
+abertos: nenhum; PRs #34, #35, #36, #37 e #39 mergeados; release v1.7.0 publicada,
+seguindo sem APKs assinados (ver #38). Branch remota de feature apagada após o merge.
+
+**Próximo passo útil.** (1) O mantenedor anexar os APKs assinados na release v1.7.0
+(issue #38 — fora do alcance do agente, exige o keystore). (2) Melhorias futuras de UX
+sugeridas: busca por sinônimo na exploração do catálogo (coluna `sinonimos` já existe no
+acervo) ou marcação de favorito na lista de produtos; na Lixeira, a busca já convive com
+o filtro de categoria. (3) Na próxima release (v1.8.0), atualizar CHECKLIST_QA e contagem
+de testes (334 no "Não lançado").
+
+---
+
 ## 2026-11-06 — Sessões anteriores (backfill, resumo)
 
 **Foco:** estabilização do app — backup/restauração à prova de falhas, CSVs consistentes e CI verde.
