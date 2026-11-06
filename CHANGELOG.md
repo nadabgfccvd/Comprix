@@ -4,6 +4,8 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 
 ## [Não lançado]
 
+## [1.7.0] — 2026-11-06
+
 ### Adicionado
 - **Busca na Lixeira**: campo "Buscar na lixeira" acima dos chips de categoria — cada palavra digitada precisa aparecer no nome ou no detalhe do registro, sem acento e sem se importar com maiúsculas (o mesmo critério amigável do catálogo: "melao" acha "Melão"). Achar "aquela lista que apaguei" deixa de depender de rolar; a busca se combina com o filtro de categoria, o estado vazio explica que nada casou e oferece limpar a busca. Enquanto a busca filtra a visão, os botões de "Esvaziar" ficam escondidos — eles atingem a categoria inteira, e não só o recorte mostrado na tela.
 - **Contagem regressiva na Lixeira**: cartões a uma semana ou menos da exclusão permanente ganham um selo com relógio — "some hoje", "some amanhã" ou "some em N dias" (vermelho até 3 dias, âmbar de 4 a 7). Depois disso o cartão segue mostrando apenas a data completa: selo em tudo seria ruído, não informação.
