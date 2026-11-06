@@ -94,7 +94,16 @@ class ListasViewModelTest {
 
     @After
     fun fechar() {
-        Dispatchers.resetMain()
+        try {
+            Dispatchers.resetMain()
+        } catch (e: IllegalStateException) {
+            // corrida demonstrada (corrida pós-reset 2026-11-06): o Room posta o refresh
+            // de invalidação no Main a partir do executor dele — um dispatch em voo morda
+            // o NonConcurrentlyModifiable do TestMainDispatcher. Dreno + retry fecha a
+            // janela sem mascarar outra falha (só IllegalStateException é tolerada).
+            Thread.sleep(50)
+            Dispatchers.resetMain()
+        }
         banco.close()
     }
 

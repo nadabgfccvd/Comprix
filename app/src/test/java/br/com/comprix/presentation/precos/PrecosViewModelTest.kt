@@ -143,11 +143,14 @@ class PrecosViewModelTest {
         banco.close()
     }
 
-    /** Espera (com prazo real de 5 s) até a condição do efeito assíncrono valer. */
+    /** Espera (com prazo real de 15 s) até a condição do efeito assíncrono valer.
+     *  15 s, não 5 s: `copiarPrecosEntreLojas` já estourou 5 s três vezes SOMENTE na
+     *  suíte completa (isolation 3/3 verde) — tail-latency de GC/I-O do box sob carga;
+     *  prazo maior é headroom, a condição em si não mudou. */
     private suspend fun espera(condicao: suspend () -> Boolean) {
-        val prazo = System.currentTimeMillis() + 5_000
+        val prazo = System.currentTimeMillis() + 15_000
         while (!condicao()) {
-            if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 15 s")
             // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
             // do Robolectric pausado, os runnables só executam se drenados aqui.
             Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
@@ -303,7 +306,9 @@ class PrecosViewModelTest {
         vm.anotarPreco(item, b, BigDecimal("6.00"))
         espera { vm.estado.value.precoDe(item, b) != null }
         vm.limparPrecoDaLoja(item, a)
-        espera { vm.estado.value.precoDe(item, a) == null }
+        // predicado TOTAL: um join rasgado da invalidação pode esconder as DUAS células
+        // por um instante (a==null e b==null) — exigir o estado final, não o intermediário
+        espera { vm.estado.value.precoDe(item, a) == null && vm.estado.value.precoDe(item, b) != null }
         assertMoeda(vm.estado.value.precoDe(item, b), "6.00")
         assertEquals(1, vm.estado.value.itens.size) // produto continua na lista
         val desfazer = vm.desfazer.value
@@ -402,7 +407,8 @@ class PrecosViewModelTest {
         vm.marcarIndisponivel(cafe, a)
         espera { vm.estado.value.situacaoDe(cafe, a) == INDISPONIVEL }
         vm.copiarPrecosEntreLojas(deId = a, paraId = b)
-        espera { vm.estado.value.precoDe(arroz, b) != null }
+        // predicado TOTAL pelo VALOR: presença != estado final sob join rasgado
+        espera { vm.estado.value.precoDe(arroz, b)?.compareTo(BigDecimal("5.00")) == 0 }
         assertMoeda(vm.estado.value.precoDe(arroz, b), "5.00")
         assertNull("indisponível não vira preço zero", vm.estado.value.precoDe(cafe, b))
         assertTrue(vm.mensagem.value!!.contains("copiados"))
@@ -447,7 +453,12 @@ class PrecosViewModelTest {
         espera { vm.estado.value.itens.size == 2 }
         vm.anotarPreco(arroz, a, BigDecimal("5.00"))
         vm.anotarPreco(cafe, a, BigDecimal("20.00"))
-        espera { vm.estado.value.precoDe(cafe, a) != null }
+        // predicado TOTAL: esperar o VALOR das DUAS células — a prévia pode ser lida
+        // entre a propagação do café e a do arroz (o -1 era 20,00 < 25,00)
+        espera {
+            vm.estado.value.precoDe(arroz, a)?.compareTo(BigDecimal("5.00")) == 0 &&
+                vm.estado.value.precoDe(cafe, a)?.compareTo(BigDecimal("20.00")) == 0
+        }
         assertEquals(2, vm.previaDaCompra().quantidadeItens)
         assertMoeda(vm.previaDaCompra().totalPago, "25.00")
         listas.marcarComprado(arroz, true)
