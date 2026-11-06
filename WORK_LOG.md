@@ -794,3 +794,48 @@ release (v1.8.1 ou v1.9.0): a entrada da Lixeira no "Não lançado" vai junto e 
 contagem congela em 355+. (3) Sem candidato de feature pendente no radar — todas as
 buscas unificadas, release íntegra, docs sincronizados; próximas iterações só com
 defeito novo, sugestão externa ou melhoria incremental bem delimitada.
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 4: widget com objeto puro e 10 testes (PR #53, mergeado)
+
+**Foco.** Varredura por lacuna de cobertura em superfície visível achou o candidato:
+o **widget da tela inicial** era a única parte do app visível ao usuário sem um único
+teste — título do estado vazio, convite ("Abra o app para comecar"), limites da barra
+e a linha do estimado eram decididos dentro do `ListaWidgetProvider`, acoplados a
+`RemoteViews`. Mesma doutrina de `FiltroDeHistorico`/`FiltroDeProdutosLocais`/
+`FiltroDaLixeira`: lógica → objeto puro com testes próprios. Avaliação antes de
+começar: main verde no b56789c (iteração 3), 0 PRs, #38 do mantenedor.
+
+**Mudança (PR #53, mergeado).**
+- `VisoesDoWidget` (novo, objeto puro): calcula `EstadoDoWidget` (`textoNome`,
+  `maximoDaBarra`, `progressoDaBarra`, `textoContagem`, `estimadoVisivel`,
+  `textoEstimado`) a partir de `ResumoDeLista?` — JVM pura, sem Android.
+- `ListaWidgetProvider.visoes()` só traduz o estado em `RemoteViews` + PendingIntent;
+  imports mortos (`Formatadores`, `BigDecimal`) saíram.
+- **Nenhuma mudança de comportamento**: cada texto, limite e regra de visibilidade é
+  exatamente o de antes (sem lista/nome em branco → "Nenhuma lista aberta" com
+  contagem real; total 0 → convite; estimado só com valor positivo, pt-BR).
+- Docs no MESMO PR para não recriar o desvio corrigido na iteração 3: contagem
+  355 → 365 (README badge + comando, 3 refs do CHECKLIST_QA com a linhagem "+10
+  widget") e entrada "Não lançado → Interno" no CHANGELOG.
+
+**Verificação.** `./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`
+→ verdes; contagem dos XMLs JUnit: **365 testes · 0 falhas · 0 pulados** (355 + 10
+novos em `VisoesDoWidgetTest`: estado vazio ×3, contagem/barra ×2, estimado ×4,
+guarda de construção ×1). Aritmética: 355 + 10 = 365. CI do PR verde (~4 min);
+main verde após o merge. Diff revisado: sem segredos; `ResumoDeLista`/`ListaDeCompras`
+já eram JVM-puros, zero reflexão ou Robolectric necessário.
+
+**Nota de processo (ferramenta).** `MultiEdit` no editor local reporta falha mesmo
+quando a primeira edição foi aplicada (execução sequencial, não atômica) — re-ler o
+arquivo antes de repetir uma edição evita duplicar mudança.
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; #38 a única issue aberta
+(mantenedor); release v1.8.0 íntegra e inalterada (351 congelados).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) Na próxima release: as
+duas entradas do "Não lançado" (Lixeira + widget) vão junto e a contagem congela em
+365+. (3) Cobertura de superfícies puras restante: nenhuma conhecida sem testes —
+próximas iterações continuam dependentes de defeito novo, sugestão externa ou
+melhoria bem delimitada.
