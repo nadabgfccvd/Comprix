@@ -147,7 +147,10 @@ class CategoriasViewModelTest {
             val viewModel = CategoriasViewModel(catalogo)
             val coletor = launch { viewModel.estado.collect {} }
             espera { !viewModel.estado.value.carregando }
-            espera { viewModel.estado.value.totalDeProdutos == 2 }
+            espera {
+                viewModel.estado.value.totalDeProdutos == 2 &&
+                    viewModel.estado.value.produtosPorCategoria[hortifruti] == 2
+            }
             assertEquals(2, viewModel.estado.value.produtosPorCategoria.getValue(hortifruti))
             coletor.cancel()
         } finally {
@@ -161,7 +164,10 @@ class CategoriasViewModelTest {
     fun `criar publica a mensagem e a categoria entra no fim`() = teste { viewModel ->
         viewModel.criar("Bazar")
         espera { viewModel.mensagem.value == "Categoria “Bazar” criada." }
-        espera { viewModel.estado.value.categorias.any { it.nome == "Bazar" } }
+        espera {
+            viewModel.estado.value.categorias.any { it.nome == "Bazar" } &&
+                viewModel.estado.value.categorias.size == 15
+        }
         assertEquals(15, viewModel.estado.value.categorias.size)
     }
 

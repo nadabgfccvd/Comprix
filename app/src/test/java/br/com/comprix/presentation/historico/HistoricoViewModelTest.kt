@@ -159,12 +159,17 @@ class HistoricoViewModelTest {
         registrarCompra("100.00", "Mercado do Bairro", agora)
         registrarCompra("40.00", "Mercearia da esquina", agora.minusYears(1))
         configuracoes.definirMetaEconomia(5_000L) // R$ 50,00
-        espera { viewModel.estado.value.compras.size == 2 }
+        // Condição TOTAL: mostrarDica pode atrasar em relação à lista de compras.
+        espera { viewModel.estado.value.compras.size == 2 && viewModel.estado.value.mostrarDica }
 
         val estado = viewModel.estado.value
         assertTrue(estado.mostrarDica)
         assertEquals(0, BigDecimal("2.00").compareTo(estado.economiaDoMes)) // só a compra do mês
-        espera { viewModel.estado.value.metaEconomia != null }
+        // Condição TOTAL: meta não-nula ainda pode ser o valor intermediário.
+        espera {
+            val meta = viewModel.estado.value.metaEconomia
+            meta != null && BigDecimal("50.00").compareTo(meta) == 0
+        }
         assertEquals(0, BigDecimal("50.00").compareTo(viewModel.estado.value.metaEconomia!!))
         assertFalse(estado.vazio)
     }
@@ -186,7 +191,11 @@ class HistoricoViewModelTest {
         assertEquals(2, viewModel.estado.value.compras.size) // a lista NÃO é reescrita
 
         viewModel.definirPeriodo(AnalisadorDeHistorico.Periodo.TUDO)
-        espera { viewModel.estado.value.resumo.quantidadeCompras == 2 }
+        // Condição TOTAL: resumo e lista são fluxos distintos — espera cobre os dois.
+        espera {
+            viewModel.estado.value.resumo.quantidadeCompras == 2 &&
+                viewModel.estado.value.compras.size == 2
+        }
         assertEquals(2, viewModel.estado.value.compras.size)
     }
 
