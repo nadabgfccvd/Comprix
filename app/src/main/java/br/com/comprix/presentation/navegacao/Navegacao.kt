@@ -400,6 +400,7 @@ fun NavegacaoComprix(
                     HistoricoViewModel(
                         ServiceLocator.historicoRepositorio,
                         ServiceLocator.configuracoesRepositorio,
+                        ServiceLocator.catalogoRepositorio,
                     )
                 },
             )

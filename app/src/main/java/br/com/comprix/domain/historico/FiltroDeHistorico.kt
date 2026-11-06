@@ -61,16 +61,52 @@ object FiltroDeHistorico {
      * ([TextoUtil.correspondeBusca] sobre nome da lista e lojas - o mesmo
      * criterio da Lixeira e do catalogo). Consulta em branco e loja nula
      * passam tudo (filtros desligados).
+     *
+     * ## Sinonimos (expansao da consulta)
+     * [candidatos], quando presente, recebe a consulta e devolve termos
+     * alternativos - na pratica, os sinonimos do acervo de fabrica via
+     * `CatalogoRepositorio.sinonimosDe` ("mexerica" -> "tangerina,
+     * bergamota"). A busca passa se a consulta direta OU QUALQUER alternativa
+     * casar: "tangerina" encontra a lista "Mexerica para o suco" e
+     * vice-versa - a resolucao do acervo e bidirecional (nome oficial e
+     * apelido caem no mesmo item).
+     *
+     * Duas regras deliberadas, para o filtro ficar prevevel:
+     * 1. **Expansao pela consulta inteira, nao por palavra solta** - "suco de
+     *    mexerica" so se expande se a FRASE inteira resolver num item do
+     *    acervo; nao viramos cada palavra da consulta numa busca separada
+     *    (o resultado cresceria em silencio e a intersecao com a loja
+     *    perderia o sentido de "afinar").
+     * 2. **`null` = comportamento de antes** - sem candidatos, o filtro e
+     *    exatamente o que era (regressao zero para quem nao injeta o acervo).
      */
     fun comprasVisiveis(
         compras: List<CompraFinalizada>,
         consulta: String,
         loja: String?,
-    ): List<CompraFinalizada> = compras.filter { compra ->
-        correspondeLoja(compra, loja) &&
-            TextoUtil.correspondeBusca(
-                compra.nomeLista + " " + compra.descricaoEstabelecimento,
-                consulta,
-            )
+        candidatos: ((String) -> List<String>)? = null,
+    ): List<CompraFinalizada> {
+        // Alternativas calculadas UMA vez por chamada (a funcao de sinonimos
+        // e pura e barata, mas o filtro roda a cada emissao de estado - nao
+        // a cada compra da lista).
+        val alternativas = if (candidatos == null || consulta.isBlank()) {
+            emptyList()
+        } else {
+            candidatos(consulta).filter { it.isNotBlank() }
+        }
+        return compras.filter { compra ->
+            correspondeLoja(compra, loja) && casaNaBusca(compra, consulta, alternativas)
+        }
+    }
+
+    /** Busca direta OU qualquer alternativa de sinonimo casa no mesmo alvo. */
+    private fun casaNaBusca(
+        compra: CompraFinalizada,
+        consulta: String,
+        alternativas: List<String>,
+    ): Boolean {
+        val alvo = compra.nomeLista + " " + compra.descricaoEstabelecimento
+        if (TextoUtil.correspondeBusca(alvo, consulta)) return true
+        return alternativas.any { TextoUtil.correspondeBusca(alvo, it) }
     }
 }

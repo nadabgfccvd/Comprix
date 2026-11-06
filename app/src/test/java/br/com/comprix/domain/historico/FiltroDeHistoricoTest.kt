@@ -2,6 +2,7 @@ package br.com.comprix.domain.historico
 
 import br.com.comprix.domain.historico.FiltroDeHistorico.ROTULO_SEM_LOJA
 import br.com.comprix.domain.modelo.CompraFinalizada
+import br.com.comprix.util.TextoUtil
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import org.junit.Assert.assertEquals
@@ -199,5 +200,116 @@ class FiltroDeHistoricoTest {
         assertTrue(
             FiltroDeHistorico.comprasVisiveis(compras, consulta = "", loja = "Loja Fantasma").isEmpty(),
         )
+    }
+
+    // ---------------------------------------------------------------------------------
+    // comprasVisiveis: sinonimos (expansao da consulta)
+    // Lambda local imita o contrato do CatalogoRepositorio.sinonimosDe:
+    // bidirecional ("mexerica" <-> "tangerina") e vazia para termo sem acervo.
+    // ---------------------------------------------------------------------------------
+
+    /** Sinonimos de teste, no mesmo espírito do acervo de fabrica. */
+    private val sinonimosDeTeste: (String) -> List<String> = { consulta ->
+        when (TextoUtil.normalizar(consulta)) {
+            "mexerica" -> listOf("tangerina", "bergamota")
+            "tangerina" -> listOf("mexerica", "bergamota")
+            else -> emptyList()
+        }
+    }
+
+    @Test
+    fun `consulta pelo sinonimo acha a compra pelo nome oficial`() {
+        val tangerina = compra(nomeLista = "Tangerina para o suco", descricao = "Mercado do Bairro")
+        val outra = compra(nomeLista = "Limpeza", descricao = "Mercado do Bairro")
+
+        val visiveis = FiltroDeHistorico.comprasVisiveis(
+            listOf(tangerina, outra),
+            consulta = "mexerica",
+            loja = null,
+            candidatos = sinonimosDeTeste,
+        )
+
+        assertEquals(listOf(tangerina), visiveis)
+    }
+
+    @Test
+    fun `consulta pelo nome oficial acha a compra gravada pelo sinonimo`() {
+        val mexerica = compra(nomeLista = "Mexerica da feira", descricao = "Hortifruti da Esquina")
+
+        val visiveis = FiltroDeHistorico.comprasVisiveis(
+            listOf(mexerica),
+            consulta = "tangerina",
+            loja = null,
+            candidatos = sinonimosDeTeste,
+        )
+
+        assertEquals(listOf(mexerica), visiveis)
+    }
+
+    @Test
+    fun `consulta sem sinonimo no acervo se comporta como antes`() {
+        val mercado = compra(nomeLista = "Compras da semana", descricao = "Mercado do Bairro")
+
+        // Termo sem sinônimo: a busca direta segue valendo ("mercado" acha),
+        // e a expansão devolve vazia sem atrapalhar.
+        assertEquals(
+            listOf(mercado),
+            FiltroDeHistorico.comprasVisiveis(listOf(mercado), "mercado", null, sinonimosDeTeste),
+        )
+        assertTrue(
+            FiltroDeHistorico.comprasVisiveis(
+                listOf(mercado),
+                "feijao",
+                null,
+                sinonimosDeTeste,
+            ).isEmpty(),
+        )
+    }
+
+    @Test
+    fun `candidatos nulos mantem o comportamento original - regressao zero`() {
+        val tangerina = compra(nomeLista = "Tangerina para o suco", descricao = "Mercado do Bairro")
+
+        // Sem injetar candidatos, o sinônimo NÃO expande (comportamento de antes).
+        assertTrue(
+            FiltroDeHistorico.comprasVisiveis(listOf(tangerina), "mexerica", null).isEmpty(),
+        )
+        // E a busca direta continua igual.
+        assertEquals(
+            listOf(tangerina),
+            FiltroDeHistorico.comprasVisiveis(listOf(tangerina), "tangerina", null),
+        )
+    }
+
+    @Test
+    fun `expansao e pela consulta inteira, nao por palavra solta`() {
+        val tangerina = compra(nomeLista = "Tangerina para o suco", descricao = "Mercado do Bairro")
+
+        // "suco de mexerica" não resolve como frase inteira no acervo, e a
+        // regra deliberada é NÃO expandir palavra solta: a compra não aparece
+        // (previsibilidade - a interseção com a loja segue "afinando").
+        assertTrue(
+            FiltroDeHistorico.comprasVisiveis(
+                listOf(tangerina),
+                "suco de mexerica",
+                null,
+                sinonimosDeTeste,
+            ).isEmpty(),
+        )
+    }
+
+    @Test
+    fun `sinonimo e loja se combinam com E`() {
+        val noMercado = compra(nomeLista = "Tangerina para o suco", descricao = "Mercado do Bairro")
+        val noHortifruti = compra(nomeLista = "Tangerina para o suco", descricao = "Hortifruti da Esquina")
+
+        val visiveis = FiltroDeHistorico.comprasVisiveis(
+            listOf(noMercado, noHortifruti),
+            consulta = "mexerica",
+            loja = "Mercado do Bairro",
+            candidatos = sinonimosDeTeste,
+        )
+
+        assertEquals(listOf(noMercado), visiveis)
     }
 }
