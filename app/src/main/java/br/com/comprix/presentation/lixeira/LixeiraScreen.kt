@@ -32,6 +32,7 @@ import br.com.comprix.data.repositorio.LixeiraRepositorio
 import br.com.comprix.presentation.comum.BarraSimples
 import br.com.comprix.presentation.comum.BotaoComprix
 import br.com.comprix.presentation.comum.BotaoDeIcone
+import br.com.comprix.presentation.comum.CampoComprix
 import br.com.comprix.presentation.comum.CartaoComprix
 import br.com.comprix.presentation.comum.DialogoComprix
 import br.com.comprix.presentation.comum.EspacoVertical
@@ -59,12 +60,18 @@ import java.time.LocalDateTime
  *
  * 1. barra com voltar (a tela abre pelos Ajustes);
  * 2. aviso FIXO do prazo automatico de 30 dias;
- * 3. linha de chips rolaveis "Todas" + as seis categorias, cada uma com a
+ * 3. campo de **busca** (titulo e detalhe, sem acento e sem maiuscula),
+ *    igual ao do catalogo - com registros na lixeira e a lista longa,
+ *    achar "aquela lista que apaguei" nao pode depender de rolar;
+ * 4. linha de chips rolaveis "Todas" + as seis categorias, cada uma com a
  *    contagem de registros;
- * 4. acoes de esvaziar (sempre com DUPLA confirmacao: aviso com o numero ->
- *    dialogo PERIGO definitivo);
- * 5. cartoes: titulo, detalhe, categoria, a data em que some para sempre,
- *    "Restaurar" e o "excluir agora" individual (confirmacao simples).
+ * 5. acoes de esvaziar (sempre com DUPLA confirmacao: aviso com o numero ->
+ *    dialogo PERIGO definitivo) - escondidas enquanto a busca filtra a
+ *    visao, porque o "esvaziar" ataca a categoria inteira, nao so o que
+ *    esta na tela;
+ * 6. cartoes: titulo, detalhe, categoria, o aviso de prazo quando a
+ *    exclusao permanente esta a uma semana ou menos, a data completa, e
+ *    "Restaurar" + o "excluir agora" individual (confirmacao simples).
  */
 @Composable
 fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
@@ -73,7 +80,12 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
     val contagens by viewModel.contagens.collectAsStateWithLifecycle()
     val tipoSelecionado by viewModel.tipoSelecionado.collectAsStateWithLifecycle()
     val visiveis by viewModel.registrosVisiveis.collectAsStateWithLifecycle()
+    val busca by viewModel.busca.collectAsStateWithLifecycle()
     val mensagem by viewModel.mensagem.collectAsStateWithLifecycle()
+
+    // "Agora" fixo por composicao: os selos de prazo nao piscam de tom no
+    // meio de uma rolagem - e a data de cada cartao nao muda a cada frame.
+    val agora = remember { LocalDateTime.now() }
 
     // Confirmacao simples do "excluir agora" individual.
     var registroParaExcluir by remember { mutableStateOf<RegistroDeLixeiraEntity?>(null) }
@@ -129,6 +141,18 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
                 }
 
                 EspacoVertical(10.dp)
+
+                // Busca: so faz sentido com registros para achar; na lixeira
+                // vazia o campo seria ruido sobre o estado vazio.
+                if (registros.isNotEmpty()) {
+                    CampoComprix(
+                        valor = busca,
+                        aoMudar = viewModel::definirBusca,
+                        rotulo = "Buscar na lixeira",
+                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome e no detalhe.",
+                    )
+                    EspacoVertical(10.dp)
+                }
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -153,7 +177,11 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
                     }
                 }
 
-                if (registros.isNotEmpty()) {
+                // Durante a busca os botoes de esvaziar ficam escondidos: eles
+                // atingem a categoria inteira, e a tela so esta mostrando um
+                // recorte dela - confirmar por um numero que nao se ve e
+                // armadilha. Restaurar e excluir agora continuam por cartao.
+                if (registros.isNotEmpty() && busca.isBlank()) {
                     EspacoVertical(10.dp)
                     FlowRow(
                         Modifier.fillMaxWidth(),
@@ -190,25 +218,35 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
             }
 
             if (visiveis.isEmpty()) {
+                val buscando = busca.isNotBlank()
                 EstadoVazio(
-                    icone = Icones.excluir,
-                    titulo = if (tipoSelecionado == null) {
-                        "A lixeira está vazia."
-                    } else {
-                        "A lixeira desta categoria está vazia."
+                    icone = if (buscando) Icones.buscar else Icones.excluir,
+                    titulo = when {
+                        buscando -> "Nada encontrado"
+                        tipoSelecionado == null -> "A lixeira está vazia."
+                        else -> "A lixeira desta categoria está vazia."
                     },
-                    descricao = "O que você excluir no app aparece aqui e fica " +
-                        "recuperável por 30 dias.",
+                    descricao = if (buscando) {
+                        "Nenhum registro casa com “$busca” — tente outra palavra ou limpe a busca."
+                    } else {
+                        "O que você excluir no app aparece aqui e fica " +
+                            "recuperável por 30 dias."
+                    },
                 ) {
-                    if (tipoSelecionado != null) {
-                        BotaoComprix(
+                    when {
+                        buscando -> BotaoComprix(
+                            "Limpar busca",
+                            { viewModel.definirBusca("") },
+                            estilo = EstiloDeBotao.CONTORNADO,
+                            icone = Icones.recomecar,
+                        )
+                        tipoSelecionado != null -> BotaoComprix(
                             "Ver todas as categorias",
                             { viewModel.selecionarTipo(null) },
                             estilo = EstiloDeBotao.CONTORNADO,
                             icone = Icones.recomecar,
                         )
-                    } else {
-                        BotaoComprix("Voltar", aoVoltar, icone = Icones.voltar)
+                        else -> BotaoComprix("Voltar", aoVoltar, icone = Icones.voltar)
                     }
                 }
             } else {
@@ -218,6 +256,7 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
                             registro = registro,
                             rotuloDoTipo = rotuloDoTipo(registro.tipo),
                             expiraEm = viewModel.expiraEm(registro),
+                            agora = agora,
                             aoRestaurar = { viewModel.restaurar(registro.id) },
                             aoExcluirAgora = { registroParaExcluir = registro },
                         )
@@ -356,18 +395,21 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
 }
 
 /**
- * Cartao de um registro da lixeira: titulo, detalhe, categoria, a data da
- * exclusao permanente e as duas acoes (Restaurar / excluir agora).
+ * Cartao de um registro da lixeira: titulo, detalhe, categoria, o selo de
+ * prazo urgente (a uma semana ou menos do fim), a data da exclusao
+ * permanente e as duas acoes (Restaurar / excluir agora).
  */
 @Composable
 private fun CartaoDeRegistro(
     registro: RegistroDeLixeiraEntity,
     rotuloDoTipo: String,
     expiraEm: LocalDateTime,
+    agora: LocalDateTime,
     aoRestaurar: () -> Unit,
     aoExcluirAgora: () -> Unit,
 ) {
     val cores = Tema.cores
+    val prazo = FiltroDaLixeira.prazo(FiltroDaLixeira.diasRestantes(expiraEm, agora))
     CartaoComprix(preenchimento = PaddingValues(15.dp)) {
         Row(
             Modifier.fillMaxWidth(),
@@ -396,11 +438,20 @@ private fun CartaoDeRegistro(
         }
 
         EspacoVertical(8.dp)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(7.dp),
-        ) {
-            Selo(texto = rotuloDoTipo, tom = TomDoSelo.NEUTRO)
+        // Selos em linha propria e a data embaixo: com o aviso de prazo ao
+        // lado da categoria, colocar a legenda na mesma linha estouraria em
+        // telas estreitas.
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                Selo(texto = rotuloDoTipo, tom = TomDoSelo.NEUTRO)
+                prazo?.let {
+                    Selo(texto = it.rotulo, tom = it.tom, icone = Icones.relogio)
+                }
+            }
+            EspacoVertical(5.dp)
             Legenda("Excluído permanentemente em ${Formatadores.dataSemAno(expiraEm)}")
         }
 

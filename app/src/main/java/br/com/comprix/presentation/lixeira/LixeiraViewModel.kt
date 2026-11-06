@@ -22,8 +22,9 @@ import kotlinx.coroutines.launch
  * - [registros]: tudo que esta na lixeira (Flow do Room, do mais recente para
  *   o mais antigo);
  * - [contagens]: quantos registros existem por categoria (alimenta os chips);
- * - [tipoSelecionado] + [registrosVisiveis]: o filtro da tela, `null` mostra
- *   todas as categorias;
+ * - [tipoSelecionado] + [busca] + [registrosVisiveis]: os filtros da tela -
+ *   `null` mostra todas as categorias, a busca casa titulo e detalhe
+ *   ([FiltroDaLixeira.corresponde]);
  * - [expiraEm]: a data da exclusao permanente de um registro, para o cartao.
  *
  * As acoes destrutivas ([esvaziarCategoria], [esvaziarTudo], [removerRegistro])
@@ -42,6 +43,11 @@ class LixeiraViewModel(
     /** Categoria escolhida nos chips; `null` = Todas (padrao da tela). */
     val tipoSelecionado: StateFlow<LixeiraRepositorio.TipoDeLixeira?> = _tipoSelecionado.asStateFlow()
 
+    private val _busca = MutableStateFlow("")
+
+    /** Consulta digitada no campo de busca da tela ("" = sem busca). */
+    val busca: StateFlow<String> = _busca.asStateFlow()
+
     /** Todos os registros vivos, do mais recente para o mais antigo. */
     val registros: StateFlow<List<RegistroDeLixeiraEntity>> = lixeiraRepositorio.observarTodos()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -55,10 +61,17 @@ class LixeiraViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
 
-    /** Lista visivel: os registros do filtro atual (`null` = todas as categorias). */
+    /**
+     * Lista visivel: registros do filtro atual - a categoria (`null` = todas)
+     * E a busca ([FiltroDaLixeira.corresponde], casa titulo e detalhe sem
+     * acento e sem maiuscula). Os dois filtros se combinam: buscar "arroz"
+     * dentro da categoria "Listas" so mostra o que e lista E arroz.
+     */
     val registrosVisiveis: StateFlow<List<RegistroDeLixeiraEntity>> =
-        combine(registros, _tipoSelecionado) { lista, tipo ->
-            if (tipo == null) lista else lista.filter { it.tipo == tipo.name }
+        combine(registros, _tipoSelecionado, _busca) { lista, tipo, consulta ->
+            lista
+                .filter { tipo == null || it.tipo == tipo.name }
+                .filter { FiltroDaLixeira.corresponde(it, consulta) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
@@ -70,6 +83,11 @@ class LixeiraViewModel(
 
     fun selecionarTipo(tipo: LixeiraRepositorio.TipoDeLixeira?) {
         _tipoSelecionado.value = tipo
+    }
+
+    /** Define a consulta do campo de busca; "" desliga o filtro. */
+    fun definirBusca(consulta: String) {
+        _busca.value = consulta
     }
 
     /** Devolve o registro aonde ele estava (o repositorio devolve a mensagem pronta). */
