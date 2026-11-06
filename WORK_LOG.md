@@ -393,3 +393,35 @@ Descobribilidade do PR #43: a dica do campo de busca da exploração descrevia s
 acervo de fábrica; agora avisa que "a busca também olha os seus produtos". Mudança de
 string única; `compileDebugKotlin` verde localmente e CI do PR verde (testes + lint +
 build) antes do merge. main verde.
+
+## 2026-11-06 — Sessão 3, encerramento: varredura de estado + desenho da próxima iteração
+
+**Foco.** Janela no fim (~10 min): sem iteração de código nesta janela — em vez de
+forçar uma feature apressada, verificar o estado e deixar a próxima iteração pronta.
+
+**Verificação de estado.** main CI verde (dc96d60, d5e6e00: success); 0 PRs abertos;
+única issue aberta é a #38 (mantenedor, APKs da v1.7.0 — nada acionável pelo agente).
+Suíte do main: 340 testes (PRs #43/#44/#45 mergeados nesta sessão).
+
+**Correção de backlog.** A nota "produtos locais do Room na busca" que ainda aparecia
+como pendente em iterações anteriores estava DESATUALIZADA: já entregue no PR #43
+(seção "Seus produtos") + descobribilidade no PR #45. Removida da lista de pendências.
+
+**Desenho pronto para a próxima sessão — busca por sinônimo no Histórico.**
+Achado de avaliação: `HistoricoViewModel` NÃO injeta `CatalogoRepositorio`; a busca
+usa `FiltroDeHistorico.comprasVisiveis` (pura) com `TextoUtil.correspondeBusca` sobre
+`nomeLista + descricaoEstabelecimento`. Plano:
+(1) passar ao `comprasVisiveis` um parâmetro opcional `candidatos: ((String) -> List<String>)? = null`
+(retrocompatível com os testes existentes);
+(2) o ViewModel injeta `CatalogoRepositorio` (ou lambda `sinonimosDe`) e expande a
+consulta: conjunto = {consulta} ∪ {sinônimos da consulta inteira normalizada} — casar
+se QUALQUER candidato casa (expansão por palavra inteira, não por palavra solta);
+(3) `sinonimosDe` já é bidirecional (`itemPorNome` + `itemPorSinonimo`) — "tangerina"
+acha lista "Mexerica" e vice-versa;
+(4) casos de teste em `FiltroDeHistoricoTest`: sinônimo direto, inverso, consulta
+sem sinônimo (comportamento atual), candidatos nulos (regressão zero).
+
+**Estado do GitHub.** main verde; 0 PRs; #38 a única issue aberta.
+
+**Próximo passo útil.** (1) Implementar o desenho acima (iteração 1 da sessão 4).
+(2) #38 segue com o mantenedor. (3) Congelar contagem de testes só na próxima release.
