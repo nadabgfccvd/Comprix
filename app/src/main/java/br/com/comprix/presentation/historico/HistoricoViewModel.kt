@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import br.com.comprix.data.repositorio.ConfiguracoesRepositorio
 import br.com.comprix.data.repositorio.HistoricoRepositorio
 import br.com.comprix.domain.compra.AnalisadorDeHistorico
+import br.com.comprix.domain.historico.FiltroDeHistorico
 import br.com.comprix.domain.modelo.CompraFinalizada
 import br.com.comprix.domain.modelo.ResumoHistorico
 import br.com.comprix.util.Constantes
 import br.com.comprix.util.ExportadorCsv
-import br.com.comprix.util.TextoUtil
 import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,6 +62,14 @@ class HistoricoViewModel(
     /** Consulta digitada na busca de compras ("" = sem busca). */
     val consulta: StateFlow<String> = _consulta.asStateFlow()
 
+    private val _lojaSelecionada = MutableStateFlow<String?>(null)
+
+    /**
+     * Loja selecionada na linha de pastilhas (`null` = "Todas"). O valor e o
+     * rotulo do cartao - [FiltroDeHistorico] explica por que rotulo, e nao id.
+     */
+    val lojaSelecionada: StateFlow<String?> = _lojaSelecionada.asStateFlow()
+
     val estado: StateFlow<EstadoDoHistorico> = combine(
         _periodo.flatMapLatest { periodo -> historicoRepositorio.resumo(periodo) },
         historicoRepositorio.compras,
@@ -82,26 +91,28 @@ class HistoricoViewModel(
 
     /**
      * Compras visiveis na secao "Compras realizadas": a lista inteira
-     * filtrada pela busca ([TextoUtil.correspondeBusca] sobre nome da lista e
-     * lojas - "MERCADO" acha "Mercado do Bairro"). Declarado DEPOIS de
-     * [estado] - o initializer le a propriedade e Kotlin constroi na ordem.
-     * As analiticas, os numeros do cabecalho e a variacao mensal seguem
-     * calculados sobre TODAS as compras: a busca afina a lista, nunca
-     * reescreve a estatistica.
+     * atravessando o filtro de loja e a busca amigavel - a intersecao dos
+     * dois e calculada por [FiltroDeHistorico.comprasVisiveis] ("MERCADO"
+     * acha "Mercado do Bairro"). Declarado DEPOIS de [estado] - o initializer
+     * le a propriedade e Kotlin constroi na ordem. As analiticas, os numeros
+     * do cabecalho e a variacao mensal seguem calculados sobre TODAS as
+     * compras: busca e loja afinam a lista, nunca reescrevem a estatistica.
      */
     val comprasVisiveis: StateFlow<List<CompraFinalizada>> =
-        combine(estado, _consulta) { estadoAtual, consulta ->
-            if (consulta.isBlank()) {
-                estadoAtual.compras
-            } else {
-                estadoAtual.compras.filter { compra ->
-                    TextoUtil.correspondeBusca(
-                        compra.nomeLista + " " + compra.descricaoEstabelecimento,
-                        consulta,
-                    )
-                }
-            }
+        combine(estado, _consulta, _lojaSelecionada) { estadoAtual, consulta, loja ->
+            FiltroDeHistorico.comprasVisiveis(estadoAtual.compras, consulta, loja)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /**
+     * Pastilhas da linha de lojas: rotulos distintos das compras do periodo
+     * (nao das compras filtradas) com quantas compras tem cada um - derivado
+     * de [estado] para acompanhar a troca de periodo sem estado duplicado.
+     * Declarado DEPOIS de [estado], pela mesma ordem de construcao.
+     */
+    val lojasDisponiveis: StateFlow<List<FiltroDeHistorico.LojaDoHistorico>> =
+        estado
+            .map { FiltroDeHistorico.lojas(it.compras) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun definirPeriodo(periodo: AnalisadorDeHistorico.Periodo) {
         _periodo.value = periodo
@@ -110,6 +121,21 @@ class HistoricoViewModel(
     /** Define a consulta da busca de compras; "" desliga o filtro. */
     fun definirConsulta(consulta: String) {
         _consulta.value = consulta
+    }
+
+    /**
+     * Define a loja selecionada; `null` = "Todas". O toque na pastilha ativa
+     * recolhe o filtro, como nos setores do catalogo e nas categorias da
+     * Lixeira - a decisao do toggle fica na tela.
+     */
+    fun definirLoja(loja: String?) {
+        _lojaSelecionada.value = loja
+    }
+
+    /** Limpa busca e loja de uma vez - o caminho de saida do "Nada encontrado". */
+    fun limparFiltros() {
+        _consulta.value = ""
+        _lojaSelecionada.value = null
     }
 
     fun remover(compra: CompraFinalizada) {
