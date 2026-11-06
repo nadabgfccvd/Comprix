@@ -12,8 +12,6 @@ import br.com.comprix.R
 import br.com.comprix.di.ServiceLocator
 import br.com.comprix.domain.modelo.ResumoDeLista
 import br.com.comprix.presentation.MainActivity
-import br.com.comprix.util.Formatadores
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -78,33 +76,27 @@ class ListaWidgetProvider : AppWidgetProvider() {
         private fun visoes(contexto: Context, resumo: ResumoDeLista?): RemoteViews {
             val visoes = RemoteViews(contexto.packageName, R.layout.lista_widget)
 
-            val nome = resumo?.lista?.nome.orEmpty()
-            visoes.setTextViewText(
-                R.id.texto_nome,
-                if (nome.isBlank()) "Nenhuma lista aberta" else nome,
-            )
+            // As regras de exibição (textos, barra, estimado) vivem em
+            // VisoesDoWidget, objeto puro testável na JVM - aqui só a pintura.
+            val estado = VisoesDoWidget.estado(resumo)
 
-            val total = resumo?.totalDeItens ?: 0
-            val comprados = resumo?.itensComprados ?: 0
+            visoes.setTextViewText(R.id.texto_nome, estado.textoNome)
+
             // ProgressBar em RemoteViews: setProgressBar(id, max, progresso, indeterminado).
-            visoes.setProgressBar(R.id.barra_progresso, total, comprados, false)
-            visoes.setTextViewText(
-                R.id.texto_contagem,
-                if (total == 0) "Abra o app para comecar" else "$comprados de $total comprados",
+            visoes.setProgressBar(
+                R.id.barra_progresso,
+                estado.maximoDaBarra,
+                estado.progressoDaBarra,
+                false,
             )
+            visoes.setTextViewText(R.id.texto_contagem, estado.textoContagem)
 
-            // Total estimado da lista: some quando nao ha precos anotados ainda,
-            // para o widget vazio ficar com duas linhas limpas, nao tres.
-            val estimado: BigDecimal = resumo?.totalEstimado ?: BigDecimal.ZERO
             visoes.setViewVisibility(
                 R.id.texto_estimado,
-                if (estimado.signum() > 0) View.VISIBLE else View.GONE,
+                if (estado.estimadoVisivel) View.VISIBLE else View.GONE,
             )
-            if (estimado.signum() > 0) {
-                visoes.setTextViewText(
-                    R.id.texto_estimado,
-                    "≈ ${Formatadores.moeda(estimado)} estimados",
-                )
+            if (estado.estimadoVisivel) {
+                visoes.setTextViewText(R.id.texto_estimado, estado.textoEstimado)
             }
 
             // Widget inteiro clicavel: abre o app (unica Activity, MainActivity).

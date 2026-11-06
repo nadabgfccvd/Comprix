@@ -7,6 +7,9 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 ### Refinado
 - **A busca da Lixeira também entende sinônimos do catálogo**: digitar "mexerica" encontra a lista "Tangerina da feira" que foi para a lixeira — e "tangerina" acha "Mexerica", porque a resolução do acervo é bidirecional. Mesma receita já estabelecida na busca do Histórico e em "Seus produtos": expansão pela consulta inteira, nunca por palavra solta; alternativa computada uma vez por emissão da busca; sem sinônimo, o comportamento de antes vale intacto. Com isto, todas as buscas do app falam a mesma língua. A dica do campo cita o novo alcance.
 
+### Interno
+- **As regras de exibição do widget viram objeto puro com testes próprios**: o widget da tela inicial ("primeira lista aberta") decidia título do estado vazio, convite de contagem, limites da barra e a linha do estimado dentro do provider — decisões visíveis na tela inicial sem um único teste. Agora um objeto puro (`VisoesDoWidget`) calcula o estado e o provider só traduz em `RemoteViews`; 10 testes JVM novos cobrem o estado vazio (widget recém-colocado, nome em branco, lista sem itens), a contagem e a barra (incluindo lista completa) e o estimado (aparece só com valor positivo, formatado pt-BR com separador de milhar). Nenhuma mudança visível: cada texto, limite e regra de visibilidade é exatamente o de antes — o teste congela o comportamento.
+
 ## [1.8.0] — 2026-11-06
 
 ### Adicionado
