@@ -83,7 +83,7 @@ fun CatalogoScreen(
                     valor = estado.consulta,
                     aoMudar = viewModel::definirConsulta,
                     rotulo = "Buscar no catálogo",
-                    dica = "Sem acento e sem se importar com maiúsculas — “melao” acha “Melão”.",
+                    dica = "Sem acento e sem se importar com maiúsculas — “melao” acha “Melão”. A busca também olha os seus produtos.",
                 )
                 EspacoVertical(10.dp)
                 Row(
