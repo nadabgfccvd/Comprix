@@ -25,18 +25,20 @@ class ValidacaoDeBackupTest {
         listOf("#TABELA $tabela") + registros[tabela].orEmpty()
     }
 
-    /** Backup v2 com checksum correto (o rodapé cobre o corpo inteiro). */
-    private fun backupV2(registros: Map<String, List<String>>): List<String> {
-        val corpo = layoutV1ComHistorico.flatMap { tabela ->
-            listOf("#TABELA $tabela") + registros[tabela].orEmpty()
-        }
+    /** Backup v2 com checksum correto (o rodapé cobre o corpo inteiro, cabeçalho incluso). */
+    private fun backupV2(
+        registros: Map<String, List<String>>,
+        secoes: List<String> = layoutV1ComHistorico,
+    ): List<String> {
+        val linhas = listOf("#COMPRIX-BACKUP v2") +
+            secoes.flatMap { tabela -> listOf("#TABELA $tabela") + registros[tabela].orEmpty() }
         val digest = MessageDigest.getInstance("SHA-256")
-        corpo.forEach { linha ->
+        linhas.forEach { linha ->
             digest.update(linha.toByteArray(Charsets.UTF_8))
             digest.update('\n'.code.toByte())
         }
         val soma = digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
-        return listOf("#COMPRIX-BACKUP v2") + corpo + "#SHA256 $soma"
+        return linhas + "#SHA256 $soma"
     }
 
     private val lista = """{"id":"1","nome":"Lista","criada":"1000","fim":"false","fav":"false"}"""

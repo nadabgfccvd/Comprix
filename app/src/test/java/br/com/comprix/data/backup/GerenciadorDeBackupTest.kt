@@ -16,6 +16,7 @@ import br.com.comprix.data.local.CompraEntity
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.security.MessageDigest
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -66,6 +67,22 @@ class GerenciadorDeBackupTest {
 
     private fun precoJson(id: Long, itemId: Long, lojaId: Long) =
         """{"id":"$id","item":"$itemId","loja":"$lojaId","cent":"100","data":"1000","disp":"true"}"""
+
+    /** Backup v2 com checksum correto (o rodapé cobre o corpo inteiro, cabeçalho incluso). */
+    private fun backupV2(
+        registros: Map<String, List<String>> = emptyMap(),
+        secoes: List<String> = layoutV1ComHistorico,
+    ): String {
+        val linhas = listOf("#COMPRIX-BACKUP v2") +
+            secoes.flatMap { tabela -> listOf("#TABELA $tabela") + registros[tabela].orEmpty() }
+        val digest = MessageDigest.getInstance("SHA-256")
+        linhas.forEach { linha ->
+            digest.update(linha.toByteArray(Charsets.UTF_8))
+            digest.update('\n'.code.toByte())
+        }
+        val soma = digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
+        return (linhas + "#SHA256 $soma").joinToString("\n")
+    }
 
     private fun copiasDeSeguranca(): List<File> =
         gerenciador.pastaDeBackups()
@@ -154,20 +171,25 @@ class GerenciadorDeBackupTest {
 
     @Test fun falhaDeInsercaoNoMeioReverteExclusoes() = runBlocking {
         banco.listaDao().inserir(lista("Original"))
-        // Duas lojas com o mesmo nome passam da validação (ids distintos) e
-        // quebram o índice único de nome no meio da transação, depois das
-        // exclusões — exercitando o rollback real com a cópia de segurança já
-        // gravada (política legada: v1 válido até a validação aguentar).
-        val invalido = backupV1(
-            mapOf(
-                "estabelecimentos" to listOf(lojaJson(1, "Loja"), lojaJson(2, "Loja")),
+        // A tabela perfil_restricoes e de linha unica por projeto: duas linhas
+        // passam da validacao (secao livre no v2) e quebram o require() no meio
+        // da transacao, DEPOIS das exclusoes — exercitando o rollback real.
+        // O arquivo tem checksum valido: o que falha e a semantica do banco,
+        // e a transacao devolve tudo como estava.
+        val invalido = backupV2(
+            registros = mapOf(
                 "listas" to listOf(listaJson(2, "Nova")),
+                "perfil_restricoes" to listOf(
+                    """{"alergenos":"LEITE","semGluten":"true"}""",
+                    """{"alergenos":"SOJA","semGluten":"false"}""",
+                ),
             ),
+            secoes = layoutV1ComHistorico + "perfil_restricoes",
         )
         val resultado = gerenciador.restaurar(invalido.byteInputStream())
         assertFalse(resultado.sucesso)
         assertEquals("Original", banco.listaDao().porId(1)?.nome)
-        assertEquals(1, copiasDeSeguranca().size)
+        assertTrue(copiasDeSeguranca().isEmpty()) // v2 nao gera copia extra
     }
 
     @Test fun backupPreservaHistoricoDePrecos() = runBlocking {
