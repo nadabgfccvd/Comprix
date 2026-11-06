@@ -3,6 +3,7 @@ package br.com.comprix.presentation.catalogo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.comprix.data.repositorio.CatalogoRepositorio
+import br.com.comprix.domain.catalogo.FiltroDeProdutosLocais
 import br.com.comprix.domain.catalogo.ItemDoCatalogo
 import br.com.comprix.domain.catalogo.SetorDoCatalogo
 import br.com.comprix.domain.catalogo.SubcategoriaDoCatalogo
@@ -26,7 +27,10 @@ import kotlinx.coroutines.launch
  * @param carregando verdadeiro ate a primeira emissao do fluxo de estado.
  * @param setores os setores do acervo, para os chips de filtro.
  * @param grupos itens agrupados por subcategoria, na ordem do arquivo.
- * @param total quantos itens estao visiveis agora (ja com filtro aplicado).
+ * @param produtosLocais produtos do acervo LOCAL (Room) que casam com a busca,
+ * num secao propria acima do acervo de fabrica - vazia sem consulta ou com
+ * filtro de setor ativo (o setor filtra o acervo, nao o acervo pessoal).
+ * @param total quantos itens estao visiveis agora (acervo + locais).
  * @param buscaLimitada verdadeiro quando a busca bruta atingiu o teto de
  * [LIMITE_DA_BUSCA] resultados (e nenhum filtro de setor esta ativo): a
  * contagem da tela explica que existe mais alem do recorte mostrado.
@@ -37,6 +41,7 @@ data class EstadoDoCatalogo(
     val carregando: Boolean = true,
     val setores: List<SetorDoCatalogo> = emptyList(),
     val grupos: List<GrupoDoCatalogo> = emptyList(),
+    val produtosLocais: List<Produto> = emptyList(),
     val total: Int = 0,
     val buscaLimitada: Boolean = false,
 )
@@ -71,8 +76,11 @@ class CatalogoViewModel(
     val estado: StateFlow<EstadoDoCatalogo> = combine(
         _consulta,
         _setorSelecionado,
-    ) { consulta, setor -> consulta to setor }
-        .map { (consulta, setor) -> calcular(consulta, setor) }
+        catalogoRepositorio.produtos,
+    ) { consulta, setor, produtosDoRoom ->
+        Triple(consulta, setor, produtosDoRoom)
+    }
+        .map { (consulta, setor, produtosDoRoom) -> calcular(consulta, setor, produtosDoRoom) }
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EstadoDoCatalogo())
 
@@ -85,6 +93,15 @@ class CatalogoViewModel(
     fun selecionarSetor(setorId: Int?) {
         _setorSelecionado.value = setorId
     }
+
+    /**
+     * Sinonimos de busca de um produto do acervo local ("Mexerica" ->
+     * "Tangerina"), direto do catalogo-semente. Funcao PURA em memoria -
+     * barata o bastante para a renderizacao por item da secao
+     * "Seus produtos".
+     */
+    fun sinonimosDoProduto(nome: String): List<String> =
+        catalogoRepositorio.sinonimosDe(nome)
 
     /**
      * Encontra (ou cria) o produto do nome tocado e, quando ha lista aberta,
@@ -118,7 +135,11 @@ class CatalogoViewModel(
      * principal ([Dispatchers.Default] no `flowOn`), porque filtrar 1.714 itens
      * por tecla e trabalho de fundo.
      */
-    private fun calcular(consulta: String, setorSelecionado: Int?): EstadoDoCatalogo {
+    private fun calcular(
+        consulta: String,
+        setorSelecionado: Int?,
+        produtosDoRoom: List<Produto>,
+    ): EstadoDoCatalogo {
         val catalogo = catalogoRepositorio.dadosDoCatalogoSemente()
             ?: return EstadoDoCatalogo(consulta = consulta, setorSelecionado = setorSelecionado, carregando = false)
 
@@ -139,6 +160,15 @@ class CatalogoViewModel(
             buscaBruta.filter { it.subcategoriaId in subPorId }
         }
 
+        // Secao "Seus produtos": so com consulta digitada e sem filtro de
+        // setor - a exploracao aberta e conteudo do acervo; o setor filtra o
+        // acervo, nao o acervo pessoal.
+        val produtosLocais = if (termo.isNotBlank() && setorSelecionado == null) {
+            FiltroDeProdutosLocais.filtrar(termo, produtosDoRoom)
+        } else {
+            emptyList()
+        }
+
         val grupos = itensVisiveis
             .groupBy { it.subcategoriaId }
             .mapNotNull { (subId, itens) ->
@@ -152,7 +182,8 @@ class CatalogoViewModel(
             carregando = false,
             setores = catalogo.setores,
             grupos = grupos,
-            total = itensVisiveis.size,
+            produtosLocais = produtosLocais,
+            total = itensVisiveis.size + produtosLocais.size,
             // Com filtro de setor ativo a contagem ja e um recorte menor; o
             // aviso de teto so ajuda quando o rol inteiro vem da busca.
             buscaLimitada = buscaBruta != null &&

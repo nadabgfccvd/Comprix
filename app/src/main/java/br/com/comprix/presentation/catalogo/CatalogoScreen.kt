@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.comprix.domain.catalogo.ItemDoCatalogo
+import br.com.comprix.domain.modelo.Produto
 import br.com.comprix.presentation.comum.BarraSimples
 import br.com.comprix.presentation.comum.BotaoComprix
 import br.com.comprix.presentation.comum.BotaoDeIcone
@@ -126,7 +127,7 @@ fun CatalogoScreen(
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Legenda("Abrindo o catálogo…")
                 }
-            } else if (estado.grupos.isEmpty()) {
+            } else if (estado.grupos.isEmpty() && estado.produtosLocais.isEmpty()) {
                 EstadoVazio(
                     icone = Icones.buscar,
                     titulo = "Nada encontrado no catálogo.",
@@ -146,6 +147,29 @@ fun CatalogoScreen(
                 }
             } else {
                 LazyColumn(Modifier.fillMaxSize(), contentPadding = PREENCHIMENTO_DA_TELA) {
+                    // O que a pessoa mesma cadastrou vem PRIMEIRO na busca: e
+                    // o resultado que ela reconhece de cara. O acervo de
+                    // fabrica segue logo abaixo, com suas subcategorias.
+                    if (estado.produtosLocais.isNotEmpty()) {
+                        item(key = "cab-seus-produtos") {
+                            CabecalhoDeSecao(
+                                "Seus produtos",
+                                contagem = estado.produtosLocais.size.toString(),
+                            )
+                        }
+                        items(
+                            estado.produtosLocais,
+                            key = { produto -> "local-${produto.id}" },
+                        ) { produto ->
+                            LinhaDoProdutoLocal(
+                                produto = produto,
+                                podeAdicionar = listaId > 0,
+                                aoAdicionar = { viewModel.adicionar(produto.nome, listaId) },
+                                sinonimosDe = viewModel::sinonimosDoProduto,
+                            )
+                            EspacoVertical(4.dp)
+                        }
+                    }
                     estado.grupos.forEach { grupo ->
                         item(key = "cab-${grupo.subcategoria.id}") {
                             CabecalhoDeSecao(
@@ -202,6 +226,47 @@ private fun LinhaDoCatalogo(
             BotaoDeIcone(
                 Icones.adicionar,
                 "Adicionar ${item.nome} à lista",
+                aoAdicionar,
+                tinta = cores.verdeTinta,
+                fundo = cores.verdeSuave,
+            )
+        }
+    }
+}
+
+@Composable
+private fun LinhaDoProdutoLocal(
+    produto: Produto,
+    podeAdicionar: Boolean,
+    aoAdicionar: () -> Unit,
+    sinonimosDe: (String) -> List<String>,
+) {
+    val cores = Tema.cores
+    Row(
+        // Mesmo alinhamento do LinhaDoCatalogo: sem padding horizontal
+        // proprio, o nome cai na mesma linha dos titulos de secao.
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                produto.nome,
+                style = MaterialTheme.typography.bodyLarge,
+                color = cores.texto,
+            )
+            // Um produto local que tambem existe no acervo de fabrica ganha
+            // a dica do sinonimo dele (mesmo recurso de LinhaDoCatalogo) -
+            // "Mexerica" cadastrada pela pessoa mostra "também: Tangerina".
+            val sinonimos = sinonimosDe(produto.nome)
+            if (sinonimos.isNotEmpty()) {
+                Legenda("também: " + TextoUtil.capitalizarTitulo(sinonimos.joinToString(", ")))
+            }
+        }
+        if (podeAdicionar) {
+            BotaoDeIcone(
+                Icones.adicionar,
+                "Adicionar ${produto.nome} à lista",
                 aoAdicionar,
                 tinta = cores.verdeTinta,
                 fundo = cores.verdeSuave,
