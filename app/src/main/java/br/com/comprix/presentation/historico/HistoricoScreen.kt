@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -84,6 +86,8 @@ fun HistoricoScreen(
     val cores = Tema.cores
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val consulta by viewModel.consulta.collectAsStateWithLifecycle()
+    val lojaSelecionada by viewModel.lojaSelecionada.collectAsStateWithLifecycle()
+    val lojasDisponiveis by viewModel.lojasDisponiveis.collectAsStateWithLifecycle()
     val comprasVisiveis by viewModel.comprasVisiveis.collectAsStateWithLifecycle()
     val mensagem by viewModel.mensagem.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
@@ -312,13 +316,43 @@ fun HistoricoScreen(
                         rotulo = "Buscar compras",
                         dica = "Sem acento e sem se importar com maiúsculas — busca no nome da lista e nas lojas.",
                     )
+                    // Pastilhas de loja, mesma receita das categorias da
+                    // Lixeira e dos setores do catalogo: toque na pastilha
+                    // ativa recolhe o filtro. Os rotulos sao os mesmos textos
+                    // dos cartoes ("Mercado do Bairro", "... + 2 loja(s)").
+                    if (lojasDisponiveis.isNotEmpty()) {
+                        EspacoVertical(10.dp)
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            PastilhaSelecionavel(
+                                texto = "Todas (${estado.compras.size})",
+                                selecionada = lojaSelecionada == null,
+                                aoTocar = { viewModel.definirLoja(null) },
+                            )
+                            lojasDisponiveis.forEach { loja ->
+                                PastilhaSelecionavel(
+                                    texto = "${loja.rotulo} (${loja.quantidade})",
+                                    selecionada = lojaSelecionada == loja.rotulo,
+                                    aoTocar = {
+                                        viewModel.definirLoja(
+                                            if (lojaSelecionada == loja.rotulo) null else loja.rotulo,
+                                        )
+                                    },
+                                )
+                            }
+                        }
+                    }
                 }
                 EspacoVertical(12.dp)
             }
 
-            // Busca sem resultado ganha um cartao proprio no lugar da lista -
-            // dizer "nada casou" e oferecer o caminho de saida.
-            if (consulta.isNotBlank() && comprasVisiveis.isEmpty()) {
+            // Busca ou loja sem resultado ganham um cartao proprio no lugar da
+            // lista - dizer "nada casou" e oferecer o caminho de saida.
+            if ((consulta.isNotBlank() || lojaSelecionada != null) && comprasVisiveis.isEmpty()) {
                 item {
                     CartaoComprix(preenchimento = PaddingValues(15.dp)) {
                         Text(
@@ -328,13 +362,20 @@ fun HistoricoScreen(
                         )
                         EspacoVertical(3.dp)
                         Legenda(
-                            "Nenhuma compra casa com “$consulta” — tente outra " +
-                                "palavra ou limpe a busca.",
+                            when {
+                                consulta.isNotBlank() && lojaSelecionada != null ->
+                                    "Nenhuma compra em “$lojaSelecionada” casa com “$consulta” — tente outra palavra ou outra loja."
+                                lojaSelecionada != null ->
+                                    "Nenhuma compra em “$lojaSelecionada” neste período — toque em outra loja ou em “Todas”."
+                                else ->
+                                    "Nenhuma compra casa com “$consulta” — tente outra " +
+                                        "palavra ou limpe a busca."
+                            },
                         )
                         EspacoVertical(9.dp)
                         BotaoComprix(
-                            "Limpar busca",
-                            { viewModel.definirConsulta("") },
+                            "Limpar filtros",
+                            { viewModel.limparFiltros() },
                             estilo = EstiloDeBotao.CONTORNADO,
                             compacto = true,
                             icone = Icones.recomecar,

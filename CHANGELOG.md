@@ -6,6 +6,7 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 
 ### Adicionado
 - **Busca no Histórico**: campo "Buscar compras" na seção "Compras realizadas" — cada palavra digitada precisa aparecer no nome da lista ou nas lojas da compra, sem acento e sem se importar com maiúsculas (o mesmo critério amigável da Lixeira e do catálogo). Achar "aquela compra no Mercado X" deixa de depender de rolar meses de histórico; busca sem resultado ganha um cartão próprio com o botão de limpar. As analíticas, os números do topo e a variação mensal continuam calculados sobre **todas** as compras — a busca afina a lista, nunca reescreve a estatística. O casamento em si (`TextoUtil.correspondeBusca`) agora é um utilitário compartilhado, usado também pela busca da Lixeira.
+- **Filtro por loja no Histórico**: linha de pastilhas logo abaixo da busca — "Todas (N)" e uma pastilha por loja, com a contagem de compras, na mesma receita das categorias da Lixeira e dos setores do catálogo (tocar na pastilha ativa recolhe o filtro). Os rótulos são exatamente os textos dos cartões: "Mercado do Bairro" filtra as compras daquele mercado; compras em mais de um lugar ficam agrupadas no rótulo combinado ("Mercado do Bairro + 2 loja(s)"). Loja e busca se combinam com E, o estado "nada encontrado" explica qual dos dois filtros apertou e o botão "Limpar filtros" abre os dois de uma vez. A lógica é um objeto puro (`FiltroDeHistorico`), coberto por testes próprios.
 
 ## [1.7.0] — 2026-11-06
 
