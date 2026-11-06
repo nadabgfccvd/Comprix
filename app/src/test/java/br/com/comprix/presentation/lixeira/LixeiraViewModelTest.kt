@@ -10,6 +10,8 @@ import br.com.comprix.data.repositorio.LixeiraRepositorio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -75,6 +77,9 @@ class LixeiraViewModelTest {
         val prazo = System.currentTimeMillis() + 5_000
         while (!condicao()) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10) // suspende (cede o event-loop); Thread.sleep bloquearia
         }
     }
@@ -91,7 +96,11 @@ class LixeiraViewModelTest {
         }
 
     private fun teste(bloco: suspend (LixeiraViewModel) -> Unit): Unit = runBlocking {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val catalogo = CatalogoRepositorio(
                 categoriaDao = banco.categoriaDao(),
@@ -122,7 +131,11 @@ class LixeiraViewModelTest {
         // Os registros precisam existir ANTES do ViewModel: a purga roda no init.
         val fora = registro("LISTAS", "velha demais", enviadaEm = System.currentTimeMillis() - 31L * 24 * 60 * 60 * 1000)
         val dentro = registro("LISTAS", "ainda cabe", enviadaEm = System.currentTimeMillis())
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val catalogo = CatalogoRepositorio(
                 categoriaDao = banco.categoriaDao(),

@@ -12,6 +12,8 @@ import br.com.comprix.domain.modelo.Produto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.ContinuationInterceptor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -87,12 +89,19 @@ class CategoriasViewModelTest {
         val prazo = System.currentTimeMillis() + 5_000
         while (!condicao()) {
             if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 5 s")
+            // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
+            // do Robolectric pausado, os runnables só executam se drenados aqui.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10)
         }
     }
 
     private fun teste(bloco: suspend (CategoriasViewModel) -> Unit): Unit = runBlocking {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val viewModel = CategoriasViewModel(catalogo)
             val coletor = launch { viewModel.estado.collect {} }
@@ -129,7 +138,11 @@ class CategoriasViewModelTest {
         val hortifruti = banco.categoriaDao().listarTodas().single { it.chave == "hortifruti" }.id
         produtoNa("Banana", hortifruti)
         produtoNa("Mamão", hortifruti)
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val viewModel = CategoriasViewModel(catalogo)
             val coletor = launch { viewModel.estado.collect {} }
@@ -205,7 +218,11 @@ class CategoriasViewModelTest {
         // O init recarrega as contagens: o aprendizado precisa existir antes.
         catalogo.lembrarCategoria("banana prata", 3L)
         catalogo.lembrarCategoria("detergente", 6L)
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(
+            // event loop do runBlocking: single-thread e FIFO — evita retomadas
+            // Unconfined inline em threads do executor do Room (corrida da suíte)
+            coroutineContext[ContinuationInterceptor] as CoroutineDispatcher,
+        )
         try {
             val viewModel = CategoriasViewModel(catalogo)
             val coletor = launch { viewModel.estado.collect {} }
@@ -261,7 +278,8 @@ class CategoriasViewModelTest {
 
         viewModel.restaurarOrdemPadrao()
         espera { viewModel.mensagem.value == "Ordem do mercado restaurada." }
-        espera { viewModel.estado.value.categorias.first().nome == "Hortifrúti" }
+        // firstOrNull: o estado anterior (ordem não restaurada) não pode derrubar o predicado
+        espera { viewModel.estado.value.categorias.firstOrNull()?.nome == "Hortifrúti" }
         assertEquals(10, banco.categoriaDao().listarTodas().single { it.chave == "hortifruti" }.ordemPadrao)
     }
 
