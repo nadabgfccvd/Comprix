@@ -2,6 +2,11 @@
 
 Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas notas de cada [release](https://github.com/nadabgfccvd/Comprix/releases). O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Refinado
+- **A busca da Lixeira também entende sinônimos do catálogo**: digitar "mexerica" encontra a lista "Tangerina da feira" que foi para a lixeira — e "tangerina" acha "Mexerica", porque a resolução do acervo é bidirecional. Mesma receita já estabelecida na busca do Histórico e em "Seus produtos": expansão pela consulta inteira, nunca por palavra solta; alternativa computada uma vez por emissão da busca; sem sinônimo, o comportamento de antes vale intacto. Com isto, todas as buscas do app falam a mesma língua. A dica do campo cita o novo alcance.
+
 ## [1.8.0] — 2026-11-06
 
 ### Adicionado

@@ -149,7 +149,7 @@ fun LixeiraScreen(viewModel: LixeiraViewModel, aoVoltar: () -> Unit) {
                         valor = busca,
                         aoMudar = viewModel::definirBusca,
                         rotulo = "Buscar na lixeira",
-                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome e no detalhe.",
+                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome e no detalhe, e entende sinônimos do catálogo: “mexerica” acha “Tangerina”.",
                     )
                     EspacoVertical(10.dp)
                 }

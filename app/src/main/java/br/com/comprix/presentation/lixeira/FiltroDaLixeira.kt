@@ -30,16 +30,40 @@ object FiltroDaLixeira {
     const val DIAS_URGENTE = 7L
 
     /**
-     * Verdadeiro quando [registro] casa com [consulta]: todas as palavras da
-     * consulta precisam ser encontradas (busca por pedaco de palavra, sem
-     * acento e sem maiuscula) no titulo ou no detalhe. O casamento em si e o
-     * [TextoUtil.correspondeBusca], compartilhado com o Historico.
+     * Termos alternativos da consulta (sinonimos do acervo), prontos para
+     * [corresponde]. Computa UMA vez por emissao de busca — a funcao de
+     * sinonimos e pura e barata, mas nao deve rodar por registro; consulta em
+     * branco ou sem candidatos devolve vazio. Mesma receita dos filtros do
+     * Historico e de "Seus produtos": expansao pela consulta INTEIRA, nunca
+     * por palavra solta, e `candidatos = null` = comportamento de antes.
      */
-    fun corresponde(registro: RegistroDeLixeiraEntity, consulta: String): Boolean =
-        TextoUtil.correspondeBusca(
-            registro.titulo + " " + registro.detalhe.orEmpty(),
-            consulta,
-        )
+    fun alternativasDe(
+        consulta: String,
+        candidatos: ((String) -> List<String>)?,
+    ): List<String> {
+        if (candidatos == null || consulta.isBlank()) return emptyList()
+        return candidatos(consulta).filter { it.isNotBlank() }
+    }
+
+    /**
+     * Verdadeiro quando [registro] casa com [consulta] OU com qualquer termo
+     * alternativo de [alternativas] (sinonimos precomputados por
+     * [alternativasDe] — "mexerica" encontra a lista "Tangerina da feira" que
+     * a pessoa apagou, e vice-versa, porque a resolucao do acervo e
+     * bidirecional). Todas as palavras do termo precisam ser encontradas
+     * (busca por pedaco de palavra, sem acento e sem maiuscula) no titulo ou
+     * no detalhe. O casamento direto e o [TextoUtil.correspondeBusca],
+     * compartilhado com o Historico.
+     */
+    fun corresponde(
+        registro: RegistroDeLixeiraEntity,
+        consulta: String,
+        alternativas: List<String> = emptyList(),
+    ): Boolean {
+        val alvo = registro.titulo + " " + registro.detalhe.orEmpty()
+        if (TextoUtil.correspondeBusca(alvo, consulta)) return true
+        return alternativas.any { TextoUtil.correspondeBusca(alvo, it) }
+    }
 
     /**
      * Dias de calendario entre [agora] e [expiraEm]. Datas - nao horas: um

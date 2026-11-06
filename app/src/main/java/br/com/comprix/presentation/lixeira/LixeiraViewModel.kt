@@ -3,6 +3,7 @@ package br.com.comprix.presentation.lixeira
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.comprix.data.local.RegistroDeLixeiraEntity
+import br.com.comprix.data.repositorio.CatalogoRepositorio
 import br.com.comprix.data.repositorio.LixeiraRepositorio
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
  */
 class LixeiraViewModel(
     private val lixeiraRepositorio: LixeiraRepositorio,
+    private val catalogoRepositorio: CatalogoRepositorio,
 ) : ViewModel() {
 
     private val _mensagem = MutableStateFlow<String?>(null)
@@ -66,12 +68,21 @@ class LixeiraViewModel(
      * E a busca ([FiltroDaLixeira.corresponde], casa titulo e detalhe sem
      * acento e sem maiuscula). Os dois filtros se combinam: buscar "arroz"
      * dentro da categoria "Listas" so mostra o que e lista E arroz.
+     *
+     * A busca tambem entende sinonimos do acervo (mesma receita do Historico
+     * e de "Seus produtos"): as alternativas da consulta inteira vem de
+     * `sinonimosDe` (pura, em memoria) e sao computadas UMA vez por emissao —
+     * "mexerica" encontra a lista "Tangerina da feira" na lixeira.
      */
     val registrosVisiveis: StateFlow<List<RegistroDeLixeiraEntity>> =
         combine(registros, _tipoSelecionado, _busca) { lista, tipo, consulta ->
+            val alternativas = FiltroDaLixeira.alternativasDe(
+                consulta,
+                catalogoRepositorio::sinonimosDe,
+            )
             lista
                 .filter { tipo == null || it.tipo == tipo.name }
-                .filter { FiltroDaLixeira.corresponde(it, consulta) }
+                .filter { FiltroDaLixeira.corresponde(it, consulta, alternativas) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
