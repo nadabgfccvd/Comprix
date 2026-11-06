@@ -329,3 +329,36 @@ script + espelho + SDKs em ~/.m2) — anotado aqui para a próxima sessão não 
 descoberta. (2) Melhoria funcional pendente de peso: produtos locais do Room na busca
 da exploração do catálogo ("seus produtos"). (3) Issue #38 segue com o mantenedor
 (artifact dos APKs expira em ~14 dias).
+
+## 2026-11-06 — Sessão 3, iteração 2: seus produtos na busca do catálogo (PR #43, mergeado)
+
+**Foco.** A melhoria funcional pendente de maior peso das duas últimas iterações: a
+exploração do catálogo listava só o acervo de fábrica (1.714 itens) — produto cadastrado
+pelo próprio usuário era invisível na busca.
+
+**Mudança (PR #43, mergeado).**
+- Seção própria **"Seus produtos"** acima do acervo quando há consulta digitada e
+  NENHUM filtro de setor (regra documentada no código: o setor filtra o acervo, não o
+  acervo pessoal). Teto de 12, ordenação por nome normalizado, contagem do topo soma
+  acervo + locais, estado "nada encontrado" só quando nenhum dos dois lados casa.
+- Mesmo critério amigável das outras buscas (`TextoUtil.correspondeBusca`: cada palavra
+  no nome, sem acento/caixa — "queijo faz" acha "Queijo da fazenda").
+- Dica de sinônimos herdada do acervo ("Mexerica" → "também: Tangerina") via
+  `CatalogoViewModel.sinonimosDoProduto` (função pura `sinonimosDe`, já existente).
+- Adicionar passa por `encontrarOuCriar` — nunca duplica produto local existente.
+- Lógica pura isolada: `FiltroDeProdutosLocais` (mesma receita de `FiltroDeHistorico`/
+  `FiltroDaLixeira`) com 6 testes próprios.
+
+**Verificação.** `./gradlew testDebugUnitTest` local → **340 testes · 0 falhas · 0
+pulados** (334 + 6). Nota de honestidade: 1º run do teste novo reprovou porque a
+EXPECTATIVA do teste estava errada (ordem alfabética: "mineral" < "tonica") — a
+implementação estava correta; expectativa corrigida e re-executado completo, verde.
+CI do PR verde em ~3,5 min; main verde após o merge.
+
+**Estado do GitHub.** main em CI verde; 0 issues além da #38 (mantenedor); 0 PRs
+abertos; CHANGELOG "Não lançado → Adicionado" com a entrada.
+
+**Próximo passo útil.** (1) Issue #38 segue com o mantenedor (APKs da v1.7.0; artifact
+expira ~14 dias). (2) Candidatas: contagem de testes citada no QA volta a divergir
+(340 agora) — atualizar na próxima release; filtro por setor também para "Seus
+produtos" se o feedback pedir; reler CHECKLIST_QA seção 0 na próxima tag.
