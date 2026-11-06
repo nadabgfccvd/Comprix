@@ -146,15 +146,41 @@ class PrecosViewModelTest {
     /** Espera (com prazo real de 15 s) até a condição do efeito assíncrono valer.
      *  15 s, não 5 s: `copiarPrecosEntreLojas` já estourou 5 s três vezes SOMENTE na
      *  suíte completa (isolation 3/3 verde) — tail-latency de GC/I-O do box sob carga;
-     *  prazo maior é headroom, a condição em si não mudou. */
+     *  prazo maior é headroom, a condição em si não mudou.
+     *  No estouro, embute DIAGNÓSTICO na mensagem (mensagem do VM, estado e threads):
+     *  sem isso, um estouro só em CI é ininvestigável — o relatório é o único testemunho. */
     private suspend fun espera(condicao: suspend () -> Boolean) {
         val prazo = System.currentTimeMillis() + 15_000
         while (!condicao()) {
-            if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 15 s")
+            if (System.currentTimeMillis() > prazo) throw AssertionError("condição não atingida em 15 s — ${diagnostico()}")
             // O Room 2.8.x posta o refresh de invalidação no Handler principal; com o looper
             // do Robolectric pausado, os runnables só executam se drenados aqui.
             Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
             delay(10)
+        }
+    }
+
+    /** Diagnóstico de estouro de espera: o que o VM diz de si (mensagem = a cópia
+     *  terminou? com que resultado?), o estado que o teste vê e onde as threads estão.
+     *  Concatenado na AssertionError — aparece no relatório XML/HTML do CI. */
+    private fun diagnostico(): String {
+        return try {
+            val st = vm.estado.value
+            val partes = mutableListOf<String>()
+            partes.add("mensagemVM=${vm.mensagem.value}")
+            partes.add("carregando=${st.carregando} itens=${st.itens.size} lojas=${st.estabelecimentos.map { "${it.id}:${it.nome}" }}")
+            st.precos.values.forEach { p ->
+                partes.add("preco(item=${p.itemDaListaId},loja=${p.estabelecimentoId},valor=${p.preco},disp=${p.disponivel})")
+            }
+            Thread.getAllStackTraces().forEach { (t, frames) ->
+                val topo = frames.take(6).joinToString(">") { f ->
+                    "${f.className.substringAfterLast('.')}.${f.methodName}"
+                }
+                if (topo.isNotEmpty()) partes.add("THREAD[${t.name}]: $topo")
+            }
+            partes.joinToString(" | ")
+        } catch (e: Throwable) {
+            "diagnóstico indisponível: $e"
         }
     }
 
