@@ -20,7 +20,7 @@
   <a href="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml"><img src="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>&nbsp;
   <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
   <img src="https://img.shields.io/badge/release-v1.8.0-8A5CF6" alt="Release: v1.8.0"/>&nbsp;
-  <img src="https://img.shields.io/badge/unit_tests-570_passing-4CAF50" alt="Unit tests: 570 passing"/>&nbsp;
+  <img src="https://img.shields.io/badge/unit_tests-583_passing-4CAF50" alt="Unit tests: 583 passing"/>&nbsp;
   <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
   <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>
@@ -63,7 +63,7 @@ Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/r
 Requirements: **JDK 17** and the **Android SDK** (platform 35 + build-tools 35.0.0). The Gradle wrapper is versioned — no Gradle install needed.
 
 ```bash
-./gradlew testDebugUnitTest      # 570 JVM unit tests
+./gradlew testDebugUnitTest      # 583 JVM unit tests
 ./gradlew lintDebug              # Android lint (errors fail the build, also enforced by CI)
 ./gradlew assembleDebug          # debug APK
 ```
