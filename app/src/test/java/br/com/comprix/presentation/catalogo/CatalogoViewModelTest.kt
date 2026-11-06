@@ -170,7 +170,14 @@ class CatalogoViewModelTest {
     @Test
     fun `busca por apelido de fabrica acha o item do acervo`() = teste { viewModel, _, _ ->
         viewModel.definirConsulta("tang")
-        espera { viewModel.estado.value.total == 1 && viewModel.estado.value.consulta == "tang" }
+        // Condição TOTAL: cobre todos os campos que o assert abaixo lê
+        // (grupos e buscaLimitada podem atrasar em relação a total/consulta).
+        espera {
+            val estado = viewModel.estado.value
+            estado.total == 1 && estado.consulta == "tang" &&
+                estado.grupos.singleOrNull()?.itens?.map { it.nome } == listOf("Tangerina") &&
+                !estado.buscaLimitada
+        }
         val estado = viewModel.estado.value
         assertEquals(listOf("Tangerina"), estado.grupos.single().itens.map { it.nome })
         assertFalse(estado.buscaLimitada)
@@ -181,7 +188,10 @@ class CatalogoViewModelTest {
         val produto = repositorio.criarProdutoLocal("Mexerica da feira")
 
         // Sem consulta: a seção local NÃO existe (a exploração aberta é do acervo).
-        espera { viewModel.estado.value.grupos.isNotEmpty() }
+        espera {
+            viewModel.estado.value.grupos.isNotEmpty() &&
+                viewModel.estado.value.produtosLocais.isEmpty()
+        }
         assertTrue(viewModel.estado.value.produtosLocais.isEmpty())
 
         // Consulta pelo nome canônico do acervo: os sinônimos se expandem
@@ -199,7 +209,11 @@ class CatalogoViewModelTest {
         // Setor existente: acervo do setor continua, seção local some (o setor
         // filtra o acervo, não o acervo pessoal).
         viewModel.selecionarSetor(1)
-        espera { viewModel.estado.value.produtosLocais.isEmpty() }
+        espera {
+            val estado = viewModel.estado.value
+            estado.produtosLocais.isEmpty() && estado.grupos.size == 1 &&
+                estado.total == 1 && !estado.buscaLimitada
+        }
         val comSetor = viewModel.estado.value
         assertEquals(1, comSetor.grupos.size)
         assertEquals(1, comSetor.total)
@@ -207,7 +221,11 @@ class CatalogoViewModelTest {
 
         // Setor sem subcategorias: acervo some e a contagem vai a zero.
         viewModel.selecionarSetor(99)
-        espera { viewModel.estado.value.total == 0 }
+        espera {
+            viewModel.estado.value.total == 0 &&
+                viewModel.estado.value.grupos.isEmpty() &&
+                viewModel.estado.value.produtosLocais.isEmpty()
+        }
         assertTrue(viewModel.estado.value.grupos.isEmpty())
         assertTrue(viewModel.estado.value.produtosLocais.isEmpty())
     }
@@ -221,14 +239,18 @@ class CatalogoViewModelTest {
         },
     ) { viewModel, _, _ ->
         viewModel.definirConsulta("item")
-        espera { viewModel.estado.value.total == 120 }
+        espera {
+            val estado = viewModel.estado.value
+            estado.total == 120 && estado.grupos.size == 1 &&
+                estado.grupos.first().itens.size == 120 && estado.buscaLimitada
+        }
         val estado = viewModel.estado.value
         assertEquals(120, estado.grupos.single().itens.size)
         assertTrue(estado.buscaLimitada)
 
         // Com filtro de setor ativo a contagem já é um recorte menor: o aviso some.
         viewModel.selecionarSetor(1)
-        espera { !viewModel.estado.value.buscaLimitada }
+        espera { !viewModel.estado.value.buscaLimitada && viewModel.estado.value.total == 120 }
         assertEquals(120, viewModel.estado.value.total)
     }
 

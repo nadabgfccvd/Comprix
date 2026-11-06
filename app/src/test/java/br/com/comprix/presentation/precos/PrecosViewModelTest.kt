@@ -429,7 +429,8 @@ class PrecosViewModelTest {
         val b = loja("Mercado B")
         vm.anotarPreco(item, b, BigDecimal("6.00"))
         // o melhor preço da linha chega no flow junto com o segundo preço
-        espera { vm.estado.value.matriz?.linhas?.single()?.melhorEstabelecimentoId == a }
+        // singleOrNull: matriz com linhas ainda vazia NÃO pode estourar dentro do espera
+        espera { vm.estado.value.matriz?.linhas?.singleOrNull()?.melhorEstabelecimentoId == a }
         assertEquals(1, vm.estado.value.matriz!!.linhas.size)
         assertEquals(a, vm.estado.value.matriz!!.linhas.single().melhorEstabelecimentoId)
     }

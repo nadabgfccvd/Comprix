@@ -180,7 +180,14 @@ class NutricionalViewModelTest {
         produtoComTabela("Iogurte A")
         produtoComTabela("Iogurte B")
         produtoSemTabela("Sal")
-        espera { viewModel.estado.value.candidatos.size == 2 }
+        // Condição TOTAL: cobre o que os asserts abaixo leem (nomes, seleção, comparação).
+        espera {
+            val estado = viewModel.estado.value
+            estado.candidatos.size == 2 &&
+                estado.candidatos.map { it.nome }.toSet() == setOf("Iogurte A", "Iogurte B") &&
+                estado.selecionados.size == 2 &&
+                estado.comparacao != null
+        }
 
         val estado = viewModel.estado.value
         assertEquals(setOf("Iogurte A", "Iogurte B"), estado.candidatos.map { it.nome }.toSet())
@@ -205,7 +212,11 @@ class NutricionalViewModelTest {
         espera { viewModel.estado.value.candidatos.size == 2 }
 
         viewModel.alternarProduto(a) // desmarca o primeiro
-        espera { viewModel.estado.value.comparacao == null }
+        // Condição TOTAL: comparacao nula e seleção encolhida chegam em fluxos distintos.
+        espera {
+            viewModel.estado.value.comparacao == null &&
+                viewModel.estado.value.selecionados.size == 1
+        }
         assertEquals(1, viewModel.estado.value.selecionados.size)
     }
 
