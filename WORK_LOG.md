@@ -756,3 +756,41 @@ inspeção `aapt2 dump badging` nos 5 APKs — evidência que o CI não produz:
 O estado da release está íntegro de ponta a ponta: tag no commit certo, workflow
 verde, artifact correto, notas e avisos no lugar. Arquivos temporários apagados após
 a verificação (nada de build local vai para o repo).
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 3: contagem dos docs ressincronizada 351 → 355 (PR #52, mergeado)
+
+**Foco.** O "próximo passo útil" da iteração 2 alertava para o congelamento da contagem
+na próxima release — mas o passo imediato era mais simples: o PR #51 somou +4 testes e
+a contagem real do main virou 355, enquanto README e CHECKLIST_QA diziam 351 (exatamente
+o desvio que o PR #40 já tinha corrigido uma vez). Avaliação antes de começar: CI do main
+verde, 0 PRs abertos, #38 segue com o mantenedor.
+
+**Verificação antes de editar (fonte da verdade).** `./gradlew :app:testDebugUnitTest`
+→ verde (UP-TO-DATE, mesmas entradas da corrida completa); contagem lida dos XMLs JUnit
+(`app/build/test-results/testDebugUnitTest`): **355 testes · 0 falhas · 0 pulados**.
+Aritmética confere: 351 (v1.8.0) + 4 (`LixeiraBuscaTest`) = 355.
+
+**Mudança (PR #52, mergeado — só docs, 2 arquivos, 5 linhas).**
+- `README.md`: badge `unit_tests-351_passing` → `355_passing` (com o alt text) e o
+  comentário do comando de teste.
+- `CHECKLIST_QA.md` (3 referências): seção 0 com a linhagem atualizada ("...somou +11:
+  sinônimos na busca do Histórico (+6) e em 'Seus produtos' (+5); já pós-v1.8.0,
+  sinônimos na busca da Lixeira somaram +4"); critério 10 ("Atual: 355 testes");
+  estado final reetiquetado de "(v1.8.0)" para "(pós-v1.8.0)" — honesto, porque a
+  release publicada congela em 351 e o 355 é estado do main.
+- História intacta: v1.7.0 = 317 e v1.8.0 = 351 permanecem como estão.
+
+**Verificação pós-edit.** `grep -rn "351" --include="*.md"` fora do WORK_LOG → 0
+ocorrências. CI do PR #52 verde (~1 min); main verde após o merge. Diff revisado:
+sem segredos, sem código, sem build.
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; #38 a única issue aberta
+(mantenedor); release v1.8.0 íntegra.
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor (exige keystore). (2) Na PRÓXIMA
+release (v1.8.1 ou v1.9.0): a entrada da Lixeira no "Não lançado" vai junto e a
+contagem congela em 355+. (3) Sem candidato de feature pendente no radar — todas as
+buscas unificadas, release íntegra, docs sincronizados; próximas iterações só com
+defeito novo, sugestão externa ou melhoria incremental bem delimitada.
