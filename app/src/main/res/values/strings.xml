@@ -13,4 +13,9 @@
     <string name="desc_arrastar">Arrastar para reordenar</string>
     <string name="desc_moldura">Area de enquadramento</string>
     <string name="desc_widget_lista">Progresso da lista de compras em andamento</string>
+
+    <!-- Textos de PREVIEW do layout do widget (lista_widget.xml): o provider
+         (ListaWidgetProvider) sobrescreve os dois campos com RemoteViews antes
+         de exibir. Aqui so dao conteudo ao preview do editor de layout. -->
+    <string name="widget_contagem_padrao">0 de 0 comprados</string>
 </resources>
