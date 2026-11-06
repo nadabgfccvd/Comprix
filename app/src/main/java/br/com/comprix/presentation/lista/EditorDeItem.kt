@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -92,7 +94,9 @@ fun EditorDeItem(
     val produto = itemComProduto.produto
 
     var nome by remember(produto.id) { mutableStateOf(produto.nome) }
-    var categoriaId by remember(produto.id) { mutableStateOf(produto.categoriaId) }
+    // mutableLongStateOf: sem boxing de Long a cada tecla (o valor muda com
+    // frequencia e o estado primitivo reescreve sem alocar).
+    var categoriaId by remember(produto.id) { mutableLongStateOf(produto.categoriaId) }
     var quantidadeTexto by remember(original.id) {
         mutableStateOf(Formatadores.quantidade(original.quantidade))
     }
@@ -578,7 +582,7 @@ fun FolhaDePesoEstimado(
     val cores = Tema.cores
     val produto = itemComProduto.produto
     var gramas by remember(produto.id) {
-        mutableStateOf(produto.pesoMedioEstimadoEmBase?.toFloat() ?: 350f)
+        mutableFloatStateOf(produto.pesoMedioEstimadoEmBase?.toFloat() ?: 350f)
     }
     var texto by remember(produto.id) {
         mutableStateOf(produto.pesoMedioEstimadoEmBase?.let { Formatadores.quantidade(it) } ?: "350")
