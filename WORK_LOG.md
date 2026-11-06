@@ -47,6 +47,14 @@ detalhe de uso, corrigido na terceira.
 abertos: nenhum; PRs #34, #35, #36, #37 e #39 mergeados; release v1.7.0 publicada,
 seguindo sem APKs assinados (ver #38). Branch remota de feature apagada após o merge.
 
+**Limitação registrada (higiene de branches).** Tentativa pós-merge de apagar as 19
+branches remotes cujos PRs já foram mergeados (`git branch -r` mostrava 25 refs, das
+quais 19 ligadas a PRs `merged=True` e 5 a PRs fechados sem merge, mantidas de propósito).
+A API recusou todas com "Repository rule violations found — Cannot delete this branch":
+as regras do repositório exigem permissão de administração que o fine-grained PAT do
+agente não tem (e não deve ter). Nada foi contornado; as branches ficam para o mantenedor
+apagar ("Restore/Delete branch" de cada PR) — o conteúdo de todas já está no main.
+
 **Próximo passo útil.** (1) O mantenedor anexar os APKs assinados na release v1.7.0
 (issue #38 — fora do alcance do agente, exige o keystore). (2) Melhorias futuras de UX
 sugeridas: busca por sinônimo na exploração do catálogo (coluna `sinonimos` já existe no
