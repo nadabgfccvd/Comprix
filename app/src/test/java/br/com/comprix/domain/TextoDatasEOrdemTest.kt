@@ -48,6 +48,31 @@ class TextoDatasEOrdemTest {
     }
 
     @Test
+    fun `busca amigavel casa sem acento e sem caixa`() {
+        assertTrue(TextoUtil.correspondeBusca("Café da Manhã", "CAFE"))
+        assertTrue(TextoUtil.correspondeBusca("Mercado do Bairro", "MERCADO"))
+        assertTrue(TextoUtil.correspondeBusca("Compra do mês", "mÊs"))
+    }
+
+    @Test
+    fun `busca em branco casa com tudo`() {
+        assertTrue(TextoUtil.correspondeBusca("qualquer coisa", ""))
+        assertTrue(TextoUtil.correspondeBusca("qualquer coisa", "   "))
+    }
+
+    @Test
+    fun `busca exige todas as palavras e casa por pedaco`() {
+        assertTrue(TextoUtil.correspondeBusca("Compra do mês · Mercado do Bairro", "compra bairro"))
+        assertFalse(TextoUtil.correspondeBusca("Compra do mês", "compra feijao"))
+        assertTrue(TextoUtil.correspondeBusca("Melão", "mel"))
+    }
+
+    @Test
+    fun `busca nao deixa pontuacao atrapalhar`() {
+        assertTrue(TextoUtil.correspondeBusca("Compra (fechada) — Mercado: 2", "fechada mercado"))
+    }
+
+    @Test
     fun `decimal aceita virgula e ponto de milhar brasileiros`() {
         assertEquals(0, TextoUtil.paraDecimal("1.234,56")!!.compareTo(BigDecimal("1234.56")))
         assertEquals(0, TextoUtil.paraDecimal("12,90")!!.compareTo(BigDecimal("12.90")))

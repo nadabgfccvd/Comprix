@@ -41,6 +41,7 @@ import br.com.comprix.domain.modelo.CompraFinalizada
 import br.com.comprix.presentation.comum.BarraDeRolagem
 import br.com.comprix.presentation.comum.BarraSimples
 import br.com.comprix.presentation.comum.BotaoComprix
+import br.com.comprix.presentation.comum.CampoComprix
 import br.com.comprix.presentation.comum.CartaoComprix
 import br.com.comprix.presentation.comum.EspacoVertical
 import br.com.comprix.presentation.comum.EstadoVazio
@@ -82,6 +83,8 @@ fun HistoricoScreen(
 ) {
     val cores = Tema.cores
     val estado by viewModel.estado.collectAsStateWithLifecycle()
+    val consulta by viewModel.consulta.collectAsStateWithLifecycle()
+    val comprasVisiveis by viewModel.comprasVisiveis.collectAsStateWithLifecycle()
     val mensagem by viewModel.mensagem.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     var confirmandoRemocao by remember { mutableStateOf<CompraFinalizada?>(null) }
@@ -297,10 +300,51 @@ fun HistoricoScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = cores.texto,
                 )
+                // Mesma busca amigavel da Lixeira: achar "aquela compra no
+                // Mercado X" nao pode depender de rolar meses de historico.
+                // As analiticas e os numeros do topo seguem sobre TODAS as
+                // compras - a busca afina a lista, nao a estatistica.
+                if (estado.compras.isNotEmpty()) {
+                    EspacoVertical(10.dp)
+                    CampoComprix(
+                        valor = consulta,
+                        aoMudar = viewModel::definirConsulta,
+                        rotulo = "Buscar compras",
+                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome da lista e nas lojas.",
+                    )
+                }
                 EspacoVertical(12.dp)
             }
 
-            items(estado.compras, key = { it.id }) { compra ->
+            // Busca sem resultado ganha um cartao proprio no lugar da lista -
+            // dizer "nada casou" e oferecer o caminho de saida.
+            if (consulta.isNotBlank() && comprasVisiveis.isEmpty()) {
+                item {
+                    CartaoComprix(preenchimento = PaddingValues(15.dp)) {
+                        Text(
+                            "Nada encontrado",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = cores.texto,
+                        )
+                        EspacoVertical(3.dp)
+                        Legenda(
+                            "Nenhuma compra casa com “$consulta” — tente outra " +
+                                "palavra ou limpe a busca.",
+                        )
+                        EspacoVertical(9.dp)
+                        BotaoComprix(
+                            "Limpar busca",
+                            { viewModel.definirConsulta("") },
+                            estilo = EstiloDeBotao.CONTORNADO,
+                            compacto = true,
+                            icone = Icones.recomecar,
+                        )
+                    }
+                    EspacoVertical(10.dp)
+                }
+            }
+
+            items(comprasVisiveis, key = { it.id }) { compra ->
                 CartaoDeCompra(
                     compra = compra,
                     aoRemover = { confirmandoRemocao = compra },
