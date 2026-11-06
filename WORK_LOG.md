@@ -162,3 +162,23 @@ documentação. (2) Melhorias futuras de UX: busca na exploração do catálogo 
 (coluna `sinonimos` já existe), ou filtro por loja no Histórico como atalho da busca.
 (3) Revisitar a contagem de testes citada no QA na próxima release (317 no v1.7.0; o
 "Não lançado" já soma +4).
+
+---
+
+## 2026-11-06 — Sessão 1, acréscimo: aviso automático de release sem APKs (PR #37)
+
+**Foco.** Defeito de operação identificado ao publicar a v1.7.0: sem os segredos
+`KEYSTORE_*`, o workflow de release termina **verde** e a release fica **sem APKs** sem
+qualquer sinalização do próprio workflow (o aviso no corpo da v1.7.0 foi manual).
+
+**Mudança (PR #37, mergeado).** Novo passo no `release.yml`, rodando só quando
+`ASSINADO != true`: escreve o aviso no **resumo do job** (sempre) e, em runs de tag,
+anexa um bloquote ao **corpo da release** com o nome do artifact e os dois caminhos de
+resolução (configurar os 4 segredos e re rodar, ou assinar com `apksigner`). Idempotente:
+`grep` no corpo antes de editar — re runs não duplicam. Caminho assinado inalterado.
+
+**Verificação.** YAML parseado; script extraído com `bash -n`; execução simulada com `gh`
+stub cobrindo os dois caminhos (anexar e "já presente — nada a fazer"); CI do PR verde.
+
+**Estado.** 0 issues, 0 PRs abertos; main em CI verde; release v1.7.0 publicada (APKs
+aguardando o mantenedor — artifact expira em 14 dias).
