@@ -114,3 +114,48 @@ de release publica os APKs assinados sozinho (com a sessão que o está refazend
 da release: badge e tabela de Download do README apontam v1.6.0 → atualizar para v1.7.0, e
 a linha "Atual (v1.6.0, versionCode 10)" do CHECKLIST_QA. (3) Próxima melhoria de UX:
 busca na tela de Histórico, na mesma receita da Lixeira (`FiltroDaLixeira` generaliza).
+
+---
+
+## 2026-11-06 — Sessão 2, iteração 2 (agente autônomo): busca no Histórico + v1.7.0
+
+**Contexto.** A sessão paralela fechou o ciclo da release: PR #34 mergeado (03:34) e tag
+`v1.7.0` empurrada — workflow de release verde (testes + `assembleRelease`), release
+"Comprix v1.7.0 — backup blindado e busca na lixeira" publicada. **Sem segredos de
+assinatura no repo, os APKs seguiram o caminho desenhado**: artifact
+`apks-release-nao-assinados-v1.7.0` (78,5 MB, retenção 14 dias) para o mantenedor assinar
+com `apksigner` e anexar — a release pública nunca recebe APK não assinado
+(`SECURITY.md`, rotação v1.4.2). CI no main verde em todos os pontos.
+
+**Foco escolhido.** A Lixeira acabara de ganhar busca amigável (v1.7.0); o Histórico é a
+outra lista que cresce sem parar — achar "aquela compra no Mercado X" exigia rolar meses.
+
+**Mudanças (PR #35, mergeado).**
+- `HistoricoScreen`: campo "Buscar compras" na seção "Compras realizadas" (mesma receita
+  da Lixeira: cada palavra digitada precisa aparecer no nome da lista ou nas lojas, sem
+  acento e sem maiúscula); busca sem resultado ganha cartão próprio com botão de limpar.
+- `HistoricoViewModel`: `consulta`/`definirConsulta` + `comprasVisiveis`. As analíticas,
+  os números do topo e a variação mensal seguem sobre TODAS as compras — a busca afina a
+  lista, nunca reescreve a estatística.
+- `TextoUtil.correspondeBusca`: o casamento virou utilitário puro compartilhado;
+  `FiltroDaLixeira.corresponde` passa a delegar (16 testes da Lixeira guardam o
+  comportamento). 4 testes novos cobrem o utilitário.
+
+**Verificação.** `./gradlew testDebugUnitTest` → **321 testes, 0 falhas** (eram 317);
+`./gradlew lintDebug` e `./gradlew assembleDebug` → verdes. Nota de honestidade: uma
+execução local falhou de forma transitória e não reproduzível; a verificação final foi uma
+re-execução completa (`--rerun-tasks --no-build-cache`) verde, e o CI do PR #35 confirmou
+no runner. CI do main verde após o merge.
+
+**Coordenação.** Nenhuma colisão com a sessão da release: arquivos disjuntos, CHANGELOG
+adicionou ao "Não lançado" recém-aberto pela v1.7.0.
+
+**Estado do GitHub.** main em CI verde; 0 issues; PRs #31, #35 (esta sessão) e #34
+(sessão paralela) mergeados; release v1.7.0 publicada (APKs aguardando assinatura do
+mantenedor, pelo design de segurança do repo).
+
+**Próximo passo útil.** (1) Quando o mantenedor anexar os APKs assinados na v1.7.0:
+atualizar badge/tabela de Download do README (hoje v1.6.0, ainda a última com APKs
+públicos) e a linha "Atual" do CHECKLIST_QA. (2) Melhorias futuras de UX: busca na
+exploração do catálogo por sinônimo (coluna `sinonimos` já existe), ou filtro por loja
+no Histórico como atalho da busca. (3) Atentar para a janela do artifact de 14 dias.
