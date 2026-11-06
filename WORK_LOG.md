@@ -839,3 +839,42 @@ duas entradas do "Não lançado" (Lixeira + widget) vão junto e a contagem cong
 365+. (3) Cobertura de superfícies puras restante: nenhuma conhecida sem testes —
 próximas iterações continuam dependentes de defeito novo, sugestão externa ou
 melhoria bem delimitada.
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 5: testes de contrato do DivisorDeLinha (PR #54, mergeado)
+
+**Foco.** A varredura de objetos sem referência em testes (`object` no main sem match
+no test) apontou o `DivisorDeLinha` — a porta de entrada do parser de texto livre —
+como o último objeto puro do `domain` sem teste direto: ele era exercitado só de ponta
+a ponta pela especificação (`EspecificacaoDoParserTest` + JSON). A varredura também
+revelou um achado: **`DivisorDeLinha.padraoDe` (e o enum `PadraoDePosicao`) é código
+morto** — zero chamadores em produção e em teste. Avaliação antes de começar: main
+verde no 3aef4d5, 0 PRs, #38 do mantenedor.
+
+**Mudança (PR #54, mergeado — só testes + docs).**
+- `DivisorDeLinhaTest` (15 testes JVM): contrato direto de `dividir` (separadores
+  fortes, proteção de decimal/fração, "c/" → "com", conectivo `e` — itens ×
+  quantidade, corte conservador de colagem após preço com os 2 falso-negativos
+  documentados, anexação P2, apelido de animal que não vira quantidade) e de
+  `soTemQuantidade` (4 casos positivos, 4 negativos). Guarda das preposições
+  expostas.
+- **Nada em código de produção** — `padraoDe` NÃO recebe teste (morto) e a decisão
+  de reviver/remover fica com o mantenedor (anotada no CHANGELOG e aqui).
+- Docs no mesmo PR: contagem 365 → 380 (README badge + comando, 3 refs do
+  CHECKLIST_QA com a linhagem "+15 divisor") e entrada "Interno" no CHANGELOG.
+
+**Verificação.** `./gradlew :app:testDebugUnitTest` → verde; XMLs JUnit: **380
+testes · 0 falhas · 0 pulados** (365 + 15). Aritmética ✓. Nota: teste com `/` no
+nome entre crases não compila ("Name contains illegal characters") — renomeado.
+CI do PR verde (~2 min); main verde após o merge. Diff revisado: sem segredos.
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; #38 a única issue aberta
+(mantenedor); release v1.8.0 íntegra.
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) `padraoDe` morto —
+decisão do mantenedor (o agente não remove API pública sem ordem). (3) Na próxima
+release: as 3 entradas do "Não lançado" (Lixeira + widget + divisor) vão junto e a
+contagem congela em 380+. (4) Varredura de objetos sem teste esgotada — restam só
+camadas Android (Room/Compose/DI), que exigem instrumentação e estão fora do
+critério de teste JVM do projeto.
