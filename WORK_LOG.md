@@ -154,8 +154,11 @@ adicionou ao "Não lançado" recém-aberto pela v1.7.0.
 (sessão paralela) mergeados; release v1.7.0 publicada (APKs aguardando assinatura do
 mantenedor, pelo design de segurança do repo).
 
-**Próximo passo útil.** (1) Quando o mantenedor anexar os APKs assinados na v1.7.0:
-atualizar badge/tabela de Download do README (hoje v1.6.0, ainda a última com APKs
-públicos) e a linha "Atual" do CHECKLIST_QA. (2) Melhorias futuras de UX: busca na
-exploração do catálogo por sinônimo (coluna `sinonimos` já existe), ou filtro por loja
-no Histórico como atalho da busca. (3) Atentar para a janela do artifact de 14 dias.
+**Próximo passo útil.** (1) O mantenedor anexar os APKs assinados na release v1.7.0 (o
+artifact `apks-release-nao-assinados-v1.7.0` expira em 14 dias). Nota: o README e o
+CHECKLIST_QA **já apontam v1.7.0** — o PR #36 da sessão paralela mergeou momentos após
+este texto ser escrito; o que segue faltando são os próprios APKs na release, não a
+documentação. (2) Melhorias futuras de UX: busca na exploração do catálogo por sinônimo
+(coluna `sinonimos` já existe), ou filtro por loja no Histórico como atalho da busca.
+(3) Revisitar a contagem de testes citada no QA na próxima release (317 no v1.7.0; o
+"Não lançado" já soma +4).
