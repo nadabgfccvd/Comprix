@@ -4,6 +4,9 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 
 ## [Não lançado]
 
+### Interno
+- **Os mapeadores Room <-> domínio ganharam testes de contrato**: `Mapeadores` é a fronteira onde a "sujeira" de persistência mora — centavos viram `BigDecimal`, epoch vira data, texto com `|` vira lista de enum, tabela nutricional vira JSON — e era o último objeto puro do `data` sem teste direto. 28 testes JVM novos congelam o contrato: dinheiro com arredondamento HALF_EVEN (empate vai para o dígito par — 12,345 vira 1234, não 1235), datas com null preservado, a decisão central de que **enum inválido (backup de versão futura) cai num valor seguro em vez de lançar**, descarte silencioso de nomes desconhecidos nas listas `|`, decimal ilegível virando null (e quantidade ilegível virando 1, nunca exceção), JSON com chaves desconhecidas descartadas e ida-e-volta completa de cada modelo. Nenhuma mudança em código de produção.
+
 ### Refinado
 - **A busca da Lixeira também entende sinônimos do catálogo**: digitar "mexerica" encontra a lista "Tangerina da feira" que foi para a lixeira — e "tangerina" acha "Mexerica", porque a resolução do acervo é bidirecional. Mesma receita já estabelecida na busca do Histórico e em "Seus produtos": expansão pela consulta inteira, nunca por palavra solta; alternativa computada uma vez por emissão da busca; sem sinônimo, o comportamento de antes vale intacto. Com isto, todas as buscas do app falam a mesma língua. A dica do campo cita o novo alcance.
 
