@@ -472,3 +472,40 @@ repo impede exclusão — já documentado na sessão 2).
 **Próximo passo útil.** (1) #38 segue com o mantenedor (APKs da v1.7.0). (2) Candidatas
 de UX: filtro por setor para "Seus produtos" (PR #43); reler o CHECKLIST_QA seção 0 na
 próxima tag. (3) Na próxima release: congelar a contagem (agora 346) e sincronizar docs.
+
+---
+
+## 2026-11-06 — Sessão 4, iteração 2: "Seus produtos" também entende sinônimos (PR #47, mergeado)
+
+**Foco.** Achado de avaliação na sequência: a busca do acervo é sensível a sinônimos
+desde a v1.4.0, mas a seção "Seus produtos" (PR #43) casava só a consulta direta —
+digitar "tangerina" não achava "Mexerica da feira" gravado pelo usuário. Inconsistência
+de conserto barato agora que o PR #46 estabeleceu a receita.
+
+**Mudança (PR #47, mergeado).**
+- `FiltroDeProdutosLocais.filtrar` ganha `candidatos: ((String) -> List<String>)? =
+  null` — MESMA receita do PR #46: produto passa se a consulta direta OU qualquer
+  alternativa casar; expansão pela consulta inteira; `null` = comportamento de antes.
+- `CatalogoViewModel.calcular` passa `catalogoRepositorio::sinonimosDe`. A seção segue
+  só existindo com consulta digitada e sem filtro de setor; teto 12 e ordenação intactos.
+- Dica do campo do catálogo agora diz "melao acha Melão, mexerica acha Tangerina".
+- CHANGELOG "Não lançado → Refinado" com a entrada.
+
+**Verificação.** `./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`
+numa passada → **351 testes · 0 falhas · 0 pulados** (346 + 5 novos em
+`FiltroDeProdutosLocaisTest`: sinônimo direto, inverso, candidatos nulos, frase inteira
+não expande, busca direta segue valendo). Contagem dos XMLs JUnit. CI do PR verde
+(~4 min); main verde após o merge (900e0a38).
+
+**Coordenação.** Arquivos disjuntos do PR #46 (o filtro de catálogo vs o de histórico);
+zero colisão. A receita agora está em DOIS filtros puros com as mesmas regras —
+próximo candidato natural, se um dia a busca da Lixeira pedir sinônimos, é copiar o
+padrão; os testes de referência já existem nos dois lados.
+
+**Estado do GitHub.** main em CI verde (900e0a38); 0 PRs abertos; issue #38 a única
+aberta (mantenedor).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) Candidatas: filtro por setor
+para "Seus produtos" (só se feedback pedir — decisão documentada no PR #43); na próxima
+release congelar a contagem (agora 351) e sincronizar docs/badge. (3) Varredura de
+defeitos: rodar o lint completo com todos os avisos e avaliar o que é acionável.
