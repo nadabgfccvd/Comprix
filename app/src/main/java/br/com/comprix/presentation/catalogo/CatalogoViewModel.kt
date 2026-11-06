@@ -162,9 +162,15 @@ class CatalogoViewModel(
 
         // Secao "Seus produtos": so com consulta digitada e sem filtro de
         // setor - a exploracao aberta e conteudo do acervo; o setor filtra o
-        // acervo, nao o acervo pessoal.
+        // acervo, nao o acervo pessoal. Os candidatos de sinonimo vem do
+        // acervo (mesma receita da busca do Historico): "tangerina" acha
+        // "Mexerica da feira" gravada pelo usuario, e vice-versa.
         val produtosLocais = if (termo.isNotBlank() && setorSelecionado == null) {
-            FiltroDeProdutosLocais.filtrar(termo, produtosDoRoom)
+            FiltroDeProdutosLocais.filtrar(
+                termo,
+                produtosDoRoom,
+                candidatos = catalogoRepositorio::sinonimosDe,
+            )
         } else {
             emptyList()
         }

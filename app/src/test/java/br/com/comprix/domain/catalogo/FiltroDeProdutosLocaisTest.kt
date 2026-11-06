@@ -70,4 +70,77 @@ class FiltroDeProdutosLocaisTest {
         assertTrue(FiltroDeProdutosLocais.filtrar("xilofone", acervo).isEmpty())
         assertTrue(FiltroDeProdutosLocais.filtrar("agua", emptyList()).isEmpty())
     }
+
+    // ---------------------------------------------------------------------------------
+    // sinonimos: mesma receita da busca do Historico (PR que estabeleceu o padrao).
+    // Lambda local imita o contrato do CatalogoRepositorio.sinonimosDe:
+    // bidirecional ("mexerica" <-> "tangerina") e vazia para termo sem acervo.
+    // ---------------------------------------------------------------------------------
+
+    private val sinonimosDeTeste: (String) -> List<String> = { consulta ->
+        when (TextoUtil.normalizar(consulta)) {
+            "mexerica" -> listOf("tangerina", "bergamota")
+            "tangerina" -> listOf("mexerica", "bergamota")
+            else -> emptyList()
+        }
+    }
+
+    @Test
+    fun `consulta pelo sinonimo acha o produto gravado pelo nome oficial`() {
+        val locais = listOf(produto("Tangerina do sitio", 1))
+
+        assertEquals(
+            listOf("Tangerina do sitio"),
+            FiltroDeProdutosLocais.filtrar("mexerica", locais, candidatos = sinonimosDeTeste)
+                .map { it.nome },
+        )
+    }
+
+    @Test
+    fun `consulta pelo nome oficial acha o produto gravado pelo sinonimo`() {
+        val locais = listOf(produto("Mexerica da feira", 1))
+
+        assertEquals(
+            listOf("Mexerica da feira"),
+            FiltroDeProdutosLocais.filtrar("tangerina", locais, candidatos = sinonimosDeTeste)
+                .map { it.nome },
+        )
+    }
+
+    @Test
+    fun `candidatos nulos mantem o comportamento original - regressao zero`() {
+        val locais = listOf(produto("Tangerina do sitio", 1))
+
+        // Sem injetar candidatos, o sinonimo NAO expande (comportamento de antes).
+        assertTrue(FiltroDeProdutosLocais.filtrar("mexerica", locais).isEmpty())
+        // E a busca direta continua igual.
+        assertEquals(
+            listOf("Tangerina do sitio"),
+            FiltroDeProdutosLocais.filtrar("tangerina", locais).map { it.nome },
+        )
+    }
+
+    @Test
+    fun `expansao e pela consulta inteira, nao por palavra solta`() {
+        val locais = listOf(produto("Tangerina do sitio", 1))
+
+        // "suco de mexerica" não resolve como frase inteira no acervo, e a
+        // regra deliberada é NÃO expandir palavra solta.
+        assertTrue(
+            FiltroDeProdutosLocais.filtrar("suco de mexerica", locais, candidatos = sinonimosDeTeste)
+                .isEmpty(),
+        )
+    }
+
+    @Test
+    fun `com candidatos presentes a busca direta segue valendo`() {
+        val locais = listOf(produto("Tangerina do sitio", 1), produto("Queijo da fazenda", 2))
+
+        // Termo sem sinônimo: casamento direto normal, nada mudou.
+        assertEquals(
+            listOf("Queijo da fazenda"),
+            FiltroDeProdutosLocais.filtrar("queijo", locais, candidatos = sinonimosDeTeste)
+                .map { it.nome },
+        )
+    }
 }
