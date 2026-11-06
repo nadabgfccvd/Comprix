@@ -700,3 +700,41 @@ artifacts consolidados).
 (2) Candidatas de UX com decisão de produto: filtro por setor para "Seus produtos"
 (só com feedback); favoritos na lista de produtos. (3) Monitorar o CI do main nas
 próximas janelas; varredura de estado a cada check-in.
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 2: Lixeira também entende sinônimos — unificação completa (PR #51, mergeado)
+
+**Foco.** O work log da sessão 4 apontou o candidato natural restante: com a receita
+dos `candidatos` consolidada em dois filtros, copiar para a Lixeira fecha a unificação.
+Avaliação antes de começar: acervo (sinônimo-aware desde v1.4.0) ✓, "Seus produtos" ✓
+(#47), Histórico ✓ (#46), **Lixeira ✗** — a única busca que não falava a língua das
+outras. Nota: "favoritos na lista de produtos" continua na prateleira por constraint
+ dura (migration nova é proibida no projeto; ProdutoEntity não tem coluna e não pode
+ganhar).
+
+**Mudança (PR #51, mergeado).**
+- `FiltroDaLixeira.alternativasDe(consulta, candidatos)`: função pura nova — computa
+  os termos alternativos da consulta inteira UMA vez por emissão (a regra do #46 de
+  não rodar por registro preservada; `corresponde` é por-registro).
+- `FiltroDaLixeira.corresponde(registro, consulta, alternativas = emptyList())`:
+  parâmetro default retrocompatível — registro passa se a consulta direta OU qualquer
+  alternativa casar. Regras deliberadas intactas: expansão pela consulta inteira,
+  consulta em branco nem chama os candidatos, `null` = comportamento de antes.
+- `LixeiraViewModel` injeta `CatalogoRepositorio` (2º parâmetro) e passa
+  `catalogoRepositorio::sinonimosDe`; DI no `Navegacao`; dica do campo cita o alcance.
+- CHANGELOG "Não lançado → Refinado" reaberto (pós-v1.8.0).
+
+**Verificação.** `./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`
+→ verdes; **355 testes · 0 falhas · 0 pulados** (351 + 4 novos em `LixeiraBuscaTest`:
+sinônimo direto, inverso, sem sinônimo/sem candidatos, em branco + frase inteira não
+expande). CI do PR verde (~5 min); main verde após o merge (**2554eada**).
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; release v1.8.0 publicada;
+#38 a única issue aberta (mantenedor, com os 2 artifacts consolidados no comentário
+da iteração 1).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) Na PRÓXIMA release: a
+entrada da Lixeira no "Não lançado" vai junto (congelar contagem em 355+). (3) Sem
+outro candidato de unificação — todas as buscas agora compartilham a receita; os 3
+filtros puros têm testes de referência com a mesma lambda de sinonimos de teste.
