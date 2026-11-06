@@ -509,3 +509,45 @@ aberta (mantenedor).
 para "Seus produtos" (só se feedback pedir — decisão documentada no PR #43); na próxima
 release congelar a contagem (agora 351) e sincronizar docs/badge. (3) Varredura de
 defeitos: rodar o lint completo com todos os avisos e avaliar o que é acionável.
+
+---
+
+## 2026-11-06 — Sessão 4, iteração 3: varredura de lint + higiene de recomposição (PR #48, mergeado)
+
+**Foco.** Varredura de defeitos prometida na iteração anterior: TODO/FIXME no código
+(nenhum real — os matches eram "TODOS" em português) e o relatório completo do lint
+(50 warnings + 3 infos). Classificação por acionabilidade real:
+
+**Defeitos reais consertados (PR #48, mergeado; zero mudança de comportamento).**
+- `BarraDeRolagem` lia `estado.layoutInfo` na COMPOSIÇÃO — muda a cada quadro de
+  rolagem, então a barra recomporia por frame. Toda a leitura migrou para o draw do
+  Canvas (casos "nada a desenhar" não pintam). Aviso `FrequentlyChangedStateReadInComposition` sumiu.
+- `ChaveComprix`: cursor animado usava `offset(x: Dp)` (recompõe por frame) →
+  sobrecarga por lambda com `IntOffset`/`roundToPx` (só re-layout).
+  Aviso `UseOfNonLambdaOffsetOverload` sumiu.
+- `EditorDeItem`/`ListaScreen`: `mutableLongStateOf`/`mutableFloatStateOf` nos 3 estados
+  primitivos (categoriaId, gramas, deslocamentoDoArrasto) — sem boxing por escrita.
+  Avisos `AutoboxingStateCreation` sumiram.
+
+**Avaliados e DEFERIDOS, com motivo (registrado no corpo do PR #48).**
+- `GradleDependency` ×13: bumps grandes (CameraX 1.3→1.6, Navigation 2.8→2.10,
+  Lifecycle 2.8→2.11) sem teste em dispositivo — bump cego não cabe num app em
+  estabilização.
+- `StaticFieldLeak` ×4: padrão deliberado (`ServiceLocator`/`Feedback` guardam o
+  contexto de APLICAÇÃO, que vive tanto quanto o processo — falso positivo prático).
+- `UnusedResources` (12 cores + 8 strings desc_*), `HardcodedText` (widget),
+  `RedundantLabel`, `Overdraw`, `IconLauncherShape`, `ModifierParameter`: higiene/design
+  com decisão de produto — candidatas a PRs próprios.
+
+**Verificação.** `./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`
+numa passada → **351 testes · 0 falhas**; lint 50 warnings + 3 infos → **48 warnings**
+(5 avisos alvo eliminados). CI do PR verde (~3,5 min); main verde após o merge
+(d809f951).
+
+**Estado do GitHub.** main em CI verde (d809f951); 0 PRs abertos; issue #38 a única
+aberta (mantenedor).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) Próxima varredura: higiene
+de recursos (strings desc_* e cores sem uso — conferir referências antes de apagar),
+strings do widget para @string e label redundante do manifesto. (3) Na próxima release:
+congelar contagem (351) e sincronizar docs/badge.
