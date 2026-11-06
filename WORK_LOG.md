@@ -386,3 +386,10 @@ expira ~14 dias). (2) O número de testes agora churna a cada iteração — na 
 RELEASE, congelar a contagem na nota e evitar divergência citando "verde na suíte"
 nas entradas intermediárias. (3) Candidatas de UX: filtro por setor para "Seus
 produtos"; busca por sinônimo também no campo do Histórico.
+
+## 2026-11-06 — Sessão 3, acréscimo: dica da busca menciona "Seus produtos" (PR #45, mergeado)
+
+Descobribilidade do PR #43: a dica do campo de busca da exploração descrevia só o
+acervo de fábrica; agora avisa que "a busca também olha os seus produtos". Mudança de
+string única; `compileDebugKotlin` verde localmente e CI do PR verde (testes + lint +
+build) antes do merge. main verde.
