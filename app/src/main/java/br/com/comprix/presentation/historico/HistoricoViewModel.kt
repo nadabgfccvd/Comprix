@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.comprix.data.repositorio.CatalogoRepositorio
 import br.com.comprix.data.repositorio.ConfiguracoesRepositorio
 import br.com.comprix.data.repositorio.HistoricoRepositorio
 import br.com.comprix.domain.compra.AnalisadorDeHistorico
@@ -36,6 +37,7 @@ import kotlinx.coroutines.withContext
 class HistoricoViewModel(
     private val historicoRepositorio: HistoricoRepositorio,
     private val configuracoesRepositorio: ConfiguracoesRepositorio,
+    private val catalogoRepositorio: CatalogoRepositorio,
 ) : ViewModel() {
 
     data class EstadoDoHistorico(
@@ -97,10 +99,21 @@ class HistoricoViewModel(
      * le a propriedade e Kotlin constroi na ordem. As analiticas, os numeros
      * do cabecalho e a variacao mensal seguem calculados sobre TODAS as
      * compras: busca e loja afinam a lista, nunca reescrevem a estatistica.
+     *
+     * A busca tambem entende sinonimos do acervo de fabrica: os candidatos
+     * chegam como lambda (a funcao e pura e em memoria, nao toca no Room) e
+     * "mexerica" encontra a lista "Tangerina para o suco" - e "tangerina"
+     * encontra "Mexerica", porque a resolucao e bidirecional. As regras da
+     * expansao (consulta inteira, nunca palavra solta) estao no filtro.
      */
     val comprasVisiveis: StateFlow<List<CompraFinalizada>> =
         combine(estado, _consulta, _lojaSelecionada) { estadoAtual, consulta, loja ->
-            FiltroDeHistorico.comprasVisiveis(estadoAtual.compras, consulta, loja)
+            FiltroDeHistorico.comprasVisiveis(
+                estadoAtual.compras,
+                consulta,
+                loja,
+                candidatos = catalogoRepositorio::sinonimosDe,
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     /**

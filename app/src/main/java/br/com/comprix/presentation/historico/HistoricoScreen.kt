@@ -314,7 +314,7 @@ fun HistoricoScreen(
                         valor = consulta,
                         aoMudar = viewModel::definirConsulta,
                         rotulo = "Buscar compras",
-                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome da lista e nas lojas.",
+                        dica = "Sem acento e sem se importar com maiúsculas — busca no nome da lista e nas lojas, e entende sinônimos do catálogo: “mexerica” acha “Tangerina”.",
                     )
                     // Pastilhas de loja, mesma receita das categorias da
                     // Lixeira e dos setores do catalogo: toque na pastilha
