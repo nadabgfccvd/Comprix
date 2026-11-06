@@ -293,3 +293,39 @@ ruído sem afrouxar o gate.
 **Estado do GitHub no fechamento.** main em CI verde; issue #38 (mantenedor) a única
 aberta; **PR #41 aguardando CI no GitHub** — o próximo ciclo deve conferir o resultado
 e mergeá-lo se verde (ou corrigir se vermelho) ANTES de escolher novo foco.
+
+## 2026-11-06 — Sessão 3, iteração 1: PR #41 mergeado; gate do parser estabilizado (PR #42)
+
+**Abertura.** Janela nova de 2h iniciada após a reciclagem do sandbox — que DESTRUÍ o
+ambiente local: `.env` regenerado pelo template (token do Comprix perdido do arquivo;
+restaurado a partir das instruções originais do usuário — segue LOCAL ONLY, nunca
+commitado), Android SDK `/home/z/android-sdk` apagado (reinstalado: cmdline-tools +
+platform 35 + build-tools 35.0.0) e cache de artefatos `~/.gradle/caches/modules-2` ido.
+
+**Obstáculos de rede (solução local, nada commitado).** O IP compartilhado do sandbox
+recebe **HTTP 429 do CDN do Maven Central** (curl e Gradle JVM). Contornos:
+1. `~/.gradle/init.d/sandbox-mirror.gradle` troca a URL do `mavenCentral()` pelo espelho
+   Huawei Cloud (200, 61 ms) em todos os níveis — sem tocar no repo;
+2. `~/.gradle/gradle.properties` (fora do repo): IPv4 preferido + retries/backoff;
+3. SDKs do Robolectric pré-baixados do espelho para `~/.m2` (SDK 9 e SDK 15; os 20
+   reprovos do `GerenciadorDeBackupTest` eram só "artifact não baixável").
+
+**PR #41 (teto da busca no catálogo)**: CI verde no GitHub, **mergeado** no início da
+sessão. main em verde.
+
+**PR #42 (gate de desempenho do parser), mergeado.** Diagnóstico do falso reprovado:
+a média de UMA corrida (300 repetições) mistura custo real com picos de escalonador/GC
+— o host que reprovava (1,06–1,174 ms) mede **0,497–0,700 ms** com o mínimo de 5 lotes
+de 60 repetições, SEM tocar no parser. Correção = qualidade de medida, não afrouxamento:
+orçamento local 1,0 ms INTACTO, fatores CI/JaCoCo inalterados, regressões de 5× seguem
+presas em qualquer ambiente. Verificação: suíte local completa **334/334, 0 falhas** no
+host que antes reprovava. CI do PR verde; main verde após o merge.
+
+**Estado do GitHub.** main em CI verde; 0 issues além da #38 (mantenedor); 0 PRs abertos;
+CHANGELOG "Não lançado" com as entradas de #41 e #42.
+
+**Próximo passo útil.** (1) A infra local do sandbox agora está reprodutível (init
+script + espelho + SDKs em ~/.m2) — anotado aqui para a próxima sessão não refazer a
+descoberta. (2) Melhoria funcional pendente de peso: produtos locais do Room na busca
+da exploração do catálogo ("seus produtos"). (3) Issue #38 segue com o mantenedor
+(artifact dos APKs expira em ~14 dias).
