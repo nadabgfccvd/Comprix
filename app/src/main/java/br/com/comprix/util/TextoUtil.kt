@@ -45,6 +45,19 @@ object TextoUtil {
     fun tokens(texto: String): List<String> =
         normalizar(texto).split(" ").filter { it.isNotBlank() }
 
+    /**
+     * Casamento de busca amigavel, o mesmo da Lixeira e do catalogo: cada
+     * palavra digitada (normalizada) precisa aparecer em [alvo] (tambem
+     * normalizado) - "melao" acha "Melão", "MERCADO" acha "mercado".
+     * Consulta em branco casa com tudo (campo desligado).
+     */
+    fun correspondeBusca(alvo: String, consulta: String): Boolean {
+        val termos = tokens(consulta)
+        if (termos.isEmpty()) return true
+        val alvoNormalizado = normalizar(alvo)
+        return termos.all { alvoNormalizado.contains(it) }
+    }
+
     /** "arroz branco tipo 1" -> "Arroz Branco Tipo 1" (apenas para exibicao). */
     fun capitalizarTitulo(texto: String): String =
         texto.trim().split(" ").joinToString(" ") { palavra ->

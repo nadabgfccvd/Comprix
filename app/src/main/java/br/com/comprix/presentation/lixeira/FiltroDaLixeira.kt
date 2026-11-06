@@ -32,14 +32,14 @@ object FiltroDaLixeira {
     /**
      * Verdadeiro quando [registro] casa com [consulta]: todas as palavras da
      * consulta precisam ser encontradas (busca por pedaco de palavra, sem
-     * acento e sem maiuscula) no titulo ou no detalhe.
+     * acento e sem maiuscula) no titulo ou no detalhe. O casamento em si e o
+     * [TextoUtil.correspondeBusca], compartilhado com o Historico.
      */
-    fun corresponde(registro: RegistroDeLixeiraEntity, consulta: String): Boolean {
-        val termos = TextoUtil.tokens(consulta)
-        if (termos.isEmpty()) return true
-        val alvo = TextoUtil.normalizar(registro.titulo + " " + (registro.detalhe.orEmpty()))
-        return termos.all { alvo.contains(it) }
-    }
+    fun corresponde(registro: RegistroDeLixeiraEntity, consulta: String): Boolean =
+        TextoUtil.correspondeBusca(
+            registro.titulo + " " + registro.detalhe.orEmpty(),
+            consulta,
+        )
 
     /**
      * Dias de calendario entre [agora] e [expiraEm]. Datas - nao horas: um

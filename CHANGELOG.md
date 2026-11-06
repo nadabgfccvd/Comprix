@@ -4,6 +4,9 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 
 ## [Não lançado]
 
+### Adicionado
+- **Busca no Histórico**: campo "Buscar compras" na seção "Compras realizadas" — cada palavra digitada precisa aparecer no nome da lista ou nas lojas da compra, sem acento e sem se importar com maiúsculas (o mesmo critério amigável da Lixeira e do catálogo). Achar "aquela compra no Mercado X" deixa de depender de rolar meses de histórico; busca sem resultado ganha um cartão próprio com o botão de limpar. As analíticas, os números do topo e a variação mensal continuam calculados sobre **todas** as compras — a busca afina a lista, nunca reescreve a estatística. O casamento em si (`TextoUtil.correspondeBusca`) agora é um utilitário compartilhado, usado também pela busca da Lixeira.
+
 ## [1.7.0] — 2026-11-06
 
 ### Adicionado

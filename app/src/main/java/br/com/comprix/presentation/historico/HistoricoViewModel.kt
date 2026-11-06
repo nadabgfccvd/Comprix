@@ -11,6 +11,7 @@ import br.com.comprix.domain.modelo.CompraFinalizada
 import br.com.comprix.domain.modelo.ResumoHistorico
 import br.com.comprix.util.Constantes
 import br.com.comprix.util.ExportadorCsv
+import br.com.comprix.util.TextoUtil
 import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,6 +56,11 @@ class HistoricoViewModel(
     private val _mensagem = MutableStateFlow<String?>(null)
     val mensagem: StateFlow<String?> = _mensagem.asStateFlow()
 
+    private val _consulta = MutableStateFlow("")
+
+    /** Consulta digitada na busca de compras ("" = sem busca). */
+    val consulta: StateFlow<String> = _consulta.asStateFlow()
+
     val estado: StateFlow<EstadoDoHistorico> = combine(
         _periodo.flatMapLatest { periodo -> historicoRepositorio.resumo(periodo) },
         historicoRepositorio.compras,
@@ -74,8 +80,36 @@ class HistoricoViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EstadoDoHistorico())
 
+    /**
+     * Compras visiveis na secao "Compras realizadas": a lista inteira
+     * filtrada pela busca ([TextoUtil.correspondeBusca] sobre nome da lista e
+     * lojas - "MERCADO" acha "Mercado do Bairro"). Declarado DEPOIS de
+     * [estado] - o initializer le a propriedade e Kotlin constroi na ordem.
+     * As analiticas, os numeros do cabecalho e a variacao mensal seguem
+     * calculados sobre TODAS as compras: a busca afina a lista, nunca
+     * reescreve a estatistica.
+     */
+    val comprasVisiveis: StateFlow<List<CompraFinalizada>> =
+        combine(estado, _consulta) { estadoAtual, consulta ->
+            if (consulta.isBlank()) {
+                estadoAtual.compras
+            } else {
+                estadoAtual.compras.filter { compra ->
+                    TextoUtil.correspondeBusca(
+                        compra.nomeLista + " " + compra.descricaoEstabelecimento,
+                        consulta,
+                    )
+                }
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     fun definirPeriodo(periodo: AnalisadorDeHistorico.Periodo) {
         _periodo.value = periodo
+    }
+
+    /** Define a consulta da busca de compras; "" desliga o filtro. */
+    fun definirConsulta(consulta: String) {
+        _consulta.value = consulta
     }
 
     fun remover(compra: CompraFinalizada) {
