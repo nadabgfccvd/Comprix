@@ -93,3 +93,30 @@ jobs:
           path: app/build/apks-empacotados/*.apk
           if-no-files-found: error
           retention-days: 14
+
+      # Sem os segredos, o run termina verde e a release fica SEM APKs —
+      # sucesso silencioso já deixou uma release vazia passar despercebida.
+      # Este passo torna o estado óbvio: resumo do job (sempre) e um aviso no
+      # corpo da release da tag (idempotente: não duplica se já estiver lá).
+      - name: Avisar que a release ficou sem APKs (segredos de assinatura ausentes)
+        if: env.ASSINADO != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          ARTEFATO: apks-release-nao-assinados${{ startsWith(github.ref, 'refs/tags/') && format('-{0}', github.ref_name) || '' }}
+        run: |
+          AVISO="> ⚠️ **APKs não anexados a esta release:** os segredos de assinatura (\`KEYSTORE_BASE64\`, \`KEYSTORE_PASSWORD\`, \`KEY_ALIAS\`, \`KEY_PASSWORD\`) não estão configurados no repositório. Os APKs não assinados estão no artifact **\`$ARTEFATO\`** deste run — baixe, assine com \`apksigner\` e anexe (procedimento da v1.5.0), ou configure os segredos e rode o workflow de novo. O APK sem assinatura não instala no aparelho."
+          echo "$AVISO" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$TAG" == v* ]]; then
+            if gh release view "$TAG" --json body -q .body | grep -qF "APKs não anexados"; then
+              echo "Aviso já presente no corpo da release $TAG — nada a fazer."
+            else
+              NOTAS=$(gh release view "$TAG" --json body -q .body)
+              gh release edit "$TAG" --notes "${NOTAS}
+
+          ${AVISO}"
+              echo "Aviso anexado ao corpo da release $TAG."
+            fi
+          else
+            echo "Run sem tag (dispatch em branch): aviso só no resumo do job."
+          fi
