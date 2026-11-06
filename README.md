@@ -19,7 +19,7 @@
 <p align="center">
   <a href="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml"><img src="https://github.com/nadabgfccvd/Comprix/actions/workflows/ci.yml/badge.svg" alt="CI status"/></a>&nbsp;
   <img src="https://img.shields.io/badge/platform-Android_8.0%2B-3DDC84?logo=android&logoColor=white" alt="Platform: Android 8.0+"/>&nbsp;
-  <img src="https://img.shields.io/badge/release-v1.5.0-8A5CF6" alt="Release: v1.5.0"/>&nbsp;
+  <img src="https://img.shields.io/badge/release-v1.6.0-8A5CF6" alt="Release: v1.6.0"/>&nbsp;
   <img src="https://img.shields.io/badge/unit_tests-269_passing-4CAF50" alt="Unit tests: 269 passing"/>&nbsp;
   <img src="https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 1.9"/>&nbsp;
   <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4" alt="Jetpack Compose: Material 3"/>&nbsp;
@@ -45,19 +45,17 @@ Comprix keeps your grocery lists and compares prices between the stores you regi
 
 ## 📥 Download
 
-Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.4.2` is archived there. Detailed per-version history lives in [CHANGELOG.md](CHANGELOG.md) (pt-BR).
+Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/releases) — every version from `v1.0` to `v1.6.0` is archived there. Detailed per-version history lives in [CHANGELOG.md](CHANGELOG.md) (pt-BR).
 
-**Latest (v1.4.2):**
+**Latest (v1.6.0):**
 
 | File | For | Size |
 |---|---|---|
-| `comprix-v1.4.2-arm64-v8a-release.apk` | Most modern phones (2016+) — **recommended** | ~21 MB |
-| `comprix-v1.4.2-armeabi-v7a-release.apk` | Older 32-bit phones | ~15 MB |
-| `comprix-v1.4.2-release.apk` | Universal (all ABIs) | ~67 MB |
-| `comprix-v1.4.2-x86_64-release.apk` / `-x86-` | Emulators | ~23 MB |
+| `comprix-v1.6.0-arm64-v8a-release.apk` | Most modern phones (2016+) — **recommended** | ~21 MB |
+| `comprix-v1.6.0-armeabi-v7a-release.apk` | Older 32-bit phones | ~15 MB |
+| `comprix-v1.6.0-release.apk` | Universal (all ABIs) | ~64 MB |
+| `comprix-v1.6.0-x86_64-release.apk` / `-x86-` | Emulators | ~22 MB |
 
-> `debug` variants are also attached for every release.
->
 > **Upgrading from v1.4.1 or earlier?** See [Key rotation](#-key-rotation-v142) — v1.4.2 is signed with a new key, so Android requires uninstall → reinstall (your data is safe via the in-app backup).
 
 ## 🛠️ Build from source
@@ -65,7 +63,7 @@ Grab the latest APK from [**Releases**](https://github.com/nadabgfccvd/Comprix/r
 Requirements: **JDK 17** and the **Android SDK** (platform 35 + build-tools 35.0.0). The Gradle wrapper is versioned — no Gradle install needed.
 
 ```bash
-./gradlew testDebugUnitTest      # 257 JVM unit tests
+./gradlew testDebugUnitTest      # 269 JVM unit tests
 ./gradlew lintDebug              # Android lint (errors fail the build, also enforced by CI)
 ./gradlew assembleDebug          # debug APK
 ```
@@ -86,11 +84,11 @@ See [`SECURITY.md`](SECURITY.md) for why the signing key is no longer in the rep
 - **Kotlin** + **Jetpack Compose** (Material 3, 4 complete theme sets)
 - **Room** for persistence, **ML Kit** for on-device OCR/barcodes
 - Clean-ish architecture: `domain/` (pure Kotlin, fully unit-tested) · `data/` (Room repositories, backup) · `presentation/` (Compose screens + ViewModels)
-- Hand-rolled pt-BR quantity parser (`domain/parser/`) covered by a 257-test suite
+- Hand-rolled pt-BR quantity parser (`domain/parser/`) covered by the unit-test suite
 
 ## 🤖 CI
 
-Every push and pull request runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on GitHub Actions: **257 unit tests → Android lint (errors are blocking) → debug build**. Lint is a hard gate (`abortOnError = true`), including the lint-vital pass that release builds run. Pushing a `v*` tag triggers [`.github/workflows/release.yml`](.github/workflows/release.yml): tests + signed release build + APK upload (signing via repository secrets; unsigned without them).
+Every push and pull request runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on GitHub Actions: **unit tests → Android lint (errors are blocking) → debug build**. Lint is a hard gate (`abortOnError = true`), including the lint-vital pass that release builds run. Pushing a `v*` tag triggers [`.github/workflows/release.yml`](.github/workflows/release.yml): tests + signed release build + APK upload (signing via repository secrets; unsigned without them).
 
 ## 📦 Repository structure
 
