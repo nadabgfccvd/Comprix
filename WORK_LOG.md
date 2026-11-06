@@ -362,3 +362,27 @@ abertos; CHANGELOG "Não lançado → Adicionado" com a entrada.
 expira ~14 dias). (2) Candidatas: contagem de testes citada no QA volta a divergir
 (340 agora) — atualizar na próxima release; filtro por setor também para "Seus
 produtos" se o feedback pedir; reler CHECKLIST_QA seção 0 na próxima tag.
+
+## 2026-11-06 — Sessão 3, iteração 3: docs ressincronizados (PR #44, mergeado) e varredura de segurança
+
+**Foco.** Fechamento da janela: o badge do README e as citações do CHECKLIST_QA diziam
+334 testes; o real do main é 340 (+6 do PR #43).
+
+**Mudança (PR #44, mergeado; só documentação).** Badge `unit_tests-340_passing`,
+comentário do README e as 3 citações do CHECKLIST_QA atualizadas com o número
+verificado, mantendo o histórico ("v1.7.0 tinha 317") explícito.
+
+**Verificação.** Suíte local: **340 testes · 0 falhas · 0 pulados** (XMLs JUnit). CI do
+PR verde (~45 s); main verde após o merge.
+
+**Varredura de segurança.** Dependabot alerts: **desativados neste repositório** (nada a
+fazer via API); 0 issues acionáveis; 0 PRs abertos antes deste.
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; issue #38 (mantenedor) a única
+aberta.
+
+**Próximo passo útil.** (1) Issue #38 segue com o mantenedor (APKs da v1.7.0; artifact
+expira ~14 dias). (2) O número de testes agora churna a cada iteração — na PRÓXIMA
+RELEASE, congelar a contagem na nota e evitar divergência citando "verde na suíte"
+nas entradas intermediárias. (3) Candidatas de UX: filtro por setor para "Seus
+produtos"; busca por sinônimo também no campo do Histórico.
