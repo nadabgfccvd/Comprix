@@ -425,3 +425,50 @@ sem sinônimo (comportamento atual), candidatos nulos (regressão zero).
 
 **Próximo passo útil.** (1) Implementar o desenho acima (iteração 1 da sessão 4).
 (2) #38 segue com o mantenedor. (3) Congelar contagem de testes só na próxima release.
+
+---
+
+## 2026-11-06 — Sessão 4, iteração 1: busca por sinônimo no Histórico (PR #46, mergeado)
+
+**Foco.** O desenho deixado pronto no encerramento da sessão 3, executado como
+especificado: a busca de compras do Histórico agora entende os sinônimos do acervo de
+fábrica. "mexerica" encontra a lista "Tangerina para o suco" — e "tangerina" encontra
+"Mexerica" — porque a resolução do acervo (`sinonimosDe`: `itemPorNome` +
+`itemPorSinonimo`) é bidirecional.
+
+**Mudança (PR #46, mergeado).**
+- `FiltroDeHistorico.comprasVisiveis` ganha `candidatos: ((String) -> List<String>)? =
+  null`, retrocompatível: a compra passa se a consulta direta OU qualquer alternativa
+  casar (o mesmo `TextoUtil.correspondeBusca`). Alternativas calculadas UMA vez por
+  chamada, não por compra.
+- Duas regras deliberadas, documentadas no KDoc e presas por teste: expansão pela
+  **consulta inteira** ("suco de mexerica" não expande palavra solta — o resultado
+  cresceria em silêncio) e `candidatos = null` = **comportamento de antes** (regressão
+  zero para quem não injeta o acervo).
+- `HistoricoViewModel` injeta `CatalogoRepositorio` (3º parâmetro do construtor) e passa
+  `catalogoRepositorio::sinonimosDe` como lambda — função pura, em memória, sem tocar no
+  Room. DI atualizada no `Navegacao`.
+- Dica do campo de busca cita o novo alcance ("entende sinônimos do catálogo:
+  'mexerica' acha 'Tangerina'") — descobribilidade, mesmo critério do PR #45.
+- CHANGELOG "Não lançado → Refinado" com a entrada.
+
+**Verificação.** `./gradlew :app:compileDebugUnitTestKotlin` → verde.
+`./gradlew :app:testDebugUnitTest` → **346 testes · 0 falhas · 0 pulados** (340 + 6
+novos em `FiltroDeHistoricoTest`, 19 no arquivo: sinônimo direto, inverso, consulta sem
+sinônimo, candidatos nulos, frase inteira não expande, E com loja). Contagem lida dos
+XMLs JUnit, não estimada. `./gradlew :app:lintDebug :app:assembleDebug` → verdes.
+CI do PR verde (~3 min); main verde após o merge (414a68ee, ~4,5 min).
+
+**Coordenação.** Uma nota de ferramenta: o corpo do PR precisa de JSON via arquivo
+(`python3 json.dumps` → `curl -d @file`) — o inline com backticks do Markdown quebra no
+bash (interpretados como command substitution). Mesma receita dos PRs anteriores.
+Contagem de testes nos docs NÃO foi tocada (decisão da sessão 3: congelar só na
+próxima release; 346 é volátil).
+
+**Estado do GitHub.** main em CI verde (414a68ee); 0 PRs abertos; issue #38 a única
+aberta (mantenedor). Branch remota `historico/busca-sinonimo` ficou no repo (regra do
+repo impede exclusão — já documentado na sessão 2).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor (APKs da v1.7.0). (2) Candidatas
+de UX: filtro por setor para "Seus produtos" (PR #43); reler o CHECKLIST_QA seção 0 na
+próxima tag. (3) Na próxima release: congelar a contagem (agora 346) e sincronizar docs.
