@@ -240,3 +240,31 @@ stub cobrindo os dois caminhos (anexar e "já presente — nada a fazer"); CI do
 
 **Estado.** 0 issues, 0 PRs abertos; main em CI verde; release v1.7.0 publicada (APKs
 aguardando o mantenedor — artifact expira em 14 dias).
+
+## 2026-11-06 — Sessão 2, iteração 4: contagem de testes verificada e sincronizada (PR #40)
+
+**Foco.** Próximo passo (3) deixado pela iteração do Histórico: os números de teste
+citados no README e no CHECKLIST_QA estavam congelados na v1.7.0 (317) enquanto o
+"Não lançado" já somava +17.
+
+**Verificação primeiro.** `./gradlew testDebugUnitTest` → **334 testes · 0 falhas ·
+0 pulados** (contagem lida dos XMLs JUnit, não estimada). Aritmética confere:
+317 (v1.7.0) + 4 (`TextoUtilTest`, PR #35) + 13 (`FiltroDeHistoricoTest`, PR #39) = 334.
+
+**Mudança (PR #40, mergeado; só documentação, zero código).**
+- README: badge `unit_tests-334_passing` e comentário do comando (`# 334 JVM unit tests`).
+- CHECKLIST_QA: as 3 citações de "317" passam a **334**, sempre mantendo o histórico
+  explícito ("a v1.7.0 tinha 317") para o documento não apagar a própria linhagem.
+
+**Estado do GitHub.** main em CI verde; 0 issues além da #38 (ação do mantenedor:
+anexar APKs assinados à v1.7.0 — requer os segredos `KEYSTORE_*`); 0 PRs abertos.
+
+**Nota de auditoria.** A sugestão antiga "busca por sinônimo na exploração do catálogo"
+foi checada neste ciclo e JÁ ESTÁ implementada desde a baseline v1.4.0
+(`CatalogoSemente.buscar` tem 7 níveis de prioridade cobrindo sinônimos, com testes);
+a anotação do work log estava obsoleta e cai fora da lista de pendências.
+
+**Próximo passo útil.** (1) Mantenedor anexar os APKs assinados na release v1.7.0
+(issue #38; artifact expira em ~14 dias). (2) Exploração do catálogo ainda lista só o
+acervo de fábrica (1.714 itens) — incluir os produtos locais do Room como seção
+"seus produtos" na mesma busca seria a próxima melhoria funcional de peso.
