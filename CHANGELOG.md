@@ -4,6 +4,8 @@ Todas as mudanças notáveis do Comprix ficam registradas aqui, com base nas not
 
 ## [Não lançado]
 
+## [1.6.1] — 2026-11-06
+
 ### Segurança
 - **Backups à prova de truncamento e corrupção**: o exportador incluiu verificação de integridade nos novos arquivos (PR #23), os identificadores de registros inválidos, duplicados ou sem identidade são rejeitados na importação (PR #28) e o formato v2 passou a ter checksum cobrindo também o cabeçalho (PR #29).
 - **Restauração atômica**: exclusões e inserções passaram a rodar dentro de uma transação Room — falha no meio da restauração reverte o banco ao estado anterior, sem dados parcialmente apagados (PRs #19 e #29).
