@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -197,7 +198,7 @@ fun ListaScreen(
     // do cabecalho alvo e apenas visual, e o resultado final e aplicado de
     // uma vez ao soltar.
     var idEmArrasto by remember { mutableStateOf<Long?>(null) }
-    var deslocamentoDoArrasto by remember { mutableStateOf(0f) }
+    var deslocamentoDoArrasto by remember { mutableFloatStateOf(0f) }
     val posicaoDosItens = remember { mutableStateMapOf<Long, Int>() }
     val posicaoDosCabecalhos = remember { mutableStateMapOf<Long, Int>() }
     var categoriaSobArrasto by remember { mutableStateOf<Long?>(null) }

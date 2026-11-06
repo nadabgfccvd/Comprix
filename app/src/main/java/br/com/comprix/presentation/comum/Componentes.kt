@@ -59,6 +59,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import br.com.comprix.presentation.tema.IconeComprix
 import br.com.comprix.presentation.tema.Icones
@@ -544,10 +545,12 @@ fun ChaveComprix(
             // Botao centrado no trilho: (50-20)/2 = 5 dp de folga em cada lado.
             // Antes ficava a 3 dp do topo/esquerda e a 7 dp do fim - o cursor
             // parecia desalinhado e o curso ficava curto quando ligado.
+            // Lambda do offset: o deslocamento animado reLAYOUTA a cada quadro
+            // sem recompor o Box (a sobrecarga com Dp recomporia por frame).
             Box(
                 Modifier
                     .padding(start = 5.dp, top = 5.dp)
-                    .offset(x = deslocamento)
+                    .offset { IntOffset(deslocamento.roundToPx(), 0) }
                     .size(20.dp)
                     .clip(CircleShape)
                     .background(if (ativa) cores.sobreAcao else cores.apagado),
@@ -736,12 +739,11 @@ fun BarraDeRolagem(
             visibilidade.animateTo(0f, tween(320))
         }
     }
-    val info = estado.layoutInfo
-    val total = info.totalItemsCount
-    val visiveis = info.visibleItemsInfo
-    if (total == 0 || visiveis.size >= total) return
-    val primeiro = visiveis.firstOrNull() ?: return
-
+    // O layoutInfo muda a CADA quadro de rolagem: ler aqui recomporia a barra
+    // por frame. Toda a leitura (total, visiveis, offset do primeiro item)
+    // mora dentro do draw do Canvas - a barra redesenha sem recompor, e os
+    // casos "nada a desenhar" simplesmente nao pintam (o Box, de 9 dp, custo
+    // desprezivel comparado a recompor a cada quadro).
     Box(
         modifier
             .width(9.dp)
@@ -749,6 +751,11 @@ fun BarraDeRolagem(
             .graphicsLayer { alpha = visibilidade.value },
     ) {
         Canvas(Modifier.fillMaxSize()) {
+            val info = estado.layoutInfo
+            val total = info.totalItemsCount
+            val visiveis = info.visibleItemsInfo
+            if (total == 0 || visiveis.size >= total) return@Canvas
+            val primeiro = visiveis.firstOrNull() ?: return@Canvas
             val altura = size.height
             if (altura < 40f) return@Canvas
             val proporcaoVisivel = (visiveis.size.toFloat() / total).coerceIn(0.04f, 1f)
