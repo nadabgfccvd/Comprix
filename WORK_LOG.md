@@ -878,3 +878,46 @@ release: as 3 entradas do "Não lançado" (Lixeira + widget + divisor) vão junt
 contagem congela em 380+. (4) Varredura de objetos sem teste esgotada — restam só
 camadas Android (Room/Compose/DI), que exigem instrumentação e estão fora do
 critério de teste JVM do projeto.
+
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 6: testes de contrato do Mapeadores, fronteira Room <-> domínio (PR #55, mergeado)
+
+**Foco.** Revisão da afirmação da iteração 5 ("restam só camadas Android sem teste") encontrou uma
+imprecisão: `Mapeadores` (data/local) é **JVM puro** — zero import de Android, entidades do Room são
+data classes simples — e não tinha nenhum teste direto. É a fronteira onde a "sujeira" de
+persistência mora (centavos <-> BigDecimal, epoch <-> data, `|` <-> enum, JSON nutricional), ou seja,
+exatamente onde um bug silencioso corrompe dado. Avaliação antes de começar: main verde no 63cf33b
+(backend da iteração 5), 0 PRs, #38 do mantenedor.
+
+**Mudança (PR #55, mergeado — só testes + docs).**
+- `MapeadoresTest` (28 testes JVM): dinheiro com **HALF_EVEN** congelado em empates exatos
+  (12,345 -> 1234; 12,355 -> 1236; 0,005 -> 0), ida-e-volta de dinheiro/datas sem perda (null e
+  bissexto inclusive), a decisão central de **enum inválido cair em valor seguro em vez de lançar**
+  (5 enums), descarte de desconhecidos/vazios nas listas `|`, quantidade ilegível -> **1** (nunca 0
+  nem exceção), zeros à direita somem no decimal em texto, JSON com chaves desconhecidas descartadas,
+  escala da fonte presa entre 100 e 160 **nos dois sentidos** e ida-e-volta completa de cada modelo.
+- Documentado no teste: `ConfiguracoesEntity.nutrientesComparados` guarda NOME de enum
+  ("VALOR_ENERGETICO|SODIO"), não a chave do JSON ("energia") — só-nome-desconhecido volta à
+  `selecaoPadrao`.
+- **Nada em código de produção** — todos os 28 testes passaram de primeira após 2 correções no
+  próprio teste (dados errados meus, não do mapeador).
+- Docs no mesmo PR: contagem 380 -> 408 (badge + comando do README, 3 refs do CHECKLIST_QA com a
+  linhagem "+28 mapeadores") e entrada "Interno" no CHANGELOG (4ª do "Não lançado").
+
+**Verificação.** `./gradlew :app:testDebugUnitTest` -> verde; XMLs JUnit: **408 testes · 0 falhas ·
+0 pulados** (380 + 28). Aritmética ✓. Duas lições de compilação: (1) `paraEntidade`/`paraModelo` de
+`AlergiaCustomizada` são **extensoes-membro** — entram via `with(Mapeadores)`, como no produção;
+(2) `paraDominio(null)` é ambíguo entre `ConfiguracoesEntity?` e `PerfilRestricoesEntity?` — precisa
+de local tipado. CI do PR verde (~2,5 min); main verde após o merge.
+
+**Estado do GitHub.** main em CI verde; 0 PRs abertos; #38 a única issue aberta (mantenedor);
+release v1.8.0 íntegra.
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor. (2) `padraoDe` morto — decisão do
+mantenedor. (3) Na próxima release: as **4** entradas do "Não lançado" (Lixeira + widget + divisor +
+mapeadores) vão junto e a contagem congela em 408+. (4) Varredura re-feita com o critério correto:
+`Constantes` (só declarações) e `DadosIniciais` (semente declarativa) são os únicos objetos puros
+restantes sem teste — baixo valor por teste; as demais superfícies sem teste são mesmo Android
+(Feedback/ServiceLocator/Navegacao/Icones/Tema/Composable).
