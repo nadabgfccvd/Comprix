@@ -60,6 +60,10 @@ class GerenciadorDeBackup(
         const val EXTENSAO = "cbk"
         private const val MAXIMO_AUTOMATICOS = 5
         private const val INTERVALO_AUTOMATICO_MS = 24L * 60 * 60 * 1000
+
+        /** Prefixo das copias de seguranca pre-restauracao (politica legada — veja [restaurar]). */
+        internal const val PREFIXO_COPIA_SEGURANCA = "pre-restauracao-"
+        private const val MAXIMO_COPIAS_SEGURANCA = 3
     }
 
     data class ResultadoRestauracao(
@@ -171,8 +175,12 @@ class GerenciadorDeBackup(
      * Le um `.cbk` e substitui o conteudo atual.
      *
      * A validacao ocorre antes de qualquer escrita e a substituicao usa uma
-     * transacao. O formato v2 verifica integridade; arquivos v1 continuam
-     * suportados, mas nao permitem detectar todos os truncamentos.
+     * transacao. O formato v2 verifica integridade por checksum. Arquivos v1
+     * (legados, sem checksum) passam ainda pela conferencia do layout exato
+     * das secoes — truncamentos no meio do arquivo sao rejeitados — e, como os
+     * truncamentos nos ultimos registros continuam indistinguiveis, NADA e
+     * apagado sem antes gravar uma copia de seguranca do estado atual (v2, com
+     * checksum), que fica na pasta de backups como "desfazer" da restauracao.
      */
     suspend fun restaurar(entrada: InputStream): ResultadoRestauracao {
         val linhas = runCatching { entrada.bufferedReader(Charsets.UTF_8).readLines() }
@@ -180,6 +188,37 @@ class GerenciadorDeBackup(
 
         val porTabela = lerBackup(linhas)
             ?: return ResultadoRestauracao(false, "Backup incompleto ou inválido; nenhum dado foi alterado.")
+
+        // Backups antigos nao carregam historico. Nao podemos combinar ids de
+        // bancos diferentes sem correr o risco de associar precos aos produtos
+        // errados, nem apagar o historico existente. Conferido antes da copia
+        // de seguranca (restauracao cancelada nao gera copia) e de novo dentro
+        // da transacao (a prova de corrida).
+        if ("historico_precos" !in porTabela && banco.precoDao().contarHistorico() > 0) {
+            return ResultadoRestauracao(
+                false,
+                "Este backup antigo não contém histórico de preços. A restauração foi cancelada para proteger os dados atuais.",
+            )
+        }
+
+        // Politica de restauracao legada (v1): sem checksum, um truncamento no
+        // fim do arquivo e indistinguivel de um backup valido. Uma restauracao
+        // v1 so prossegue com copia de seguranca do estado atual gravada — se
+        // nem a copia for possivel, a restauracao e abortada.
+        val copiaDeSeguranca: File? = if (linhas.firstOrNull()?.trim() == CABECALHO_V1) {
+            try {
+                criarCopiaDeSeguranca()
+            } catch (cancelamento: CancellationException) {
+                throw cancelamento
+            } catch (erro: Exception) {
+                return ResultadoRestauracao(
+                    false,
+                    "Não foi possível salvar a cópia de segurança antes de restaurar este backup antigo; nenhum dado foi alterado.",
+                )
+            }
+        } else {
+            null
+        }
 
         return try {
             banco.withTransaction {
@@ -273,7 +312,12 @@ class GerenciadorDeBackup(
 
                 ResultadoRestauracao(
                     sucesso = true,
-                    mensagem = "Backup restaurado: ${contagem.values.sum()} registros.",
+                    mensagem = if (copiaDeSeguranca != null) {
+                        "Backup antigo restaurado: ${contagem.values.sum()} registros. " +
+                            "O estado anterior foi salvo como ${copiaDeSeguranca.name} na pasta de backups."
+                    } else {
+                        "Backup restaurado: ${contagem.values.sum()} registros."
+                    },
                     tabelas = contagem,
                 )
             }
@@ -282,6 +326,32 @@ class GerenciadorDeBackup(
         } catch (erro: Exception) {
             ResultadoRestauracao(false, "Não foi possível restaurar o backup; nenhum dado foi alterado.")
         }
+    }
+
+    /**
+     * Copia de seguranca do estado ATUAL, em v2 (com checksum), gravada antes
+     * de uma restauracao legada (v1) apagar qualquer dado — o "desfazer" da
+     * restauracao que saiu errada. Aparece na lista de backups de Configuracoes
+     * como qualquer outro `.cbk`. Mantem as [MAXIMO_COPIAS_SEGURANCA] mais
+     * recentes; uma copia parcial (falta de espaco, processo morto) e descartada
+     * em vez de deixar arquivo invalido com cara de salvamento.
+     */
+    private suspend fun criarCopiaDeSeguranca(): File {
+        val arquivo = File(
+            pastaDeBackups(),
+            "$PREFIXO_COPIA_SEGURANCA${Formatadores.carimboDeArquivo()}.$EXTENSAO",
+        )
+        try {
+            arquivo.outputStream().use { exportar(it) }
+        } catch (erro: Throwable) {
+            arquivo.delete()
+            throw erro
+        }
+        listarBackups()
+            .filter { it.name.startsWith(PREFIXO_COPIA_SEGURANCA) }
+            .drop(MAXIMO_COPIAS_SEGURANCA)
+            .forEach { it.delete() }
+        return arquivo
     }
 
     // --- serializacao por tabela -----------------------------------------------------
