@@ -738,3 +738,21 @@ da iteração 1).
 entrada da Lixeira no "Não lançado" vai junto (congelar contagem em 355+). (3) Sem
 outro candidato de unificação — todas as buscas agora compartilham a receita; os 3
 filtros puros têm testes de referência com a mesma lambda de sinonimos de teste.
+
+---
+
+## 2026-11-06 — Sessão 5, acréscimo: QA do artifact da v1.8.0 (5 APKs verificados com aapt2)
+
+Download do artifact `apks-release-nao-assinados-v1.8.0` (via API, zip de 74 MB) e
+inspeção `aapt2 dump badging` nos 5 APKs — evidência que o CI não produz:
+
+- **versionCode='12' · versionName='1.8.0'** em todos (arm64-v8a, armeabi-v7a,
+  universal, x86, x86_64 — 5 ABIs como nas notas da release);
+- Permissões: apenas `CAMERA`, `VIBRATE` e a de assinatura
+  `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` — **sem INTERNET** (critério #1 do
+  CHECKLIST_QA, app 100% modo avião) e sem `ACCESS_NETWORK_STATE`;
+- targetSdk 35, compileSdk 35.
+
+O estado da release está íntegro de ponta a ponta: tag no commit certo, workflow
+verde, artifact correto, notas e avisos no lugar. Arquivos temporários apagados após
+a verificação (nada de build local vai para o repo).
