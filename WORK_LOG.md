@@ -646,3 +646,57 @@ deliberado `tools:node="remove"` nas permissões INTERNET/NETWORK_STATE/WAKE_LOC
 **Próximo passo útil.** (1) Executar o desenho da v1.8.0 (iteração 1 da sessão 5).
 (2) #38 segue com o mantenedor. (3) Candidatas de UX com decisão de produto ficam na
 prateleira: filtro por setor para "Seus produtos"; favoritos na lista de produtos.
+
+---
+
+## 2026-11-06 — Sessão 5, iteração 1: RELEASE v1.8.0 publicada (PR #50, mergeado; tag + release + workflow de release verdes)
+
+**Foco.** O desenho da sessão 4, executado de ponta a ponta com janela folgada.
+
+**Mudança (PR #50, mergeado).**
+- `app/build.gradle.kts`: versionCode 11 → **12**, versionName "1.7.0" → **"1.8.0"**.
+- CHANGELOG: "Não lançado" → **[1.8.0] — 2026-11-06** (Seus produtos; teto da busca;
+  sinônimos no Histórico e em Seus produtos; busca e filtro por loja no Histórico;
+  gate do parser; higiene de recomposição e de recursos).
+- README: badges `release-v1.8.0` e `unit_tests-351_passing`; seção Download ("v1.0 a
+  v1.8.0") e build-from-source com a contagem congelada em 351.
+- CHECKLIST_QA seção 0: coluna "Atual (v1.8.0, versionCode 12)" com **351** (v1.7.0
+  tinha 317; pós-v1.7.0: +17 busca/filtro, +6 Seus produtos, +11 sinônimos — 6 no
+  Histórico, 5 em Seus produtos); critério 10 e "Estado atual (v1.8.0)" alinhados.
+
+**Publicação.**
+- PR #50 → CI verde (~2 min) → merge (**c83c1585**); main verde no commit de release.
+- **Tag `v1.8.0` + release** criadas via API apontando para c83c1585 — erro de validação
+  na 1ª tentativa (sha truncado a 8 dígitos no `target_commitish`; a API exige o sha
+  completo), corrigido na 2ª.
+- O push da tag disparou o workflow **Release** (run **42191155823**, verde, ~3,5 min):
+  gate de testes + `assembleRelease` + artifact `apks-release-nao-assinados-v1.8.0`
+  (74 MB, 5 ABIs, expira 2026-11-20) + o aviso canônico de APKs ausentes anexado
+  automaticamente ao corpo da release (idempotente, como desenhado no próprio yml).
+- Release pública: https://github.com/nadabgfccvd/Comprix/releases/tag/v1.8.0 — notas
+  no padrão da v1.7.0 (novidades, qualidade, tabela "Qual APK baixar?", compare link);
+  0 assets (APK sem assinatura nunca vai para a release pública).
+
+**Coordenação com a #38.** O artifact da v1.8.0 expira na MESMA data (~2026-11-20) do
+da v1.7.0. Comentário publicado na issue (#issuecomment-6681152383) consolidando os
+dois artifacts numa tabela, com o link do run e os dois caminhos de assinatura — o
+mantedor resolve os dois de uma vez. A issue segue aberta para ele.
+
+**Verificação.** Local antes do PR: 351 testes · 0 falhas (XMLs), lintDebug e
+assembleDebug verdes; assembleRelease já verificado na sessão 4. CI do PR verde;
+CI do main verde no c83c1585; workflow Release verde no run da tag.
+
+**Decisões registradas.** (1) As 5 jornadas do CHECKLIST_QA (seção 2) NÃO foram
+reexecutadas: o critério do próprio documento é "a cada release maior" e v1.8.0 é
+minor — sem device/emulador no ambiente, reexecutar só por ritual não adicionaria
+evidência. (2) Contagem congelada nos docs em 351; iterar sobre main volta a mudar o
+número, que só volta a ser sincronizado na PRÓXIMA release.
+
+**Estado do GitHub.** main em CI verde (c83c1585 + work log); release v1.8.0
+publicada; 0 PRs abertos; issues abertas: **#38** (mantenedor, agora com os dois
+artifacts consolidados).
+
+**Próximo passo útil.** (1) #38 segue com o mantenedor (2 artifacts, 1 procedimento).
+(2) Candidatas de UX com decisão de produto: filtro por setor para "Seus produtos"
+(só com feedback); favoritos na lista de produtos. (3) Monitorar o CI do main nas
+próximas janelas; varredura de estado a cada check-in.
