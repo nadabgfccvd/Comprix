@@ -236,6 +236,37 @@ class ListaRepositorioTest {
     }
 
     @Test
+    fun `adicionarItem apos remocoes reaproveita ordem ocupada e ordena antes de item antigo bug conhecido`() = runBlocking {
+        // Bug conhecido documentado na issue #88 (não corrigido aqui — mudança
+        // de produção é decisão do mantenedor): a ordem do item novo vem de
+        // COUNT(*) (número de linhas atuais), não do maior ordemManual já usado.
+        // Remoção é hard delete, então a contagem encolhe e o próximo item
+        // recebe um valor que já pertenceu a outro item — podendo ordenar ANTES
+        // de um item que existia antes dele (a exibição ordena por
+        // ordemManual, id). Este teste PINA o comportamento de hoje; quando a
+        // correção trocar COUNT por MAX, é aqui que o teste vira.
+        val listaId = novaLista("Feira")
+        val produtoId = novoProduto("Arroz")
+
+        val primeiro = itemDa(listaId, produtoId)
+        val segundo = itemDa(listaId, produtoId)
+        val terceiro = itemDa(listaId, produtoId)
+        for (id in listOf(primeiro, segundo)) {
+            repositorio.removerItem(Mapeadores.paraDominio(banco.itemDao().porId(id)!!))
+        }
+
+        val quarto = itemDa(listaId, produtoId)
+
+        val porId = banco.itemDao().listarDaLista(listaId).associateBy { it.id }
+        // O item novo recebeu (COUNT=1 + 1) * 10 = 20 — valor que já foi do
+        // segundo item, removido — e a ordem de exibição o coloca ANTES do
+        // terceiro (ordem 30), adicionado antes dele.
+        assertEquals(20, porId.getValue(quarto).ordemManual)
+        assertEquals(30, porId.getValue(terceiro).ordemManual)
+        assertEquals(listOf(quarto, terceiro), banco.itemDao().listarDaLista(listaId).map { it.id })
+    }
+
+    @Test
     fun `listarItens casa o item com o produto e pula o orfao`() = runBlocking {
         val listaId = novaLista("Feira")
         val produtoId = novoProduto("Arroz")
