@@ -246,6 +246,34 @@ class LojasViewModelTest {
         espera { viewModel.estado.value.mensagem == "Já existe uma loja com esse nome" }
     }
 
+    @Test
+    fun `renomear no repositorio cria par equivalente sem guarda bug conhecido`() = runBlocking {
+        // Faceta 2 do bug conhecido da issue #86 (não corrigida aqui — mudança
+        // de produção é decisão do mantenedor): a guarda de colisão normalizada
+        // do renomear vive SÓ na tela (LojasViewModel.renomear bloqueia com
+        // "Já existe uma loja com esse nome" — pinado no teste acima). O
+        // `PrecoRepositorio.renomearEstabelecimento` em si faz `@Update` direto,
+        // sem re-checar pela chave (PrecoRepositorio.kt:66-68), e o índice
+        // UNIQUE do banco é sobre o texto CRU (Entidades.kt:155) — então não
+        // bloqueia equivalentes. Chamado DIRETAMENTE no repositório (sem a
+        // guarda da tela), um renomear para nome equivalente ao de OUTRA loja
+        // passa hoje e deixa o par equivalente no banco — o mesmo estado final
+        // do adicionar da faceta 1. Este teste PINA o comportamento de hoje
+        // para a correção do mantenedor não esquecer a camada de repositório;
+        // quando a identidade virar a chave normalizada (ou o DAO re-checar),
+        // é aqui que o teste vira.
+        val a = precos.garantirEstabelecimento("Mercado A")
+        precos.garantirEstabelecimento("Mercado B")
+
+        precos.renomearEstabelecimento(a, "mercado b") // equivalente a "Mercado B" (outra loja)
+
+        // Sem exceção e sem bloqueio: o par equivalente coexiste no banco.
+        assertEquals(
+            listOf("Mercado B", "mercado b"),
+            banco.estabelecimentoDao().listarTodos().map { it.nome }.sorted(),
+        )
+    }
+
     // --- remover ------------------------------------------------------------------------
 
     @Test
