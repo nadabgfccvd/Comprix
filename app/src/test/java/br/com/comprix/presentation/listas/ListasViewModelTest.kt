@@ -94,15 +94,25 @@ class ListasViewModelTest {
 
     @After
     fun fechar() {
-        try {
-            Dispatchers.resetMain()
-        } catch (e: IllegalStateException) {
-            // corrida demonstrada (corrida pós-reset 2026-11-06): o Room posta o refresh
-            // de invalidação no Main a partir do executor dele — um dispatch em voo morda
-            // o NonConcurrentlyModifiable do TestMainDispatcher. Dreno + retry fecha a
-            // janela sem mascarar outra falha (só IllegalStateException é tolerada).
-            Thread.sleep(50)
-            Dispatchers.resetMain()
+        // corrida demonstrada (corrida pós-reset 2026-11-06): o Room posta o refresh
+        // de invalidação no Main a partir do executor dele — um dispatch em voo morda
+        // o NonConcurrentlyModifiable do TestMainDispatcher. O Robolectric 4.17 (#79)
+        // agravou a janela: ele drena a fila do Main no teardown, e um refresh que
+        // sobe nela executa DEPOIS do banco.close(), explodindo no PRÓXIMO teste
+        // (IllegalStateException no runBlocking do helper — CI 2026-11-07). Dreno
+        // ANTES do close (banco aberto = inofensivo) elimina o veneno na fonte; o
+        // retry limitado tolera dispatch em voo remanescente sem mascarar outra
+        // falha (só IllegalStateException é tolerada).
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+        var tentativa = 0
+        while (true) {
+            try {
+                Dispatchers.resetMain()
+                break
+            } catch (e: IllegalStateException) {
+                if (++tentativa >= 5) throw e
+                Thread.sleep(25)
+            }
         }
         banco.close()
     }
