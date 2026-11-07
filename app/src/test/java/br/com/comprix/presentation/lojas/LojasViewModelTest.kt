@@ -187,11 +187,37 @@ class LojasViewModelTest {
         viewModel.adicionar("  Mercado A  ")
         espera { viewModel.estado.value.mensagem == "Loja \"Mercado A\" já está na sua rede." }
         espera { viewModel.estado.value.lojas.size == 1 } // nunca duplica
-        // QUIRK/BUG conhecido (registrado no work log): digitar com caixa
-        // diferente ("mercado a") CRIA uma segunda loja — a checagem do VM é
-        // normalizada mas o `garantirEstabelecimento` deduplica por nome
-        // EXATO. Consertar é mudança de produção; aqui o comportamento de
+        // QUIRK/BUG conhecido (issue #86, pinado no teste seguinte): digitar
+        // com caixa diferente ("mercado a") CRIA uma segunda loja — a checagem
+        // do VM é normalizada mas o `garantirEstabelecimento` deduplica por
+        // nome EXATO. Consertar é mudança de produção; aqui o comportamento de
         // hoje fica documentado.
+    }
+
+    @Test
+    fun `adicionar variacao equivalente de nome cria segunda loja bug conhecido`() = teste { viewModel ->
+        // Bug conhecido documentado na issue #86 (não corrigido aqui — mudança
+        // de produção é decisão do mantenedor): a identidade da loja no app é
+        // o nome NORMALIZADO (TextoUtil.normalizar — sem caixa, acento ou
+        // pontuação), tanto na checagem do adicionar quanto do renomear; mas a
+        // deduplicação real do garantirEstabelecimento é por nome EXATO
+        // (Daos.kt: porNome — WHERE nome = :nome) e o índice UNIQUE do banco
+        // (Entidades.kt:155) é sobre o texto CRU. Uma variação equivalente
+        // ("mercado á" ≡ "Mercado A") passa pela checagem do VM, exibe a
+        // mensagem "já está na sua rede" e AINDA ASSIM cria uma segunda loja.
+        // Este teste PINA o comportamento de hoje; quando a identidade da loja
+        // virar a chave normalizada (ou o índice UNIQUE cobrir a chave), é
+        // aqui que o teste vira.
+        viewModel.adicionar("Mercado A")
+        espera { viewModel.estado.value.lojas.size == 1 }
+
+        viewModel.adicionar("mercado á") // equivalente sem acento/caixa, cru é diferente
+        espera { viewModel.estado.value.mensagem == "Loja \"mercado á\" já está na sua rede." }
+        esperaLojas(viewModel) { it.size == 2 } // ...e a segunda loja FOI criada
+        assertEquals(
+            listOf("Mercado A", "mercado á"),
+            banco.estabelecimentoDao().listarTodos().map { it.nome }.sorted(),
+        )
     }
 
     @Test
