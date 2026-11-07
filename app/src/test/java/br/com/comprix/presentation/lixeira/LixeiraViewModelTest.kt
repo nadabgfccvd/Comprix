@@ -68,6 +68,12 @@ class LixeiraViewModelTest {
 
     @After
     fun fechar() {
+        // Robolectric 4.17 drena a fila do Main no teardown do teste: um refresh de
+        // invalidação do Room que sobe na fila executa DEPOIS do banco.close() e a
+        // exceção morde o TestMainDispatcher — explodindo no PRÓXIMO teste
+        // (IllegalStateException no runBlocking do helper, visto no CI de 2026-11-07).
+        // Drenar ANTES do close (banco aberto = inofensivo) elimina o veneno na fonte.
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
         Dispatchers.resetMain()
         banco.close()
     }
