@@ -81,6 +81,12 @@ class CatalogoViewModelTest {
         // Drenar ANTES do close (banco aberto = inofensivo) elimina o veneno na fonte.
         org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
         banco.close()
+        // Dreno tolerante DEPOIS do close (candidato da it. 36-38): a janela residual
+        // do 4.17 deixava um refresh remanescente envenenar o TestMainDispatcher do
+        // teste SEGUINTE (4 vítimas aleatórias: Listas:137 ×2, Nutricional:105). Se
+        // algo só conseguir executar aqui, é consumido — e só IllegalStateException
+        // é tolerada, para não mascarar outra falha.
+        try { org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle() } catch (_: IllegalStateException) {}
     }
 
     // --- auxiliares -------------------------------------------------------------------
